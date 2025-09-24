@@ -1,0 +1,253 @@
+import { Request, Response } from 'express';
+
+interface DomainLandingConfig {
+  domain: string;
+  title: string;
+  description: string;
+  language: string;
+  primaryColor: string;
+  secondaryColor: string;
+  specialization: string[];
+  features: Array<{
+    title: string;
+    description: string;
+    icon: string;
+  }>;
+  cta: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+  };
+  footer: string;
+}
+
+const DOMAIN_LANDING_CONFIGS: { [key: string]: DomainLandingConfig } = {
+  'astrotelugu.com': {
+    domain: 'astrotelugu.com',
+    title: 'Astro Telugu - తెలుగు జ్యోతిష్యం',
+    description: 'వైదిక జ్యోతిష్య సేవలు తెలుగులో - సంపూర్ణ జాతక విశ్లేషణ మరియు భవిష్యత్తు అంచనలు',
+    language: 'telugu',
+    primaryColor: '#FF6B35',
+    secondaryColor: '#004225',
+    specialization: ['vedic', 'traditional', 'telugu'],
+    features: [
+      {
+        title: '🎯 ఉచిత జాతకం',
+        description: 'వైదిక గణనలతో మీ జన్మ జాతకం తక్షణమే రూపొందించుకోండి',
+        icon: '🎯'
+      },
+      {
+        title: '💑 జాతక మిలన',
+        description: 'వివాహానికి గుణ మిలన మరియు మాంగల్య దోష పరిశీలన',
+        icon: '💑'
+      },
+      {
+        title: '📅 పంచాంగం',
+        description: 'రోజువారీ తిథి, నక్షత్రం, యోగ, కరణ మరియు శుభ సమయాలు',
+        icon: '📅'
+      },
+      {
+        title: '🔮 జ్యోతిష్క సేవ',
+        description: 'అనుభవజ్ఞుల జ్యోతిష్కుల నుండి చాట్, కాల్ లేదా వీడియో కాల్ ద్వారా సలహాలు',
+        icon: '🔮'
+      }
+    ],
+    cta: {
+      primary: '🎯 జాతకం రూపొందించండి',
+      secondary: '💑 జాతక మిలన చేయండి',
+      tertiary: '🔮 జ్యోతిష్కులతో మాట్లాడండి'
+    },
+    footer: '© 2025 Astro Telugu - అన్ని హక్కులు సురక్షితం - ప్రామాణిక వైదిక జ్యోతిష్య సేవలు'
+  },
+
+  'indiahoroscope.com': {
+    domain: 'indiahoroscope.com',
+    title: 'India Horoscope - Daily, Weekly & Monthly Predictions',
+    description: 'Free daily horoscope predictions based on authentic Vedic astrology calculations',
+    language: 'english',
+    primaryColor: '#FF6B00',
+    secondaryColor: '#138808',
+    specialization: ['horoscope', 'daily', 'predictions'],
+    features: [
+      {
+        title: '🌅 Daily Horoscope',
+        description: 'Get your daily horoscope with accurate planetary positions and predictions',
+        icon: '🌅'
+      },
+      {
+        title: '📅 Weekly Forecast',
+        description: 'Comprehensive weekly horoscope analysis with detailed planetary movements',
+        icon: '📅'
+      },
+      {
+        title: '🗓️ Monthly Predictions',
+        description: 'Monthly horoscope forecasts with major life area analysis',
+        icon: '🗓️'
+      },
+      {
+        title: '🎯 Birth Chart Analysis',
+        description: 'Complete birth chart analysis with planetary positions and house analysis',
+        icon: '🎯'
+      }
+    ],
+    cta: {
+      primary: '🌅 Get Daily Horoscope',
+      secondary: '🎯 Generate Birth Chart',
+      tertiary: '🔮 Consult Astrologer'
+    },
+    footer: '© 2025 India Horoscope - All Rights Reserved - Authentic Vedic Astrology Services'
+  },
+
+  'jaataka.com': {
+    domain: 'jaataka.com',
+    title: 'Jaataka - Traditional Birth Chart Analysis',
+    description: 'Comprehensive Jataka (birth chart) analysis with traditional Vedic astrology methods',
+    language: 'english',
+    primaryColor: '#8B4513',
+    secondaryColor: '#FFD700',
+    specialization: ['birth_chart', 'detailed_analysis', 'traditional'],
+    features: [
+      {
+        title: '📊 Complete Jaataka',
+        description: 'Detailed birth chart analysis with all planetary positions and houses',
+        icon: '📊'
+      },
+      {
+        title: '🔢 Divisional Charts',
+        description: 'Comprehensive analysis using Navamsa, Dasamsa and other divisional charts',
+        icon: '🔢'
+      },
+      {
+        title: '⏰ Dasha Analysis',
+        description: 'Complete Vimshottari Dasha periods with timing of major life events',
+        icon: '⏰'
+      },
+      {
+        title: '💎 Remedial Measures',
+        description: 'Traditional remedies including gemstones, mantras and charitable activities',
+        icon: '💎'
+      }
+    ],
+    cta: {
+      primary: '📊 Generate Jaataka',
+      secondary: '🔢 Divisional Charts',
+      tertiary: '🔮 Expert Analysis'
+    },
+    footer: '© 2025 Jaataka.com - All Rights Reserved - Traditional Vedic Birth Chart Analysis'
+  },
+
+  'astroneram.com': {
+    domain: 'astroneram.com',
+    title: 'Astro Neram - ஜோதிட நேரம்',
+    description: 'தமிழ் ஜோதிட சேவைகள் மற்றும் சுப நேரங்கள் - துல்லியமான நேர கணிப்புகள்',
+    language: 'tamil',
+    primaryColor: '#DC143C',
+    secondaryColor: '#FFD700',
+    specialization: ['timing', 'muhurat', 'panchang'],
+    features: [
+      {
+        title: '🕐 சுப நேரம்',
+        description: 'தினசரி சுப நேரங்கள் மற்றும் துல்லியமான முகூர்த்த கணிப்புகள்',
+        icon: '🕐'
+      },
+      {
+        title: '📅 பஞ்சாங்கம்',
+        description: 'தினசரி திதி, நட்சத்திரம், யோகம், கரணம் மற்றும் சுப நேரங்கள்',
+        icon: '📅'
+      },
+      {
+        title: '🎯 ஜாதகம்',
+        description: 'வேத ஜோதிட கணிப்புகளுடன் உங்கள் பிறப்பு ஜாதகம் உடனடியாக பெறுங்கள்',
+        icon: '🎯'
+      },
+      {
+        title: '💑 பொருத்தம்',
+        description: 'திருமணத்திற்கான குண மिलान மற்றும் தோஷ பரிசோதனை',
+        icon: '💑'
+      }
+    ],
+    cta: {
+      primary: '🕐 சுப நேரம் பார்க்க',
+      secondary: '🎯 ஜாதகம் உருவாக்க',
+      tertiary: '🔮 ஜோதிடர்களுடன் பேச'
+    },
+    footer: '© 2025 Astro Neram - அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை - தமிழ் ஜோதிட சேவைகள்'
+  },
+
+  'astrojothidam.com': {
+    domain: 'astrojothidam.com',
+    title: 'Astro Jothidam - தமிழ் ஜோதிடம்',
+    description: 'பாரம்பரிய தமிழ் ஜோதிட சேவைகள் - வேத ஜோதிட கணிப்புகள் மற்றும் ஆலோசனைகள்',
+    language: 'tamil',
+    primaryColor: '#FF4500',
+    secondaryColor: '#32CD32',
+    specialization: ['vedic', 'traditional', 'tamil'],
+    features: [
+      {
+        title: '🎯 இலவச ஜாதகம்',
+        description: 'வேத ஜோதிட கணிப்புகளுடன் உங்கள் பிறப்பு ஜாதகம் உருவாக்குங்கள்',
+        icon: '🎯'
+      },
+      {
+        title: '💑 திருமண பொருத்தம்',
+        description: 'குண மிலன மற்றும் தோஷ பரிசோதனையுடன் திருமண பொருத்தம் பார்க்கவும்',
+        icon: '💑'
+      },
+      {
+        title: '📅 பஞ்சாங்கம்',
+        description: 'தினசரி திதி, நட்சத்திரம், யோகம், கரணம் மற்றும் சுப நேரங்கள்',
+        icon: '📅'
+      },
+      {
+        title: '🔮 ஜோதிட ஆலோசனை',
+        description: 'அனுபவமிக்க ஜோதிடர்களிடம் நேரடி ஆலோசனை பெறுங்கள்',
+        icon: '🔮'
+      }
+    ],
+    cta: {
+      primary: '🎯 ஜாதகம் உருவாக்க',
+      secondary: '💑 பொருத்தம் பார்க்க',
+      tertiary: '🔮 ஜோதிடர்களுடன் பேச'
+    },
+    footer: '© 2025 Astro Jothidam - அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை - பாரம்பரிய தமிழ் ஜோதிடம்'
+  },
+
+  'astroscroll.com': {
+    domain: 'astroscroll.com',
+    title: 'AstroScroll - Modern Astrology Platform',
+    description: 'Interactive astrology platform combining traditional wisdom with modern tools and technology',
+    language: 'english',
+    primaryColor: '#6B46C1',
+    secondaryColor: '#EC4899',
+    specialization: ['modern', 'interactive', 'comprehensive'],
+    features: [
+      {
+        title: '🚀 Interactive Charts',
+        description: 'Modern interactive birth charts with advanced visualization and analysis tools',
+        icon: '🚀'
+      },
+      {
+        title: '📱 Mobile-First Design',
+        description: 'Responsive design optimized for mobile devices with touch-friendly interface',
+        icon: '📱'
+      },
+      {
+        title: '🤖 AI-Powered Insights',
+        description: 'Advanced AI algorithms combined with traditional astrology for deeper insights',
+        icon: '🤖'
+      },
+      {
+        title: '🌍 Global Coverage',
+        description: 'Accurate calculations for any location worldwide with timezone support',
+        icon: '🌍'
+      }
+    ],
+    cta: {
+      primary: '🚀 Try Interactive Chart',
+      secondary: '📱 Mobile Experience',
+      tertiary: '🔮 Get AI Insights'
+    },
+    footer: '© 2025 AstroScroll - All Rights Reserved - Modern Astrology Technology Platform'
+  }
+};
+

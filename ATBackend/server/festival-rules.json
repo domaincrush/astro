@@ -1,0 +1,109 @@
+{
+  "festivals": {
+    "Nag Panchami": {
+      "tithi": "Shukla Paksha Panchami",
+      "month": "Sravana",
+      "description": "Festival dedicated to serpent deities"
+    },
+    "Yogini Ekadashi": {
+      "tithi": "Krishna Paksha Ekadashi", 
+      "month": "Ashadha",
+      "description": "Fasting day for spiritual purification"
+    },
+    "Guru Purnima": {
+      "tithi": "Shukla Paksha Purnima",
+      "month": "Ashadha",
+      "description": "Festival honoring spiritual teachers"
+    },
+    "Karva Chauth": {
+      "tithi": "Krishna Paksha Chaturthi",
+      "month": "Kartika",
+      "description": "Fasting festival for married women"
+    },
+    "Diwali": {
+      "tithi": "Krishna Paksha Amavasya",
+      "month": "Kartika", 
+      "description": "Festival of lights"
+    },
+    "Holi": {
+      "tithi": "Shukla Paksha Purnima",
+      "month": "Phalguna",
+      "description": "Festival of colors"
+    },
+    "Maha Shivratri": {
+      "tithi": "Krishna Paksha Chaturdashi",
+      "month": "Magha",
+      "description": "Great night of Lord Shiva"
+    },
+    "Ram Navami": {
+      "tithi": "Shukla Paksha Navami",
+      "month": "Chaitra",
+      "description": "Birth anniversary of Lord Rama"
+    },
+    "Krishna Janmashtami": {
+      "tithi": "Krishna Paksha Ashtami",
+      "month": "Bhadrapada",
+      "description": "Birth anniversary of Lord Krishna"
+    },
+    "Ganesh Chaturthi": {
+      "tithi": "Shukla Paksha Chaturthi",
+      "month": "Bhadrapada",
+      "description": "Festival of Lord Ganesha"
+    },
+    "Akshaya Tritiya": {
+      "tithi": "Shukla Paksha Tritiya",
+      "month": "Vaisakha",
+      "description": "Auspicious day for new beginnings"
+    },
+    "Hanuman Jayanti": {
+      "tithi": "Shukla Paksha Purnima",
+      "month": "Chaitra",
+      "description": "Birth anniversary of Lord Hanuman"
+    },
+    "Makar Sankranti": {
+      "solar": true,
+      "solar_month": "Makara",
+      "description": "Sun's transition to Capricorn"
+    },
+    "Vat Purnima": {
+      "tithi": "Shukla Paksha Purnima",
+      "month": "Jyeshta",
+      "description": "Festival for married women"
+    },
+    "Rishi Panchami": {
+      "tithi": "Shukla Paksha Panchami",
+      "month": "Bhadrapada",
+      "description": "Day honoring sages"
+    }
+  },
+  "ekadashi": {
+    "names": [
+      "Parama Ekadashi", "Saphala Ekadashi", "Putrada Ekadashi", "Shattila Ekadashi",
+      "Jaya Ekadashi", "Vijaya Ekadashi", "Amalaki Ekadashi", "Papamochani Ekadashi",
+      "Kamada Ekadashi", "Varuthini Ekadashi", "Mohini Ekadashi", "Apara Ekadashi",
+      "Nirjala Ekadashi", "Yogini Ekadashi", "Sayana Ekadashi", "Kamika Ekadashi",
+      "Shravana Putrada Ekadashi", "Aja Ekadashi", "Parsva Ekadashi", "Indira Ekadashi",
+      "Papankusha Ekadashi", "Rama Ekadashi", "Devutthana Ekadashi", "Utpanna Ekadashi"
+    ]
+  },
+  "special_days": {
+    "Amavasya": {
+      "significance": "New moon day, auspicious for ancestor worship",
+      "rituals": ["Pitru paksha", "Charity", "Meditation"]
+    },
+    "Purnima": {
+      "significance": "Full moon day, auspicious for spiritual practices",
+      "rituals": ["Fasting", "Worship", "Charity"]
+    },
+    "Sankranti": {
+      "significance": "Solar transition days",
+      "frequency": "Monthly"
+    }
+  },
+  "gandmool_nakshatras": [
+    "Ashwini", "Ashlesha", "Magha", "Jyeshta", "Mula", "Revati"
+  ],
+  "panchaka_nakshatras": [
+    "Dhanishta", "Shatabhisha", "Purva Bhadrapada", "Uttara Bhadrapada", "Revati"
+  ]
+}

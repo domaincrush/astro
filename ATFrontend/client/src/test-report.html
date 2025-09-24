@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Report Generation</title>
+</head>
+<body>
+    <h1>Testing Premium Report with Dosha Analysis</h1>
+    <script>
+        const testData = {
+            name: "Test User",
+            date: "1990-06-15", 
+            time: "10:30",
+            place: "Chennai, India",
+            latitude: 13.0827,
+            longitude: 80.2707,
+            gender: "male"
+        };
+        
+        // Test without authentication first to see structure
+        fetch('/api/premium-report/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(testData)
+        }).then(r => r.json()).then(data => {
+            console.log('Report generation result:', data);
+        }).catch(e => console.error('Error:', e));
+    </script>
+</body>
+</html>

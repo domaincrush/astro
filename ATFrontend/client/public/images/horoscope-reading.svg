@@ -1,0 +1,220 @@
+<svg width="1200" height="400" viewBox="0 0 1200 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="horoscopeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#065f46;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#047857;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#064e3b;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f59e0b;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0" />
+    </radialGradient>
+    <radialGradient id="moonGlow" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0%" style="stop-color:#e5e7eb;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#d1d5db;stop-opacity:0.6" />
+      <stop offset="100%" style="stop-color:#d1d5db;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <!-- Natural mystical background -->
+  <rect width="1200" height="400" fill="url(#horoscopeGrad)"/>
+  
+  <!-- Ancient scroll/parchment effect -->
+  <g opacity="0.1">
+    <rect x="200" y="50" width="800" height="300" rx="20" fill="#fbbf24"/>
+    <rect x="210" y="60" width="780" height="280" rx="15" fill="none" stroke="#d97706" stroke-width="2"/>
+  </g>
+  
+  <!-- Zodiac wheel (main centerpiece) -->
+  <g transform="translate(600,200)">
+    <!-- Outer ring -->
+    <circle r="120" fill="none" stroke="#fbbf24" stroke-width="3"/>
+    <circle r="110" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.5"/>
+    <circle r="100" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.3"/>
+    
+    <!-- Inner rings -->
+    <circle r="80" fill="none" stroke="#10b981" stroke-width="2"/>
+    <circle r="60" fill="none" stroke="#10b981" stroke-width="1"/>
+    <circle r="40" fill="none" stroke="#10b981" stroke-width="1"/>
+    
+    <!-- Central sun -->
+    <circle r="20" fill="url(#sunGlow)"/>
+    <circle r="15" fill="none" stroke="#fbbf24" stroke-width="2"/>
+    <circle r="8" fill="#f59e0b"/>
+    
+    <!-- Sun rays -->
+    <g stroke="#fbbf24" stroke-width="2">
+      <line x1="0" y1="-30" x2="0" y2="-35"/>
+      <line x1="21" y1="-21" x2="25" y2="-25"/>
+      <line x1="30" y1="0" x2="35" y2="0"/>
+      <line x1="21" y1="21" x2="25" y2="25"/>
+      <line x1="0" y1="30" x2="0" y2="35"/>
+      <line x1="-21" y1="21" x2="-25" y2="25"/>
+      <line x1="-30" y1="0" x2="-35" y2="0"/>
+      <line x1="-21" y1="-21" x2="-25" y2="-25"/>
+    </g>
+    
+    <!-- Zodiac divisions (12 houses) -->
+    <g stroke="#fbbf24" stroke-width="1" opacity="0.6">
+      <line x1="0" y1="-120" x2="0" y2="-80"/>
+      <line x1="60" y1="-103.9" x2="48" y2="-83.1"/>
+      <line x1="103.9" y1="-60" x2="83.1" y2="-48"/>
+      <line x1="120" y1="0" x2="80" y2="0"/>
+      <line x1="103.9" y1="60" x2="83.1" y2="48"/>
+      <line x1="60" y1="103.9" x2="48" y2="83.1"/>
+      <line x1="0" y1="120" x2="0" y2="80"/>
+      <line x1="-60" y1="103.9" x2="-48" y2="83.1"/>
+      <line x1="-103.9" y1="60" x2="-83.1" y2="48"/>
+      <line x1="-120" y1="0" x2="-80" y2="0"/>
+      <line x1="-103.9" y1="-60" x2="-83.1" y2="-48"/>
+      <line x1="-60" y1="-103.9" x2="-48" y2="-83.1"/>
+    </g>
+    
+    <!-- Zodiac signs positioned around the wheel -->
+    <g fill="#fbbf24" font-family="serif" font-size="24" text-anchor="middle">
+      <text x="0" y="-140" dominant-baseline="central">♈</text>
+      <text x="70" y="-121" dominant-baseline="central">♉</text>
+      <text x="121" y="-70" dominant-baseline="central">♊</text>
+      <text x="140" y="0" dominant-baseline="central">♋</text>
+      <text x="121" y="70" dominant-baseline="central">♌</text>
+      <text x="70" y="121" dominant-baseline="central">♍</text>
+      <text x="0" y="140" dominant-baseline="central">♎</text>
+      <text x="-70" y="121" dominant-baseline="central">♏</text>
+      <text x="-121" y="70" dominant-baseline="central">♐</text>
+      <text x="-140" y="0" dominant-baseline="central">♑</text>
+      <text x="-121" y="-70" dominant-baseline="central">♒</text>
+      <text x="-70" y="-121" dominant-baseline="central">♓</text>
+    </g>
+    
+    <!-- House numbers -->
+    <g fill="#10b981" font-family="sans-serif" font-size="12" text-anchor="middle" opacity="0.7">
+      <text x="0" y="-95" dominant-baseline="central">1</text>
+      <text x="48" y="-82" dominant-baseline="central">2</text>
+      <text x="82" y="-48" dominant-baseline="central">3</text>
+      <text x="95" y="0" dominant-baseline="central">4</text>
+      <text x="82" y="48" dominant-baseline="central">5</text>
+      <text x="48" y="82" dominant-baseline="central">6</text>
+      <text x="0" y="95" dominant-baseline="central">7</text>
+      <text x="-48" y="82" dominant-baseline="central">8</text>
+      <text x="-82" y="48" dominant-baseline="central">9</text>
+      <text x="-95" y="0" dominant-baseline="central">10</text>
+      <text x="-82" y="-48" dominant-baseline="central">11</text>
+      <text x="-48" y="-82" dominant-baseline="central">12</text>
+    </g>
+  </g>
+  
+  <!-- Planetary positions -->
+  <g>
+    <!-- Sun -->
+    <g transform="translate(700,150)">
+      <circle r="8" fill="url(#sunGlow)"/>
+      <text x="0" y="20" text-anchor="middle" fill="#fbbf24" font-size="12">☉</text>
+    </g>
+    
+    <!-- Moon -->
+    <g transform="translate(500,250)">
+      <circle r="6" fill="url(#moonGlow)"/>
+      <text x="0" y="18" text-anchor="middle" fill="#e5e7eb" font-size="12">☽</text>
+    </g>
+    
+    <!-- Mars -->
+    <g transform="translate(750,250)">
+      <circle r="5" fill="#dc2626"/>
+      <text x="0" y="17" text-anchor="middle" fill="#dc2626" font-size="12">♂</text>
+    </g>
+    
+    <!-- Venus -->
+    <g transform="translate(450,150)">
+      <circle r="6" fill="#ec4899"/>
+      <text x="0" y="18" text-anchor="middle" fill="#ec4899" font-size="12">♀</text>
+    </g>
+    
+    <!-- Mercury -->
+    <g transform="translate(650,120)">
+      <circle r="4" fill="#06b6d4"/>
+      <text x="0" y="16" text-anchor="middle" fill="#06b6d4" font-size="12">☿</text>
+    </g>
+    
+    <!-- Jupiter -->
+    <g transform="translate(550,280)">
+      <circle r="7" fill="#f59e0b"/>
+      <text x="0" y="19" text-anchor="middle" fill="#f59e0b" font-size="12">♃</text>
+    </g>
+    
+    <!-- Saturn -->
+    <g transform="translate(650,280)">
+      <circle r="6" fill="#8b5cf6"/>
+      <text x="0" y="18" text-anchor="middle" fill="#8b5cf6" font-size="12">♄</text>
+    </g>
+  </g>
+  
+  <!-- Aspects lines (planetary connections) -->
+  <g stroke="#10b981" stroke-width="1" fill="none" opacity="0.4">
+    <path d="M700 150 L500 250"/>  <!-- Sun-Moon -->
+    <path d="M450 150 L750 250"/>  <!-- Venus-Mars -->
+    <path d="M650 120 L550 280"/>  <!-- Mercury-Jupiter -->
+  </g>
+  
+  <!-- Ancient astronomical instruments in corners -->
+  <g opacity="0.3">
+    <!-- Astrolabe (top left) -->
+    <g transform="translate(100,100)">
+      <circle r="30" fill="none" stroke="#fbbf24" stroke-width="2"/>
+      <circle r="20" fill="none" stroke="#fbbf24" stroke-width="1"/>
+      <circle r="10" fill="none" stroke="#fbbf24" stroke-width="1"/>
+      <line x1="-30" y1="0" x2="30" y2="0" stroke="#fbbf24" stroke-width="1"/>
+      <line x1="0" y1="-30" x2="0" y2="30" stroke="#fbbf24" stroke-width="1"/>
+    </g>
+    
+    <!-- Telescope (top right) -->
+    <g transform="translate(1100,100)">
+      <rect x="-25" y="-5" width="50" height="10" rx="5" fill="#fbbf24"/>
+      <circle cx="-20" cy="0" r="8" fill="none" stroke="#fbbf24" stroke-width="2"/>
+      <circle cx="20" cy="0" r="4" fill="none" stroke="#fbbf24" stroke-width="2"/>
+    </g>
+    
+    <!-- Compass (bottom left) -->
+    <g transform="translate(100,300)">
+      <circle r="25" fill="none" stroke="#fbbf24" stroke-width="2"/>
+      <polygon points="0,-20 5,0 0,20 -5,0" fill="#fbbf24"/>
+      <text x="0" y="-35" text-anchor="middle" fill="#fbbf24" font-size="12">N</text>
+    </g>
+    
+    <!-- Star map (bottom right) -->
+    <g transform="translate(1100,300)">
+      <rect x="-20" y="-15" width="40" height="30" rx="3" fill="none" stroke="#fbbf24" stroke-width="2"/>
+      <circle cx="-10" cy="-8" r="2" fill="#fbbf24"/>
+      <circle cx="10" cy="-5" r="1.5" fill="#fbbf24"/>
+      <circle cx="0" cy="8" r="2" fill="#fbbf24"/>
+      <circle cx="-8" cy="5" r="1" fill="#fbbf24"/>
+      <circle cx="8" cy="2" r="1.5" fill="#fbbf24"/>
+    </g>
+  </g>
+  
+  <!-- Floating mystical elements -->
+  <g opacity="0.4">
+    <text x="200" y="80" font-size="20" fill="#10b981">✧</text>
+    <text x="300" y="350" font-size="18" fill="#10b981">✦</text>
+    <text x="900" y="70" font-size="20" fill="#10b981">✧</text>
+    <text x="1000" y="350" font-size="18" fill="#10b981">✦</text>
+    <text x="150" y="200" font-size="16" fill="#fbbf24">◈</text>
+    <text x="1050" y="200" font-size="16" fill="#fbbf24">◈</text>
+  </g>
+  
+  <!-- Sacred geometry background -->
+  <g stroke="#10b981" stroke-width="1" fill="none" opacity="0.1">
+    <!-- Golden ratio spiral -->
+    <path d="M300 200 Q350 150 400 200 Q400 250 350 250 Q300 250 300 225"/>
+    <path d="M900 200 Q850 150 800 200 Q800 250 850 250 Q900 250 900 225"/>
+    
+    <!-- Flower of life elements -->
+    <circle cx="200" cy="300" r="15"/>
+    <circle cx="215" cy="287" r="15"/>
+    <circle cx="215" cy="313" r="15"/>
+    
+    <circle cx="1000" cy="100" r="15"/>
+    <circle cx="1015" cy="87" r="15"/>
+    <circle cx="1015" cy="113" r="15"/>
+  </g>
+</svg>

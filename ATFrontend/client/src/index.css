@@ -1,0 +1,777 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+
+  /* Custom mystical colors */
+  --mystical-blue: hsl(237, 71%, 20%);
+  --mystical-purple: hsl(262, 80%, 55%);
+  --mystical-gold: hsl(43, 95%, 48%);
+  --emerald-green: #50C878;
+  --cosmic-dark: hsl(258, 63%, 11%);
+  --cosmic-purple: hsl(249, 27%, 19%);
+  --cosmic-blue: hsl(244, 37%, 28%);
+
+  /* Ancient Manuscript Scroll Colors */
+  --parchment-light: hsl(44, 40%, 96%);
+  --parchment-base: hsl(43, 35%, 90%);
+  --parchment-dark: hsl(42, 30%, 85%);
+  --amber-manuscript: hsl(45, 85%, 35%);
+  --scroll-border: hsl(38, 60%, 25%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Mobile-first responsive design for ExecutiveDashboard */
+@layer utilities {
+  /* Ensure all content is properly contained on mobile */
+  @media (max-width: 640px) {
+    .premium-report-container {
+      max-width: 100vw;
+      width: 100%;
+      margin: 0 auto;
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+    
+    /* Ensure all child elements also use border-box */
+    .premium-report-container * {
+      box-sizing: border-box;
+    }
+    
+    /* Force word wrapping for long text - but exclude footer */
+    .premium-report-container *:not(footer):not(footer *) {
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+    
+    /* Prevent horizontal scrolling on cards */
+    .premium-report-container .card {
+      max-width: 100%;
+      overflow: hidden;
+    }
+    
+    /* Responsive table-like layouts */
+    .premium-report-container .flex {
+      flex-wrap: wrap;
+    }
+    
+    /* Fix alignment issues on mobile */
+    .premium-report-container .flex-col {
+      align-items: stretch !important;
+    }
+    
+    .premium-report-container .justify-between {
+      justify-content: space-between !important;
+    }
+    
+    .premium-report-container .text-right {
+      text-align: right !important;
+    }
+    
+    .premium-report-container .text-center {
+      text-align: center !important;
+    }
+    
+    .premium-report-container .text-left {
+      text-align: left !important;
+    }
+    
+    /* Ensure charts and embedded content fit mobile */
+    .premium-report-container svg,
+    .premium-report-container table,
+    .premium-report-container iframe {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+    
+    /* Mobile-friendly spacing */
+    .premium-report-container .space-y-8 > * + * {
+      margin-top: 1rem;
+    }
+    
+    .premium-report-container .space-y-6 > * + * {
+      margin-top: 0.75rem;
+    }
+    
+    /* Responsive grid fallback */
+    .premium-report-container .grid {
+      display: block;
+    }
+    
+    .premium-report-container .grid > * {
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Mobile-optimized padding */
+    .premium-report-container .p-8 {
+      padding: 0.75rem;
+    }
+    
+    .premium-report-container .p-6 {
+      padding: 0.5rem;
+    }
+    
+    .premium-report-container .p-4 {
+      padding: 0.375rem;
+    }
+    
+    /* Mobile text size optimizations - Even smaller */
+    .premium-report-container .text-lg {
+      font-size: 0.75rem !important;
+      line-height: 1.2 !important;
+    }
+    
+    .premium-report-container .text-base {
+      font-size: 0.675rem !important;
+      line-height: 1.2 !important;
+    }
+    
+    .premium-report-container .text-sm {
+      font-size: 0.6rem !important;
+      line-height: 1.1 !important;
+    }
+    
+    .premium-report-container .text-xs {
+      font-size: 0.55rem !important;
+      line-height: 1.1 !important;
+    }
+    
+    /* Header text scaling - Smaller headers */
+    .premium-report-container .text-4xl {
+      font-size: 1.25rem !important;
+      line-height: 1.3 !important;
+    }
+    
+    .premium-report-container .text-3xl {
+      font-size: 1.125rem !important;
+      line-height: 1.3 !important;
+    }
+    
+    .premium-report-container .text-2xl {
+      font-size: 1rem !important;
+      line-height: 1.3 !important;
+    }
+    
+    .premium-report-container .text-xl {
+      font-size: 0.875rem !important;
+      line-height: 1.2 !important;
+    }
+    
+    /* Maximize mobile screen usage - Better aligned */
+    .premium-report-container {
+      padding-left: 0.5rem !important;
+      padding-right: 0.5rem !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    
+    /* Reduce margins between sections - More compact */
+    .premium-report-container .mb-8 {
+      margin-bottom: 0.5rem !important;
+    }
+    
+    .premium-report-container .mb-6 {
+      margin-bottom: 0.375rem !important;
+    }
+    
+    .premium-report-container .mb-4 {
+      margin-bottom: 0.25rem !important;
+    }
+    
+    .premium-report-container .mb-3 {
+      margin-bottom: 0.25rem !important;
+    }
+    
+    .premium-report-container .mb-2 {
+      margin-bottom: 0.125rem !important;
+    }
+    
+    /* Reduce space-y classes */
+    .premium-report-container .space-y-8 > * + * {
+      margin-top: 0.5rem !important;
+    }
+    
+    .premium-report-container .space-y-6 > * + * {
+      margin-top: 0.375rem !important;
+    }
+    
+    .premium-report-container .space-y-4 > * + * {
+      margin-top: 0.25rem !important;
+    }
+    
+    .premium-report-container .space-y-3 > * + * {
+      margin-top: 0.25rem !important;
+    }
+    
+    .premium-report-container .space-y-2 > * + * {
+      margin-top: 0.125rem !important;
+    }
+    
+    /* Icon size adjustments for mobile - Smaller icons */
+    .premium-report-container .h-8,
+    .premium-report-container .w-8 {
+      height: 0.75rem !important;
+      width: 0.75rem !important;
+    }
+    
+    .premium-report-container .h-6,
+    .premium-report-container .w-6 {
+      height: 0.625rem !important;
+      width: 0.625rem !important;
+    }
+    
+    .premium-report-container .h-5,
+    .premium-report-container .w-5 {
+      height: 0.5rem !important;
+      width: 0.5rem !important;
+    }
+    
+    .premium-report-container .h-4,
+    .premium-report-container .w-4 {
+      height: 0.5rem !important;
+      width: 0.5rem !important;
+    }
+    
+    /* Make cards and containers properly rounded */
+    .premium-report-container .rounded-lg,
+    .premium-report-container .rounded-xl {
+      border-radius: 0.375rem !important;
+    }
+    
+    /* Compress gaps between flex items */
+    .premium-report-container .gap-8 {
+      gap: 0.25rem !important;
+    }
+    
+    .premium-report-container .gap-6 {
+      gap: 0.25rem !important;
+    }
+    
+    .premium-report-container .gap-4 {
+      gap: 0.125rem !important;
+    }
+    
+    .premium-report-container .gap-3 {
+      gap: 0.125rem !important;
+    }
+    
+    .premium-report-container .gap-2 {
+      gap: 0.125rem !important;
+    }
+    
+    /* Ensure Footer links work properly - exclude Footer from premium report container styles */
+    footer * {
+      font-size: inherit !important;
+      line-height: inherit !important;
+      padding: inherit !important;
+      margin: inherit !important;
+      pointer-events: auto !important;
+    }
+    
+    /* Ensure footer links are clickable */
+    footer a {
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      display: block !important;
+      text-decoration: none !important;
+    }
+    
+    /* Reset footer link sizes to normal */
+    footer .text-gray-300,
+    footer .text-gray-400,
+    footer .text-white {
+      font-size: 0.875rem !important;
+      line-height: 1.25rem !important;
+    }
+  }
+  
+  /* Global Footer fixes - apply to all screen sizes */
+  footer a {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 10 !important;
+    display: block !important;
+    text-decoration: none !important;
+  }
+  
+  footer a:hover {
+    text-decoration: none !important;
+  }
+  
+  footer {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 5 !important;
+  }
+  
+  /* Ensure footer navigation links are accessible */
+  footer nav,
+  footer ul,
+  footer li {
+    pointer-events: auto !important;
+  }
+  
+  /* Additional tablet optimizations */
+  @media (min-width: 641px) and (max-width: 1024px) {
+    .premium-report-container .text-4xl {
+      font-size: 2rem;
+    }
+    
+    .premium-report-container .text-2xl {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+/* Custom animations and styles */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Custom scrollbar styles for mobile menu */
+.mobile-menu-scroll::-webkit-scrollbar {
+  width: 12px;
+  background: #f8fafc;
+}
+
+.mobile-menu-scroll::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 6px;
+  margin: 4px;
+}
+
+.mobile-menu-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a855f7 0%, #7c3aed 100%);
+  border-radius: 6px;
+  border: 2px solid #f8fafc;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mobile-menu-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #9333ea 0%, #6d28d9 100%);
+}
+
+.mobile-menu-scroll::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%);
+}
+
+/* Firefox scrollbar */
+.mobile-menu-scroll {
+  scrollbar-width: auto;
+  scrollbar-color: #a855f7 #e2e8f0;
+}
+
+/* Ensure scrollbar is always visible */
+.mobile-menu-scroll::-webkit-scrollbar-thumb {
+  min-height: 40px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(139, 92, 246, 0.6); }
+}
+
+@keyframes cosmic-rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes star-twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fade-in-up {
+  0% { opacity: 0; transform: translateY(30px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Premium cosmic background */
+.cosmic-background {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #7b2cbf 100%);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+.cosmic-overlay {
+  background: radial-gradient(circle at 20% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 40% 80%, rgba(14, 165, 233, 0.1) 0%, transparent 50%);
+}
+
+/* Starfield effect */
+.starfield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: star-twinkle 2s infinite;
+}
+
+.star:nth-child(1) { top: 10%; left: 20%; animation-delay: 0s; }
+.star:nth-child(2) { top: 20%; left: 80%; animation-delay: 0.5s; }
+.star:nth-child(3) { top: 60%; left: 10%; animation-delay: 1s; }
+.star:nth-child(4) { top: 80%; left: 70%; animation-delay: 1.5s; }
+.star:nth-child(5) { top: 30%; left: 50%; animation-delay: 2s; }
+
+/* Enhanced buttons with premium effects */
+.premium-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.premium-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.premium-button:hover::before {
+  left: 100%;
+}
+
+.premium-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+}
+
+/* Card hover effects */
+.premium-card {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Glowing text effect */
+.glow-text {
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+  animation: pulse-glow 2s infinite;
+}
+
+/* Shimmer effect for banners */
+.shimmer-effect {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Form input enhancements */
+.premium-input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.premium-input:focus {
+  border-color: rgba(139, 92, 246, 0.5);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Animated gradient backgrounds */
+.gradient-animation {
+  background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
+  background-size: 400% 400%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+/* Cosmic particles */
+.cosmic-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.8) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Premium shadows */
+.premium-shadow {
+  box-shadow: 0 25px 50px -12px rgba(139, 92, 246, 0.25);
+}
+
+/* Responsive animations */
+@media (max-width: 768px) {
+  .cosmic-background {
+    animation-duration: 20s;
+  }
+  
+  .premium-card:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.cosmic-bg {
+  background: linear-gradient(135deg, var(--cosmic-dark) 0%, var(--cosmic-purple) 50%, var(--cosmic-blue) 100%);
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-twinkle {
+  animation: twinkle 2s infinite;
+}
+
+.chat-bubble-user {
+  background: linear-gradient(135deg, hsl(207, 90%, 54%), hsl(207, 90%, 44%));
+}
+
+.chat-bubble-astrologer {
+  background: linear-gradient(135deg, var(--mystical-purple), hsl(262, 80%, 45%));
+}
+
+/* Utility classes for mystical theme */
+.text-mystical-blue {
+  color: var(--mystical-blue);
+}
+
+.text-mystical-purple {
+  color: var(--mystical-purple);
+}
+
+.text-mystical-gold {
+  color: var(--mystical-gold);
+}
+
+.bg-mystical-blue {
+  background-color: var(--mystical-blue);
+}
+
+.bg-mystical-purple {
+  background-color: var(--mystical-purple);
+}
+
+.bg-mystical-gold {
+  background-color: var(--mystical-gold);
+}
+
+.border-mystical-gold {
+  border-color: var(--mystical-gold);
+}
+
+.hover\:bg-mystical-gold:hover {
+  background-color: var(--mystical-gold);
+}
+
+.hover\:text-mystical-gold:hover {
+  color: var(--mystical-gold);
+}
+
+.text-emerald-green {
+  color: var(--emerald-green);
+}
+
+.bg-emerald-green {
+  background-color: var(--emerald-green);
+}
+
+.border-emerald-green {
+  border-color: var(--emerald-green);
+}
+
+.hover\:bg-emerald-green:hover {
+  background-color: var(--emerald-green);
+}
+
+.hover\:text-emerald-green:hover {
+  color: var(--emerald-green);
+}
+
+/* Hide scrollbar for zodiac signs on mobile */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
+}
+
+/* Ancient Manuscript Scroll Styling */
+.manuscript-content {
+  font-family: 'Times New Roman', serif;
+  line-height: 1.8;
+  text-rendering: optimizeLegibility;
+}
+
+.manuscript-content h1,
+.manuscript-content h2,
+.manuscript-content h3 {
+  color: var(--amber-manuscript);
+  text-shadow: 0 1px 2px rgba(120, 53, 15, 0.2);
+}
+
+.manuscript-content p {
+  color: hsl(38, 40%, 25%);
+  margin-bottom: 1.2em;
+}
+
+/* Ancient scroll shadow effect */
+.ancient-scroll-shadow {
+  box-shadow: 
+    0 30px 60px rgba(120, 53, 15, 0.25),
+    0 20px 40px rgba(218, 165, 32, 0.15),
+    0 10px 20px rgba(139, 69, 19, 0.1),
+    inset 0 2px 5px rgba(255, 248, 220, 0.8),
+    inset 0 -2px 5px rgba(160, 82, 45, 0.2);
+}
+
+/* Manuscript paper texture */
+.parchment-texture {
+  background-image: 
+    radial-gradient(circle at 25% 75%, rgba(218, 165, 32, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 75% 25%, rgba(160, 82, 45, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(139, 69, 19, 0.08) 0%, transparent 40%),
+    linear-gradient(45deg, transparent 49%, rgba(139, 69, 19, 0.05) 50%, transparent 51%),
+    linear-gradient(135deg, rgba(205, 133, 63, 0.03) 0%, transparent 100%);
+  background-size: 80px 80px, 100px 100px, 60px 60px, 30px 30px, 200px 200px;
+}
+
+/* Scroll ornament animations */
+@keyframes gentle-glow {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(218, 165, 32, 0.4), 
+                0 0 30px rgba(255, 193, 7, 0.2),
+                inset 0 2px 4px rgba(255, 248, 220, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 25px rgba(218, 165, 32, 0.6), 
+                0 0 45px rgba(255, 193, 7, 0.3),
+                inset 0 2px 4px rgba(255, 248, 220, 0.7);
+  }
+}
+
+.scroll-ornament {
+  animation: gentle-glow 4s ease-in-out infinite;
+  transform: perspective(100px) rotateX(5deg);
+}
+
+/* Enhance card styling within manuscript */
+.manuscript-content .card {
+  background: rgba(255, 248, 240, 0.9) !important;
+  border: 2px solid rgba(218, 165, 32, 0.3) !important;
+  box-shadow: 0 4px 15px rgba(120, 53, 15, 0.1) !important;
+}
+
+.manuscript-content .card-header {
+  border-bottom: 1px solid rgba(218, 165, 32, 0.2) !important;
+}

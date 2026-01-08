@@ -45,6 +45,7 @@ import { useAuth } from "src/hooks/useAuth";
 import { cn } from "src/lib/utils";
 import { useLanguage } from "src/contexts/LanguageContext";
 import LanguageSelector from "src/components/layout/LanguageSelector";
+import { openAstroWhatsApp } from "../../utils/whatsapp";
 
 export default function AstroTickHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -1022,14 +1023,16 @@ useEffect(() => {
 
               {/* Chat with Astrologer Button - Desktop */}
               <div className="hidden md:block">
-                <Link href="/astrologers">
-                  <Button className="bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 hover:scale-105 px-6 py-3 flex items-center space-x-2 text-sm whitespace-nowrap transition-all duration-300 shadow-lg rounded-lg">
+                {/* <Link href="/astrologers"> */}
+                  <Button type="button"
+                  onClick={openAstroWhatsApp}
+                  className="bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 hover:scale-105 px-6 py-3 flex items-center space-x-2 text-sm whitespace-nowrap transition-all duration-300 shadow-lg rounded-lg">
                     <div className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse shadow-sm"></div>
                     <span className="font-medium">
                       {tt("header.talkToAstrologer", "Chat with Astrologer")}
                     </span>
                   </Button>
-                </Link>
+                {/* </Link> */}
               </div>
             </div>
           </div>
@@ -1215,16 +1218,17 @@ useEffect(() => {
                 </Link>
 
                 {/* Chat with Astrologer Button - Top of Mobile Menu */}
-                <Link href="/astrologers">
-                  <Button
+                {/* <Link href="/astrologers"> */}
+                  <Button type="button"
                     className="bg-purple-600 text-white hover:bg-purple-700 w-full py-3 rounded-lg flex items-center justify-center gap-2"
-                    onClick={() => setIsMenuOpen(false)}
+                    // onClick={() => setIsMenuOpen(false)}
+                    onClick={() => { setIsMenuOpen(false); openAstroWhatsApp();}}
                   >
                     <div className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse shadow-sm"></div>
                     <MessageCircle className="h-5 w-5" />
                     Chat with Astrologer
                   </Button>
-                </Link>
+                {/* </Link> */}
 
                 {mainNavItems.map((item) => {
                   // Skip Dashboard if user is not authenticated

@@ -45,6 +45,7 @@ import { useAuth } from "src/hooks/useAuth";
 import { cn } from "src/lib/utils";
 import { useLanguage } from "src/contexts/LanguageContext";
 import LanguageSelector from "src/components/layout/LanguageSelector";
+import { openAstroWhatsApp } from "../utils/whatsapp";
 
 export default function AstroTickHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

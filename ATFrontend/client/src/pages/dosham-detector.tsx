@@ -26,6 +26,7 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
+import { openAstroWhatsApp, openPremiumReportWhatsApp } from "../utils/whatsapp";
 
 export default function DoshamDetector() {
   const [formData, setFormData] = useState({
@@ -935,14 +936,14 @@ export default function DoshamDetector() {
                 remedies and timing guidance from expert astrologers
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <a
-                  href="/premium-report"
+                <a onClick={openPremiumReportWhatsApp}
+                  // href="/premium-report"
                   className="bg-white text-mystical-blue px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                 >
                   Premium Life Report
                 </a>
-                <a
-                  href="/astrologers"
+                <a onClick={openAstroWhatsApp}
+                  // href="/astrologers"
                   className="bg-white/20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition-colors backdrop-blur-sm"
                 >
                   Consult Expert

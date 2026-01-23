@@ -13,8 +13,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card
 import { Button } from "src/components/ui/button";
 import AstroTickHeader from "src/components/layout/AstroTickHeader";
 import Footer from "src/components/layout/Footer";
+import { openAstroWhatsApp } from "../utils/whatsapp";
 
 export default function Numerology2025() {
+  const currentYear = new Date().getFullYear();
   const lifePathNumbers = [
     {
       number: 1,
@@ -135,7 +137,7 @@ export default function Numerology2025() {
     {
       title: "Universal Year 9 Energy",
       description:
-        "2025 is a Universal Year 9 (2+0+2+5=9), bringing completion, wisdom, and humanitarian focus.",
+        `${currentYear} is a Universal Year 9 (2+0+2+5=9), bringing completion, wisdom, and humanitarian focus.`,
       impact:
         "Global focus on healing, completion of cycles, and serving humanity",
       color: "from-orange-400 to-red-500",
@@ -143,7 +145,7 @@ export default function Numerology2025() {
     {
       title: "Master Number 11 Influence",
       description:
-        "Strong 11 energy throughout 2025 enhances intuition and spiritual awakening.",
+        `Strong 11 energy throughout ${currentYear} enhances intuition and spiritual awakening.`,
       impact:
         "Increased psychic abilities, spiritual insights, and inspirational leadership",
       color: "from-purple-400 to-pink-500",
@@ -151,7 +153,7 @@ export default function Numerology2025() {
     {
       title: "Completion & New Cycles",
       description:
-        "9-year cycles ending, preparing for new beginnings in 2026 (Year 1).",
+        `9-year cycles ending, preparing for new beginnings in ${currentYear + 1} (Year 1).`,
       impact:
         "Release old patterns, complete projects, and prepare for fresh starts",
       color: "from-blue-400 to-cyan-500",
@@ -231,13 +233,13 @@ export default function Numerology2025() {
               transition={{ duration: 0.8 }}
             >
               <div className="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-orange-600">
-                2025
+                {currentYear}
               </div>
               <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-800">
                 Free Numerology Predictions
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto">
-                Discover the mystical power of numbers in 2025. Personal year
+                Discover the mystical power of numbers in {currentYear}. Personal year
                 predictions, life path insights, and numerological guidance for
                 success and fulfillment.
               </p>
@@ -260,7 +262,7 @@ export default function Numerology2025() {
           </div>
         </section>
 
-        {/* 2025 Numerology Trends */}
+        {/* Numerology Trends */}
         <section className="py-16 px-4 bg-white">
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -270,10 +272,10 @@ export default function Numerology2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                2025 Numerology Trends
+                {currentYear} Numerology Trends
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Understanding the universal energies shaping 2025
+                Understanding the universal energies shaping {currentYear}
               </p>
             </motion.div>
 
@@ -323,10 +325,10 @@ export default function Numerology2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                Life Path Number Predictions 2025
+                Life Path Number Predictions {currentYear}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Find your life path number and discover what 2025 holds for you
+                Find your life path number and discover what {currentYear} holds for you
               </p>
             </motion.div>
 
@@ -415,11 +417,10 @@ export default function Numerology2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                Personal Year Numbers 2025
+                Personal Year Numbers {currentYear}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Calculate your personal year number and discover your theme for
-                2025
+                Calculate your personal year number and discover your theme for {currentYear}
               </p>
             </motion.div>
 
@@ -519,7 +520,7 @@ export default function Numerology2025() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl font-bold mb-6 text-white">
-                Unlock Your Numerological Destiny in 2025
+                Unlock Your Numerological Destiny in {currentYear}
               </h2>
               <p className="text-xl text-white mb-8 opacity-90">
                 Get personalized numerology readings and discover the power of
@@ -535,15 +536,16 @@ export default function Numerology2025() {
                     Get Numerology Reading
                   </Button>
                 </Link>
-                <Link href="/astrologers">
-                  <Button
+                {/* <Link href="/astrologers"> */}
+                  <Button type="button"
+                  onClick={openAstroWhatsApp}
                     size="lg"
                     variant="outline"
                     className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
                   >
                     Consult Numerologist
                   </Button>
-                </Link>
+                {/* </Link> */}
               </div>
             </motion.div>
           </div>

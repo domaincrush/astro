@@ -14,255 +14,271 @@ import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card
 import { Button } from "src/components/ui/button";
 import AstroTickHeader from "src/components/layout/AstroTickHeader";
 import Footer from "src/components/layout/Footer";
+import { openAstroWhatsApp } from "../utils/whatsapp";
 
 export default function PlanetTransit2025() {
+  const currentYear = new Date().getFullYear();
   const majorTransits = [
-    {
-      planet: "Jupiter",
-      transit: "Gemini → Cancer",
-      date: "May 15, 2025",
-      duration: "13 months",
-      effects:
-        "Expansion in communication, education, family matters, and emotional growth",
-      benefits: [
-        "Enhanced learning",
-        "Family harmony",
-        "Property gains",
-        "Spiritual growth",
-      ],
-      challenges: [
-        "Emotional sensitivity",
-        "Family conflicts",
-        "Over-spending",
-      ],
-      color: "from-yellow-400 to-orange-500",
-      icon: Crown,
-    },
-    {
-      planet: "Saturn",
-      transit: "Pisces (continues)",
-      date: "Throughout 2025",
-      duration: "2.5 years cycle",
-      effects:
-        "Spiritual discipline, creative restrictions, karmic lessons in compassion",
-      benefits: [
-        "Spiritual growth",
-        "Artistic abilities",
-        "Compassion",
-        "Healing powers",
-      ],
-      challenges: [
-        "Confusion",
-        "Addiction issues",
-        "Spiritual tests",
-        "Health concerns",
-      ],
-      color: "from-blue-400 to-purple-500",
-      icon: Shield,
-    },
-    {
-      planet: "Rahu",
-      transit: "Pisces → Aquarius",
-      date: "May 30, 2025",
-      duration: "18 months",
-      effects:
-        "Shift from spirituality to innovation, technology, and humanitarian causes",
-      benefits: [
-        "Technical skills",
-        "Innovation",
-        "Social causes",
-        "Networking",
-      ],
-      challenges: [
-        "Technology addiction",
-        "Rebel attitudes",
-        "Friendship issues",
-      ],
-      color: "from-purple-400 to-indigo-500",
-      icon: Zap,
-    },
-    {
-      planet: "Ketu",
-      transit: "Virgo → Leo",
-      date: "May 30, 2025",
-      duration: "18 months",
-      effects: "From perfectionism to creative detachment, ego dissolution",
-      benefits: [
-        "Creative insights",
-        "Spiritual creativity",
-        "Leadership wisdom",
-      ],
-      challenges: ["Ego issues", "Authority problems", "Creative blocks"],
-      color: "from-orange-400 to-red-500",
-      icon: Star,
-    },
-  ];
+  {
+    planet: "Jupiter",
+    transit: "Taurus → Gemini",
+    date: "May 14",
+    duration: "13 months",
+    effects:
+      "Expansion in communication, learning, business skills, travel, and intellectual growth",
+    benefits: [
+      "Enhanced learning",
+      "Business growth",
+      "Networking",
+      "Skill development",
+    ],
+    challenges: [
+      "Mental restlessness",
+      "Overthinking",
+      "Scattered focus",
+    ],
+    color: "from-yellow-400 to-orange-500",
+    icon: Crown,
+  },
+  {
+    planet: "Saturn",
+    transit: "Pisces (continues)",
+    date: "Throughout",
+    duration: "2.5 years cycle",
+    effects:
+      "Spiritual discipline, karmic cleansing, emotional maturity, and inner responsibility",
+    benefits: [
+      "Spiritual growth",
+      "Emotional stability",
+      "Discipline",
+      "Long-term wisdom",
+    ],
+    challenges: [
+      "Emotional heaviness",
+      "Delays",
+      "Isolation feelings",
+      "Health discipline",
+    ],
+    color: "from-blue-400 to-purple-500",
+    icon: Shield,
+  },
+  {
+    planet: "Rahu",
+    transit: "Aquarius → Capricorn",
+    date: "November 26",
+    duration: "18 months",
+    effects:
+      "Shift from futuristic ideals to structured ambition, authority, and career focus",
+    benefits: [
+      "Career growth",
+      "Strategic thinking",
+      "Leadership ambition",
+      "Long-term planning",
+    ],
+    challenges: [
+      "Workaholism",
+      "Power struggles",
+      "Ethical conflicts",
+    ],
+    color: "from-purple-400 to-indigo-500",
+    icon: Zap,
+  },
+  {
+    planet: "Ketu",
+    transit: "Leo → Cancer",
+    date: "November 26",
+    duration: "18 months",
+    effects:
+      "Detachment from ego and recognition, inward emotional focus, ancestral healing",
+    benefits: [
+      "Emotional wisdom",
+      "Spiritual detachment",
+      "Ancestral healing",
+    ],
+    challenges: [
+      "Emotional withdrawal",
+      "Family distance",
+      "Identity confusion",
+    ],
+    color: "from-orange-400 to-red-500",
+    icon: Star,
+  },
+];
 
   const monthlyTransits = [
-    {
-      month: "January",
-      highlights: [
-        "Mercury retrograde (1st-21st) - Communication delays",
-        "Venus in Capricorn - Serious relationships",
-        "Mars in Cancer - Home and family focus",
-      ],
-    },
-    {
-      month: "February",
-      highlights: [
-        "Sun in Aquarius - Innovation and friendship",
-        "New Moon in Aquarius - Fresh start in social circles",
-        "Mercury in Pisces - Intuitive communication",
-      ],
-    },
-    {
-      month: "March",
-      highlights: [
-        "Spring Equinox - Balance and new beginnings",
-        "Venus in Aries - Bold romantic moves",
-        "Full Moon in Libra - Relationship decisions",
-      ],
-    },
-    {
-      month: "April",
-      highlights: [
-        "Mercury in Aries - Direct communication",
-        "Solar Eclipse in Aries - Major personal changes",
-        "Jupiter aspecting Venus - Love and abundance",
-      ],
-    },
-    {
-      month: "May",
-      highlights: [
-        "Jupiter enters Cancer - Family expansion",
-        "Rahu-Ketu axis shift - Major life changes",
-        "Venus retrograde begins - Relationship reviews",
-      ],
-    },
-    {
-      month: "June",
-      highlights: [
-        "Mercury in Gemini - Enhanced communication",
-        "Summer Solstice - Peak solar energy",
-        "Mars in Leo - Creative and dramatic energy",
-      ],
-    },
-    {
-      month: "July",
-      highlights: [
-        "Venus retrograde continues - Past love returns",
-        "New Moon in Cancer - Emotional new beginnings",
-        "Mercury in Cancer - Family communications",
-      ],
-    },
-    {
-      month: "August",
-      highlights: [
-        "Venus direct - Relationship clarity",
-        "Mars in Virgo - Practical action",
-        "Full Moon in Aquarius - Friendship focus",
-      ],
-    },
-    {
-      month: "September",
-      highlights: [
-        "Mercury retrograde (9th-30th) - Review and revise",
-        "Autumn Equinox - Balance and harvest",
-        "Jupiter trine Venus - Lucky in love",
-      ],
-    },
-    {
-      month: "October",
-      highlights: [
-        "Solar Eclipse in Libra - Relationship changes",
-        "Mars in Libra - Partnership actions",
-        "Venus in Scorpio - Deep emotions",
-      ],
-    },
-    {
-      month: "November",
-      highlights: [
-        "Mercury in Scorpio - Deep investigations",
-        "New Moon in Scorpio - Transformation",
-        "Jupiter sextile Mars - Successful actions",
-      ],
-    },
-    {
-      month: "December",
-      highlights: [
-        "Winter Solstice - Spiritual renewal",
-        "Venus in Sagittarius - Adventurous love",
-        "Mercury retrograde begins - Year-end reviews",
-      ],
-    },
-  ];
+  {
+    month: "January",
+    highlights: [
+      "Mercury retrograde (1st-25th) - Communication delays and revisions",
+      "Venus in Sagittarius - Honest and adventurous relationships",
+      "Mars in Cancer - Home, family, and emotional focus",
+    ],
+  },
+  {
+    month: "February",
+    highlights: [
+      "Sun in Aquarius - Innovation and group activities",
+      "New Moon in Aquarius - Fresh start in social circles",
+      "Mercury in Aquarius - Logical and future-oriented communication",
+    ],
+  },
+  {
+    month: "March",
+    highlights: [
+      "Sun moves into Pisces - Spiritual reflection increases",
+      "Venus in Pisces - Romantic and compassionate love",
+      "Full Moon in Virgo - Practical decisions and health focus",
+    ],
+  },
+  {
+    month: "April",
+    highlights: [
+      "Sun enters Aries - New beginnings and confidence",
+      "Solar Eclipse in Aries - Major personal transformations",
+      "Mercury in Aries - Fast and direct communication",
+    ],
+  },
+  {
+    month: "May",
+    highlights: [
+      "Jupiter enters Gemini - Learning, communication, and travel expand",
+      "Mars in Leo - Creative confidence and leadership",
+      "Venus in Taurus - Stability and sensual pleasures",
+    ],
+  },
+  {
+    month: "June",
+    highlights: [
+      "Mercury in Gemini - Strong communication and networking",
+      "Summer Solstice - Peak solar and life-force energy",
+      "Venus in Gemini - Playful and curious relationships",
+    ],
+  },
+  {
+    month: "July",
+    highlights: [
+      "Sun in Cancer - Emotional security and family focus",
+      "New Moon in Cancer - Emotional renewal",
+      "Mars in Virgo - Productivity and disciplined action",
+    ],
+  },
+  {
+    month: "August",
+    highlights: [
+      "Sun in Leo - Confidence and self-expression",
+      "Mercury retrograde (5th-28th) - Review plans and decisions",
+      "Venus in Leo - Passionate and expressive love",
+    ],
+  },
+  {
+    month: "September",
+    highlights: [
+      "Sun enters Virgo - Organization and health focus",
+      "Autumn Equinox - Balance and harvest themes",
+      "Jupiter retrograde begins - Re-evaluating beliefs and goals",
+    ],
+  },
+  {
+    month: "October",
+    highlights: [
+      "Sun in Libra - Relationships and harmony",
+      "Solar Eclipse in Libra - Relationship and partnership shifts",
+      "Mars in Libra - Action through cooperation",
+    ],
+  },
+  {
+    month: "November",
+    highlights: [
+      "Sun in Scorpio - Deep transformation",
+      "New Moon in Scorpio - Powerful inner renewal",
+      "Mercury in Scorpio - Research and deep thinking",
+    ],
+  },
+  {
+    month: "December",
+    highlights: [
+      "Sun in Sagittarius - Expansion and philosophy",
+      "Winter Solstice - Spiritual reset and reflection",
+      "Mercury retrograde begins - Year-end reviews and corrections",
+    ],
+  },
+];
 
   const transitEffects = [
-    {
-      title: "Career & Business",
-      description:
-        "Major planetary transits influence professional growth and business ventures",
-      keyPeriods: [
-        "Jupiter in Cancer (May-Dec)",
-        "Saturn in Pisces (All year)",
-      ],
-      advice:
-        "Focus on family businesses, emotional intelligence in leadership, and spiritual approaches to work",
-      color: "from-green-400 to-teal-500",
-    },
-    {
-      title: "Relationships & Love",
-      description:
-        "Venus and Mars transits create dynamic relationship energies",
-      keyPeriods: ["Venus retrograde (May-July)", "Mars in various signs"],
-      advice:
-        "Review past relationships, heal emotional wounds, and build deeper connections",
-      color: "from-pink-400 to-red-500",
-    },
-    {
-      title: "Health & Wellness",
-      description:
-        "Saturn in Pisces emphasizes mental health and spiritual wellness",
-      keyPeriods: ["Saturn in Pisces (All year)", "Mercury retrogrades"],
-      advice:
-        "Focus on mental health, spiritual practices, and holistic healing approaches",
-      color: "from-blue-400 to-purple-500",
-    },
-    {
-      title: "Finance & Investments",
-      description:
-        "Jupiter's transit brings expansion opportunities in money matters",
-      keyPeriods: ["Jupiter in Cancer (May-Dec)", "Eclipse seasons"],
-      advice:
-        "Invest in real estate, family businesses, and emotional security-focused ventures",
-      color: "from-yellow-400 to-orange-500",
-    },
-  ];
+  {
+    title: "Career & Business",
+    description:
+      "Major planetary transits influence professional growth and business ventures",
+    keyPeriods: [
+      "Jupiter in Gemini (May onward)",
+      "Saturn in Pisces (All year)",
+    ],
+    advice:
+      "Focus on communication skills, learning-based careers, networking, and disciplined long-term planning",
+    color: "from-green-400 to-teal-500",
+  },
+  {
+    title: "Relationships & Love",
+    description:
+      "Venus and Mars transits create dynamic relationship energies",
+    keyPeriods: [
+      "Venus retrograde (August)",
+      "Mars transits activating passion and conflict",
+    ],
+    advice:
+      "Reassess relationship expectations, communicate honestly, and avoid impulsive emotional decisions",
+    color: "from-pink-400 to-red-500",
+  },
+  {
+    title: "Health & Wellness",
+    description:
+      "Saturn in Pisces emphasizes mental health and spiritual wellness",
+    keyPeriods: [
+      "Saturn in Pisces (All year)",
+      "Mercury retrogrades",
+    ],
+    advice:
+      "Maintain emotional boundaries, follow disciplined routines, and support mental and spiritual well-being",
+    color: "from-blue-400 to-purple-500",
+  },
+  {
+    title: "Finance & Investments",
+    description:
+      "Jupiter's transit brings expansion opportunities in money matters",
+    keyPeriods: [
+      "Jupiter in Gemini (May onward)",
+      "Eclipse seasons",
+    ],
+    advice:
+      "Invest in education, communication-based businesses, digital ventures, and diversified financial planning",
+    color: "from-yellow-400 to-orange-500",
+  },
+];
 
   const eclipseSchedule = [
-    {
-      type: "Solar Eclipse",
-      date: "April 8, 2025",
-      sign: "Aries",
-      effects: "New beginnings, leadership changes, personal transformation",
-      duration: "6 months influence",
-    },
-    {
-      type: "Lunar Eclipse",
-      date: "September 18, 2025",
-      sign: "Pisces",
-      effects:
-        "Emotional revelations, spiritual insights, relationship endings",
-      duration: "6 months influence",
-    },
-    {
-      type: "Solar Eclipse",
-      date: "October 2, 2025",
-      sign: "Libra",
-      effects: "Partnership changes, legal matters, balance restoration",
-      duration: "6 months influence",
-    },
-  ];
+  {
+    type: "Solar Eclipse",
+    date: "February 17,",
+    sign: "Aquarius",
+    effects: "Sudden changes in goals, innovation, social circles, and future direction",
+    duration: "6 months influence",
+  },
+  {
+    type: "Lunar Eclipse",
+    date: "March 3,",
+    sign: "Virgo",
+    effects:
+      "Revelations related to health, work-life balance, routines, and practical matters",
+    duration: "6 months influence",
+  },
+  {
+    type: "Solar Eclipse",
+    date: "August 12,",
+    sign: "Leo",
+    effects: "Creative breakthroughs, leadership shifts, confidence rebuilding",
+    duration: "6 months influence",
+  },
+];
 
   return (
     <>
@@ -277,13 +293,13 @@ export default function PlanetTransit2025() {
               transition={{ duration: 0.8 }}
             >
               <div className="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600">
-                2025
+                {currentYear}
               </div>
               <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-800">
                 Planetary Transits
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto">
-                Navigate the cosmic shifts of 2025 with detailed planetary
+                Navigate the cosmic shifts of {currentYear} with detailed planetary
                 transit predictions. Understand how major planetary movements
                 will influence your life and decisions.
               </p>
@@ -320,7 +336,7 @@ export default function PlanetTransit2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                Major Planetary Transits 2025
+                Major Planetary Transits {currentYear}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 The most significant planetary movements that will shape your
@@ -350,7 +366,7 @@ export default function PlanetTransit2025() {
                         {transit.transit}
                       </p>
                       <p className="text-sm text-gray-600">
-                        {transit.date} | {transit.duration}
+                        {transit.date} {currentYear} | {transit.duration}
                       </p>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -524,7 +540,7 @@ export default function PlanetTransit2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                Eclipse Schedule 2025
+                Eclipse Schedule {currentYear}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Major eclipse events and their transformative effects
@@ -552,7 +568,7 @@ export default function PlanetTransit2025() {
                         {eclipse.type}
                       </CardTitle>
                       <p className="text-sm text-purple-600 font-semibold">
-                        {eclipse.date}
+                        {eclipse.date} {currentYear}
                       </p>
                       <p className="text-sm text-gray-600">in {eclipse.sign}</p>
                     </CardHeader>
@@ -580,7 +596,7 @@ export default function PlanetTransit2025() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl font-bold mb-6 text-white">
-                Navigate 2025 with Planetary Wisdom
+                Navigate {currentYear} with Planetary Wisdom
               </h2>
               <p className="text-xl text-white mb-8 opacity-90">
                 Get personalized transit predictions and guidance for your
@@ -596,15 +612,16 @@ export default function PlanetTransit2025() {
                     Get Personal Transit Report
                   </Button>
                 </Link>
-                <Link href="/astrologers">
-                  <Button
+                {/* <Link href="/astrologers"> */}
+                  <Button type="button"
+                    onClick={openAstroWhatsApp}
                     size="lg"
                     variant="outline"
                     className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
                   >
                     Consult Transit Expert
                   </Button>
-                </Link>
+                {/* </Link> */}
               </div>
             </motion.div>
           </div>

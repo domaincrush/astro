@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
@@ -12,12 +13,17 @@ import Footer from "src/components/layout/Footer";
 import LocationSearch from "src/components/LocationSearch";
 import { Sparkles, Calendar, Clock, MapPin } from "lucide-react";
 import { useRef } from "react";
+import { Link } from "wouter";
+import { motion } from "framer-motion";
+import { openAstroWhatsApp } from "../utils/whatsapp";
+import { Zap } from "lucide-react";
 
 export default function NakshatraFinder() {
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [birthPlace, setBirthPlace] = useState("");
   const resultRef = useRef<HTMLDivElement | null>(null);
+  const [, setLocation] = useLocation();
   const [coordinates, setCoordinates] = useState<{
     lat: number;
     lng: number;
@@ -441,6 +447,10 @@ export default function NakshatraFinder() {
                           </div>
                         )}
                       </div>
+                      <button onClick={() => setLocation('/learn-astrology/nakshatras')}
+                      className="mt-4 w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+                        Explore more
+                        </button>
                     </div>
                   ) : (
                     <div className="text-center py-12">
@@ -455,6 +465,45 @@ export default function NakshatraFinder() {
             </div>
           </div>
         </main>
+        {/* CTA Section */}
+        <section className="py-16 px-4 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-4xl font-bold mb-6 text-white">
+                Ready to Unlock Your Astrology Wisdom
+              </h2>
+              <p className="text-xl text-white mb-8 opacity-90">
+                Get personalized Astrology readings and discover the mystical
+                guidance awaiting you
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/learn-astrology/nakshatras">
+                  <Button
+                    size="lg"
+                    className="bg-white text-purple-600 hover:bg-gray-100 font-bold px-8 py-4 text-lg"
+                  >
+                    <Zap className="w-5 h-5 mr-2" />
+                    Learn Nakshatra Basics
+                  </Button>
+                </Link>
+                {/* <Link href="/astrologers"> */}
+                  <Button type="button"
+                  onClick={openAstroWhatsApp}
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
+                  >
+                    Consult with Expert
+                  </Button>
+                {/* </Link> */}
+              </div>
+            </motion.div>
+          </div>
+        </section>
         <Footer />
       </div>
     </>

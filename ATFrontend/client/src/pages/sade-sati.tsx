@@ -38,6 +38,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { useRef } from "react";
+import { openAstroWhatsApp, openPremiumReportWhatsApp } from "../utils/whatsapp";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -962,14 +963,14 @@ export default function SadeSati() {
                 your Sade Sati period.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button
-                  onClick={() => (window.location.href = "/premium-report")}
+                <button onClick={openPremiumReportWhatsApp}
+                  // onClick={() => (window.location.href = "/premium-report")}
                   className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-orange-600 to-red-700 text-white font-semibold rounded-lg shadow-lg hover:from-orange-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105"
                 >
                   Get Premium Report
                 </button>
-                <button
-                  onClick={() => (window.location.href = "/astrologers")}
+                <button onClick={openAstroWhatsApp}
+                  // onClick={() => (window.location.href = "/astrologers")}
                   className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-semibold rounded-lg shadow-lg hover:from-emerald-700 hover:to-teal-800 transition-all duration-300 transform hover:scale-105"
                 >
                   Chat with Expert

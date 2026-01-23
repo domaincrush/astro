@@ -105,7 +105,7 @@ export default function PrivacyPolicy() {
               </p>
               <p className="mt-2">
                 Email: privacy@astrotick.com<br />
-                Phone: +91-XXXXXXXXXX
+                Phone: +91-88075 56886
               </p>
             </section>
 

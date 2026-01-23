@@ -5,14 +5,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card
 import { Button } from "src/components/ui/button";
 import AstroTickHeader from "src/components/layout/AstroTickHeader";
 import Footer from "src/components/layout/Footer";
+import { openAstroWhatsApp } from "../utils/whatsapp";
 
 export default function Tarot2025() {
+  const currentYear = new Date().getFullYear();
   const majorArchanaCards = [
     {
       name: "The Fool",
       number: 0,
       theme: "New Beginnings",
-      message: "2025 brings fresh starts and leap of faith opportunities",
+      message: `${currentYear} brings fresh starts and leap of faith opportunities`,
       color: "from-yellow-400 to-orange-500",
       keywords: ["Adventure", "Freedom", "Spontaneity"],
     },
@@ -20,7 +22,7 @@ export default function Tarot2025() {
       name: "The Magician",
       number: 1,
       theme: "Manifestation",
-      message: "Your ability to manifest desires reaches its peak in 2025",
+      message: `Your ability to manifest desires reaches its peak in ${currentYear}`,
       color: "from-purple-400 to-pink-500",
       keywords: ["Power", "Focus", "Creation"],
     },
@@ -44,7 +46,7 @@ export default function Tarot2025() {
       name: "The Emperor",
       number: 4,
       theme: "Structure & Authority",
-      message: "Leadership opportunities and need for structure in 2025",
+      message: `Leadership opportunities and need for structure in ${currentYear}`,
       color: "from-red-400 to-orange-500",
       keywords: ["Authority", "Structure", "Leadership"],
     },
@@ -84,7 +86,7 @@ export default function Tarot2025() {
 
   const seasonalTarotThemes = [
     {
-      season: "Spring 2025",
+      season: "Spring",
       months: "March - May",
       theme: "The Empress Energy",
       focus: "Creativity, growth, and new beginnings flourish",
@@ -93,7 +95,7 @@ export default function Tarot2025() {
       color: "from-green-400 to-teal-500",
     },
     {
-      season: "Summer 2025",
+      season: "Summer",
       months: "June - August",
       theme: "The Sun's Radiance",
       focus: "Joy, success, and celebration of achievements",
@@ -102,7 +104,7 @@ export default function Tarot2025() {
       color: "from-yellow-400 to-orange-500",
     },
     {
-      season: "Autumn 2025",
+      season: "Autumn",
       months: "September - November",
       theme: "The Hermit's Wisdom",
       focus: "Introspection, wisdom, and spiritual seeking",
@@ -111,7 +113,7 @@ export default function Tarot2025() {
       color: "from-purple-400 to-indigo-500",
     },
     {
-      season: "Winter 2025",
+      season: "Winter",
       months: "December - February",
       theme: "The Star's Hope",
       focus: "Hope, healing, and preparation for new cycles",
@@ -123,7 +125,7 @@ export default function Tarot2025() {
 
   const tarotSpreads2025 = [
     {
-      name: "2025 Year Ahead Spread",
+      name: `${currentYear} Year Ahead Spread`,
       description: "12-card spread revealing monthly themes and guidance",
       positions: 12,
       purpose: "Complete yearly overview with monthly insights",
@@ -192,13 +194,13 @@ export default function Tarot2025() {
               transition={{ duration: 0.8 }}
             >
               <div className="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600">
-                2025
+                {currentYear}
               </div>
               <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-800">
                 Tarot Predictions
               </h1>
               <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto">
-                Unlock the mysteries of 2025 through ancient tarot wisdom.
+                Unlock the mysteries of {currentYear} through ancient tarot wisdom.
                 Seasonal spreads, major arcana guidance, and intuitive insights
                 for your spiritual journey.
               </p>
@@ -221,7 +223,7 @@ export default function Tarot2025() {
           </div>
         </section>
 
-        {/* 2025 Psychic Trends */}
+        {/* Psychic Trends */}
         <section className="py-16 px-4 bg-white">
           <div className="max-w-7xl mx-auto">
             <motion.div
@@ -231,7 +233,7 @@ export default function Tarot2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                2025 Spiritual Trends
+                {currentYear} Spiritual Trends
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Major spiritual and psychic trends shaping the year ahead
@@ -284,11 +286,10 @@ export default function Tarot2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                Major Arcana Guidance for 2025
+                Major Arcana Guidance for {currentYear}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Discover how the major arcana cards influence your journey in
-                2025
+                Discover how the major arcana cards influence your journey in {currentYear}
               </p>
             </motion.div>
 
@@ -347,7 +348,7 @@ export default function Tarot2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                Seasonal Tarot Themes 2025
+                Seasonal Tarot Themes {currentYear}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Align with the natural cycles and seasonal energies throughout
@@ -371,7 +372,7 @@ export default function Tarot2025() {
                         <Sun className="w-8 h-8" />
                       </div>
                       <CardTitle className="text-xl font-bold text-gray-800">
-                        {season.season}
+                        {season.season} {currentYear}
                       </CardTitle>
                       <p className="text-sm text-purple-600 font-semibold">
                         {season.months}
@@ -422,10 +423,10 @@ export default function Tarot2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                Special Tarot Spreads for 2025
+                Special Tarot Spreads for {currentYear}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Unique spreads designed to harness 2025's transformative
+                Unique spreads designed to harness {currentYear}'s transformative
                 energies
               </p>
             </motion.div>
@@ -475,7 +476,7 @@ export default function Tarot2025() {
               transition={{ duration: 0.8 }}
             >
               <h2 className="text-4xl font-bold mb-6 text-white">
-                Ready to Unlock Your Tarot Wisdom for 2025?
+                Ready to Unlock Your Tarot Wisdom for {currentYear}?
               </h2>
               <p className="text-xl text-white mb-8 opacity-90">
                 Get personalized tarot readings and discover the mystical
@@ -491,15 +492,16 @@ export default function Tarot2025() {
                     Get Tarot Reading
                   </Button>
                 </Link>
-                <Link href="/astrologers">
-                  <Button
+                {/* <Link href="/astrologers"> */}
+                  <Button type="button"
+                  onClick={openAstroWhatsApp}
                     size="lg"
                     variant="outline"
-                    className="border-white text--purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
+                    className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
                   >
                     Consult Tarot Expert
                   </Button>
-                </Link>
+                {/* </Link> */}
               </div>
             </motion.div>
           </div>

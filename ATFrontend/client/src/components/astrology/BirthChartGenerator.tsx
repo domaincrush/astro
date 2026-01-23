@@ -43,6 +43,7 @@ import { apiRequest } from "src/lib/queryClient";
 import ChartImageGenerator from "./ChartImageGenerator";
 import VedicDetailsDisplay from "./VedicDetailsDisplay";
 import { useLocation } from "wouter";
+import { openPremiumReportWhatsApp } from "../../utils/whatsapp";
 
 interface BirthChartGeneratorProps {
   onChartGenerated?: (chart: VedicBirthChart) => void;
@@ -1370,7 +1371,7 @@ function BirthChartGenerator({
                     </div>
 
                     <div className="space-y-6">
-                      <div className="bg-gradient-to-r from-orange-100 to-amber-100 border-2 border-orange-300 rounded-xl p-4 md:p-6 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105">
+                      {/* <div className="bg-gradient-to-r from-orange-100 to-amber-100 border-2 border-orange-300 rounded-xl p-4 md:p-6 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
                           <div className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-br from-orange-500 to-amber-500 rounded-full flex items-center justify-center shadow-lg">
                             <Download className="h-6 w-6 md:h-7 md:w-7 text-white" />
@@ -1406,7 +1407,7 @@ function BirthChartGenerator({
                             Email Report
                           </Button>
                         </div>
-                      </div>
+                      </div> */}
 
                       <div className="bg-gradient-to-r from-orange-100 to-amber-100 border-2 border-orange-300 rounded-xl p-4 md:p-6 backdrop-blur-sm shadow-lg hover:shadow-2xl transition-all duration-500 hover:scale-105">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-4">
@@ -1417,8 +1418,8 @@ function BirthChartGenerator({
                             <h3 className="font-bold text-lg md:text-xl text-orange-900">
                               👑 Premium Detailed Report
                             </h3>
-                            <p className="text-sm text-orange-800">
-                              82-section analysis with predictions & remedies
+                            <p className="text-sm text-orange-800 px-8">
+                                section analysis with predictions & remedies
                             </p>
                           </div>
                         </div>
@@ -1436,9 +1437,10 @@ function BirthChartGenerator({
                           </div>
                         </div>
 
-                        <Button className="w-full text-xs md:text-lg mt-4 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold">
+                        <Button onClick={openPremiumReportWhatsApp}
+                        className="w-full text-xs md:text-lg mt-4 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold">
                           <Crown className="h-4 w-4 mr-2" />
-                          Get Premium Report - ₹999
+                          Get Premium Report - ₹699
                         </Button>
                       </div>
                     </div>

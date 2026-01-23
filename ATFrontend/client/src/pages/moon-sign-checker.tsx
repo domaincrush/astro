@@ -12,6 +12,10 @@ import AstroTickHeader from "src/components/layout/AstroTickHeader";
 import Footer from "src/components/layout/Footer";
 import { Moon, Calendar, MapPin, Clock } from "lucide-react";
 import { useRef } from "react";
+import { Link } from "wouter";
+import { motion } from "framer-motion";
+import { openAstroWhatsApp } from "../utils/whatsapp";
+import { Zap } from "lucide-react";
 
 interface MoonSignData {
   moonSign: string;
@@ -538,7 +542,45 @@ export default function MoonSignChecker() {
             </Card>
           </div>
         </main>
-
+        {/* CTA Section */}
+        <section className="py-16 px-4 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600">
+          <div className="max-w-4xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-4xl font-bold mb-6 text-white">
+                Ready to Unlock Your Astrology Wisdom
+              </h2>
+              <p className="text-xl text-white mb-8 opacity-90">
+                Get personalized Astrology readings and discover the mystical
+                guidance awaiting you
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link href="/learn-astrology/nakshatras">
+                  <Button
+                    size="lg"
+                    className="bg-white text-purple-600 hover:bg-gray-100 font-bold px-8 py-4 text-lg"
+                  >
+                    <Zap className="w-5 h-5 mr-2" />
+                    Learn Nakshatra Basics
+                  </Button>
+                </Link>
+                {/* <Link href="/astrologers"> */}
+                  <Button type="button"
+                  onClick={openAstroWhatsApp}
+                    size="lg"
+                    variant="outline"
+                    className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
+                  >
+                    Consult with Expert
+                  </Button>
+                {/* </Link> */}
+              </div>
+            </motion.div>
+          </div>
+        </section>
         <Footer />
       </div>
     </>

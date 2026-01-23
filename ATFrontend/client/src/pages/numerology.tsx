@@ -17,6 +17,7 @@ import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
 import AstroTickHeader from "src/components/layout/AstroTickHeader";
 import Footer from "src/components/layout/Footer";
+import { openAstroWhatsApp } from "../utils/whatsapp";
 
 export default function Numerology() {
   const [name, setName] = useState("");
@@ -800,11 +801,13 @@ export default function Numerology() {
               complete numerological analysis today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                Calculate My Numbers
+              <button onClick={() => window.location.href = '/learn-astrology/birth-chart'}
+              className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                Learn Birth Chart Basic
               </button>
-              <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors">
-                Learn More
+              <button onClick={openAstroWhatsApp}
+              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors">
+                Chat with Expert
               </button>
             </div>
           </motion.div>

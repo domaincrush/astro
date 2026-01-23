@@ -25,6 +25,7 @@ import { useParams } from "wouter";
 import { Link } from "wouter";
 import AstroTickHeader from "src/components/layout/AstroTickHeader";
 import Footer from "src/components/layout/Footer";
+import { openAstroWhatsApp } from "../../utils/whatsapp";
 
 interface HoroscopeData {
   sign: string;
@@ -461,8 +462,9 @@ export default function DailyHoroscopeSign() {
 
               {/* Chat with Astrologer Button */}
               <div className="mt-6">
-                <Link href="/astrologers">
-                  <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 transition-all duration-300 cursor-pointer transform hover:scale-105 shadow-lg hover:shadow-xl">
+                {/* <Link href="/astrologers"> */}
+                  <Card className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 transition-all duration-300 cursor-pointer transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  onClick={openAstroWhatsApp}>
                     <CardContent className="p-6 text-center">
                       <div className="flex items-center justify-center space-x-3">
                         <MessageCircle className="h-6 w-6" />
@@ -478,7 +480,7 @@ export default function DailyHoroscopeSign() {
                       </div>
                     </CardContent>
                   </Card>
-                </Link>
+                {/* </Link> */}
               </div>
             </div>
           ) : (

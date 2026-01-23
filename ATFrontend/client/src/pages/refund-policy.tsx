@@ -130,7 +130,7 @@ export default function RefundPolicy() {
               </p>
               <p className="mt-2">
                 Email: refunds@astrotick.com<br />
-                Phone: +91-XXXXXXXXXX<br />
+                Phone: +91-88075 56886<br />
                 Support Hours: 9:00 AM - 6:00 PM (Monday to Saturday)
               </p>
             </section>

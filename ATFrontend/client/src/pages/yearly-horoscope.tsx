@@ -16,8 +16,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card
 import { Badge } from "src/components/ui/badge";
 import { Button } from "src/components/ui/button";
 import { motion } from "framer-motion";
+import { openAstroWhatsApp } from "../utils/whatsapp";
 
 const YearlyHoroscope: React.FC = () => {
+  const currentYear = new Date().getFullYear();
   const [selectedSign, setSelectedSign] = useState("aries");
   const [, setLocation] = useLocation();
 
@@ -147,7 +149,7 @@ const YearlyHoroscope: React.FC = () => {
   const yearlyPredictions = {
     aries: {
       overall:
-        "2025 brings transformative energy with Jupiter's beneficial transit through your career sector. Mars, your ruling planet, energizes your ambitions while Saturn teaches valuable lessons about patience and perseverance.",
+        `${currentYear} brings transformative energy with Jupiter's beneficial transit through your career sector. Mars, your ruling planet, energizes your ambitions while Saturn teaches valuable lessons about patience and perseverance.`,
       career:
         "Jupiter in your 10th house from May onwards brings significant professional advancement. New leadership opportunities and recognition await. Avoid impulsive decisions during Mars retrograde periods.",
       love: "Venus transits favor committed relationships over casual encounters. Single Aries may find meaningful connections through professional networks. June-August period particularly favorable for engagements and marriages.",
@@ -162,7 +164,7 @@ const YearlyHoroscope: React.FC = () => {
     },
     taurus: {
       overall:
-        "Venus, your ruling planet, brings stability and growth in 2025. Jupiter's transit through your 9th house expands horizons through higher learning and spiritual pursuits. Saturn solidifies foundations.",
+        `Venus, your ruling planet, brings stability and growth in ${currentYear}. Jupiter's transit through your 9th house expands horizons through higher learning and spiritual pursuits. Saturn solidifies foundations.`,
       career:
         "Steady progress through consistent effort. Creative fields particularly favored. Jupiter brings opportunities for international work or higher education that enhances career prospects.",
       love: "Venus retrograde periods require careful communication in relationships. Existing partnerships deepen with mutual understanding. Spring season brings romantic opportunities for singles.",
@@ -207,7 +209,7 @@ const YearlyHoroscope: React.FC = () => {
     },
     leo: {
       overall:
-        "Sun's royal influence reaches full potential in 2025. Jupiter brings international recognition while Saturn teaches humility and service. Creative expression and leadership skills highlighted.",
+        `Sun's royal influence reaches full potential in ${currentYear}. Jupiter brings international recognition while Saturn teaches humility and service. Creative expression and leadership skills highlighted.`,
       career:
         "Entertainment, politics, luxury goods, and leadership positions favored. Sun's energy attracts attention and opportunities for public recognition. Government connections prove beneficial.",
       love: "Dramatic romantic phases with grand gestures and passionate expressions. Fire element attracts similarly energetic partners. Royal treatment expected and given in relationships.",
@@ -336,14 +338,14 @@ const YearlyHoroscope: React.FC = () => {
       planet: "Jupiter",
       transit: "Through Career & Recognition Houses",
       effect: "Expansion in professional life and social status",
-      timeframe: "May - December 2025",
+      timeframe: `May - December ${currentYear}`,
       color: "from-yellow-500 to-orange-500",
     },
     {
       planet: "Saturn",
       transit: "Teaching Discipline & Patience",
       effect: "Long-term stability through persistent effort",
-      timeframe: "All Year 2025",
+      timeframe: `All Year ${currentYear}`,
       color: "from-purple-500 to-indigo-500",
     },
     {
@@ -394,7 +396,7 @@ const YearlyHoroscope: React.FC = () => {
             >
               <Calendar className="h-12 w-12 text-indigo-600" />
               <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                Yearly Horoscope 2025
+                Yearly Horoscope {currentYear}
               </h1>
               <Sparkles className="h-12 w-12 text-indigo-600" />
             </motion.div>
@@ -405,7 +407,7 @@ const YearlyHoroscope: React.FC = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl text-gray-700 mb-8 leading-relaxed"
             >
-              Discover what the stars hold for you in 2025 with comprehensive
+              Discover what the stars hold for you in {currentYear} with comprehensive
               annual predictions based on current planetary transits and Vedic
               astrological principles.
             </motion.p>
@@ -418,7 +420,7 @@ const YearlyHoroscope: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Key Planetary Transits of 2025
+              Key Planetary Transits of {currentYear}
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Major planetary movements shaping the year ahead for all zodiac
@@ -469,8 +471,7 @@ const YearlyHoroscope: React.FC = () => {
               Select Your Zodiac Sign
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Choose your zodiac sign to view detailed yearly predictions for
-              2025
+              Choose your zodiac sign to view detailed yearly predictions for {currentYear}
             </p>
           </div>
 
@@ -515,7 +516,7 @@ const YearlyHoroscope: React.FC = () => {
                     </span>
                   </div>
                   <CardTitle className="text-3xl">
-                    {currentSignData.name} 2025
+                    {currentSignData.name} {currentYear}
                   </CardTitle>
                   <p className="text-lg text-gray-600">
                     {currentSignData.sanskrit}
@@ -641,18 +642,19 @@ const YearlyHoroscope: React.FC = () => {
             className="max-w-3xl mx-auto"
           >
             <h2 className="text-3xl font-bold text-white mb-4">
-              Get Personalized Guidance for 2025
+              Get Personalized Guidance for {currentYear}
             </h2>
             <p className="text-xl text-indigo-100 mb-8">
               Consult with expert astrologers for detailed personal predictions
               and remedial guidance for the year ahead
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
+              <Button type="button"
+                onClick={openAstroWhatsApp}
                 size="lg"
                 variant="secondary"
                 className="bg-white text-indigo-600 hover:bg-gray-100"
-                onClick={() => setLocation("/astrologers")}
+                // onClick={() => setLocation("/astrologers")}
               >
                 <Calendar className="h-5 w-5 mr-2" />
                 Book Consultation

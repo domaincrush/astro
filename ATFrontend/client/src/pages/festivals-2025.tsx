@@ -14,198 +14,196 @@ import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card
 import { Button } from "src/components/ui/button";
 import AstroTickHeader from "src/components/layout/AstroTickHeader";
 import Footer from "src/components/layout/Footer";
+import { openAstroWhatsApp } from "../utils/whatsapp";
 
 export default function Festivals2025() {
+  const currentYear = new Date().getFullYear();
   const majorFestivals = [
-    {
-      name: "Makar Sankranti",
-      date: "January 14, 2025",
-      significance: "Sun enters Capricorn, harvest festival",
-      rituals: ["Kite flying", "Til-gul distribution", "Holy bath"],
-      astrological: "Sun's transition brings new energy and prosperity",
-      color: "from-yellow-400 to-orange-500",
-      icon: Sun,
-    },
-    {
-      name: "Maha Shivratri",
-      date: "February 26, 2025",
-      significance: "Great night of Lord Shiva",
-      rituals: ["Night vigil", "Shiva puja", "Fasting"],
-      astrological: "Powerful spiritual energy for meditation and prayers",
-      color: "from-blue-400 to-purple-500",
-      icon: Moon,
-    },
-    {
-      name: "Holi",
-      date: "March 14, 2025",
-      significance: "Festival of colors and love",
-      rituals: ["Color play", "Bonfire", "Sweets sharing"],
-      astrological: "Spring equinox brings joy and new relationships",
-      color: "from-pink-400 to-red-500",
-      icon: Heart,
-    },
-    {
-      name: "Navratri",
-      date: "September 22 - October 1, 2025",
-      significance: "Nine nights of Divine Mother",
-      rituals: ["Durga puja", "Fasting", "Dance ceremonies"],
-      astrological: "Powerful time for spiritual transformation",
-      color: "from-orange-400 to-red-500",
-      icon: Crown,
-    },
-    {
-      name: "Diwali",
-      date: "October 20, 2025",
-      significance: "Festival of lights",
-      rituals: ["Lakshmi puja", "Lighting diyas", "Fireworks"],
-      astrological: "New moon brings wealth and prosperity",
-      color: "from-yellow-400 to-orange-500",
-      icon: Star,
-    },
-    {
-      name: "Karva Chauth",
-      date: "October 16, 2025",
-      significance: "Wives fast for husband's longevity",
-      rituals: ["Moon sighting", "Fasting", "Prayers"],
-      astrological: "Strengthens marital bonds and love",
-      color: "from-purple-400 to-pink-500",
-      icon: Heart,
-    },
-  ];
+  {
+    name: "Makar Sankranti",
+    date: "January 14",
+    significance: "Sun enters Capricorn, harvest festival",
+    rituals: ["Kite flying", "Til-gul distribution", "Holy bath"],
+    astrological: "Sun's transition brings new energy and prosperity",
+    color: "from-yellow-400 to-orange-500",
+    icon: Sun,
+  },
+  {
+    name: "Maha Shivratri",
+    date: "February 15",
+    significance: "Great night of Lord Shiva",
+    rituals: ["Night vigil", "Shiva puja", "Fasting"],
+    astrological: "Powerful spiritual energy for meditation and prayers",
+    color: "from-blue-400 to-purple-500",
+    icon: Moon,
+  },
+  {
+    name: "Holi",
+    date: "March 4",
+    significance: "Festival of colors and love",
+    rituals: ["Color play", "Bonfire (Holika Dahan)", "Sweets sharing"],
+    astrological: "Spring equinox brings joy and new relationships",
+    color: "from-pink-400 to-red-500",
+    icon: Heart,
+  },
+  {
+    name: "Navratri",
+    date: "October 11 - October 19",
+    significance: "Nine nights of Divine Mother",
+    rituals: ["Durga puja", "Fasting", "Dance ceremonies (Garba/Dandiya)"],
+    astrological: "Powerful time for spiritual transformation",
+    color: "from-orange-400 to-red-500",
+    icon: Crown,
+  },
+  {
+    name: "Diwali",
+    date: "November 8",
+    significance: "Festival of lights",
+    rituals: ["Lakshmi puja", "Lighting diyas", "Fireworks"],
+    astrological: "New moon brings wealth and prosperity",
+    color: "from-yellow-400 to-orange-500",
+    icon: Star,
+  },
+  {
+    name: "Karva Chauth",
+    date: "October 29",
+    significance: "Wives fast for husband's longevity",
+    rituals: ["Moon sighting", "Fasting", "Prayers"],
+    astrological: "Strengthens marital bonds and love",
+    color: "from-purple-400 to-pink-500",
+    icon: Heart,
+  },
+];
 
   const monthlyFestivals = [
-    {
-      month: "January",
-      festivals: [
-        { name: "Makar Sankranti", date: "14th", type: "Solar" },
-        { name: "Vasant Panchami", date: "22nd", type: "Knowledge" },
-        { name: "Thaipusam", date: "23rd", type: "Devotion" },
-      ],
-    },
-    {
-      month: "February",
-      festivals: [
-        { name: "Maha Shivratri", date: "26th", type: "Spiritual" },
-        { name: "Magha Purnima", date: "12th", type: "Purification" },
-        { name: "Ratha Saptami", date: "5th", type: "Solar" },
-      ],
-    },
-    {
-      month: "March",
-      festivals: [
-        { name: "Holi", date: "14th", type: "Joy" },
-        { name: "Ugadi", date: "30th", type: "New Year" },
-        { name: "Chaitra Navratri", date: "22nd-30th", type: "Devotion" },
-      ],
-    },
-    {
-      month: "April",
-      festivals: [
-        { name: "Ram Navami", date: "6th", type: "Devotion" },
-        { name: "Hanuman Jayanti", date: "13th", type: "Strength" },
-        { name: "Gudi Padwa", date: "30th", type: "New Year" },
-      ],
-    },
-    {
-      month: "May",
-      festivals: [
-        { name: "Akshaya Tritiya", date: "10th", type: "Prosperity" },
-        { name: "Buddha Purnima", date: "12th", type: "Enlightenment" },
-        { name: "Ganga Dussehra", date: "6th", type: "Purification" },
-      ],
-    },
-    {
-      month: "June",
-      festivals: [
-        { name: "Rath Yatra", date: "29th", type: "Devotion" },
-        { name: "Vat Purnima", date: "11th", type: "Marital" },
-        { name: "Nirjala Ekadashi", date: "8th", type: "Fasting" },
-      ],
-    },
-    {
-      month: "July",
-      festivals: [
-        { name: "Guru Purnima", date: "13th", type: "Gratitude" },
-        { name: "Hariyali Teej", date: "18th", type: "Monsoon" },
-        { name: "Nag Panchami", date: "9th", type: "Serpent" },
-      ],
-    },
-    {
-      month: "August",
-      festivals: [
-        { name: "Raksha Bandhan", date: "9th", type: "Sibling" },
-        { name: "Krishna Janmashtami", date: "16th", type: "Devotion" },
-        { name: "Hartalika Teej", date: "30th", type: "Marital" },
-      ],
-    },
-    {
-      month: "September",
-      festivals: [
-        {
-          name: "Ganesh Chaturthi",
-          date: "29th",
-          type: "Removal of Obstacles",
-        },
-        { name: "Pitru Paksha", date: "16th-30th", type: "Ancestral" },
-        { name: "Navratri Begins", date: "22nd", type: "Divine Mother" },
-      ],
-    },
-    {
-      month: "October",
-      festivals: [
-        { name: "Dussehra", date: "2nd", type: "Victory" },
-        { name: "Karva Chauth", date: "16th", type: "Marital" },
-        { name: "Diwali", date: "20th", type: "Light" },
-      ],
-    },
-    {
-      month: "November",
-      festivals: [
-        { name: "Bhai Dooj", date: "3rd", type: "Sibling" },
-        { name: "Govardhan Puja", date: "21st", type: "Gratitude" },
-        { name: "Tulsi Vivah", date: "12th", type: "Devotion" },
-      ],
-    },
-    {
-      month: "December",
-      festivals: [
-        { name: "Dhanu Sankranti", date: "15th", type: "Solar" },
-        { name: "Dattatreya Jayanti", date: "14th", type: "Spiritual" },
-        { name: "Margashirsha Purnima", date: "15th", type: "Purification" },
-      ],
-    },
-  ];
+  {
+    month: "January",
+    festivals: [
+      { name: "Makar Sankranti", date: "14th", type: "Solar" },
+      { name: "Vasant Panchami", date: "23rd", type: "Knowledge" },
+      { name: "Thaipusam", date: "23rd", type: "Devotion" },
+    ],
+  },
+  {
+    month: "February",
+    festivals: [
+      { name: "Ratha Saptami", date: "5th", type: "Solar" },
+      { name: "Magha Purnima", date: "12th", type: "Purification" },
+      { name: "Maha Shivratri", date: "15th", type: "Spiritual" },
+    ],
+  },
+  {
+    month: "March",
+    festivals: [
+      { name: "Holi", date: "4th", type: "Joy" },
+      { name: "Ugadi", date: "22nd", type: "New Year" },
+      { name: "Chaitra Navratri", date: "22nd-30th", type: "Devotion" },
+    ],
+  },
+  {
+    month: "April",
+    festivals: [
+      { name: "Hanuman Jayanti", date: "2nd", type: "Strength" },
+      { name: "Gudi Padwa", date: "22nd", type: "New Year" },
+      { name: "Ram Navami", date: "30th", type: "Devotion" },
+    ],
+  },
+  {
+    month: "May",
+    festivals: [
+      { name: "Buddha Purnima", date: "1st", type: "Enlightenment" },
+      { name: "Akshaya Tritiya", date: "19th", type: "Prosperity" },
+      { name: "Ganga Dussehra", date: "26th", type: "Purification" },
+    ],
+  },
+  {
+    month: "June",
+    festivals: [
+      { name: "Vat Purnima", date: "1st", type: "Marital" },
+      { name: "Nirjala Ekadashi", date: "5th", type: "Fasting" },
+      { name: "Rath Yatra", date: "16th", type: "Devotion" },
+    ],
+  },
+  {
+    month: "July",
+    festivals: [
+      { name: "Guru Purnima", date: "1st", type: "Gratitude" },
+      { name: "Nag Panchami", date: "24th", type: "Serpent" },
+      { name: "Hariyali Teej", date: "27th", type: "Monsoon" },
+    ],
+  },
+  {
+    month: "August",
+    festivals: [
+      { name: "Krishna Janmashtami", date: "16th", type: "Devotion" },
+      { name: "Hartalika Teej", date: "26th", type: "Marital" },
+      { name: "Raksha Bandhan", date: "29th", type: "Sibling" },
+    ],
+  },
+  {
+    month: "September",
+    festivals: [
+      { name: "Navratri Begins", date: "11th", type: "Divine Mother" },
+      { name: "Ganesh Chaturthi", date: "13th", type: "Removal of Obstacles" },
+      { name: "Pitru Paksha", date: "14th-28th", type: "Ancestral" },
+    ],
+  },
+  {
+    month: "October",
+    festivals: [
+      { name: "Diwali", date: "8th", type: "Light" },
+      { name: "Dussehra", date: "19th", type: "Victory" },
+      { name: "Karva Chauth", date: "29th", type: "Marital" },
+    ],
+  },
+  {
+    month: "November",
+    festivals: [
+      { name: "Govardhan Puja", date: "9th", type: "Gratitude" },
+      { name: "Bhai Dooj", date: "10th", type: "Sibling" },
+      { name: "Tulsi Vivah", date: "12th", type: "Devotion" },
+    ],
+  },
+  {
+    month: "December",
+    festivals: [
+      { name: "Dhanu Sankranti", date: "16th", type: "Solar" },
+      { name: "Dattatreya Jayanti", date: "24th", type: "Spiritual" },
+      { name: "Margashirsha Purnima", date: "24th", type: "Purification" },
+    ],
+  },
+];
 
   const auspiciousPeriods = [
-    {
-      name: "Shubh Muhurat Days",
-      description: "Most auspicious days for new beginnings",
-      dates: ["Jan 14", "Mar 30", "May 10", "Oct 20", "Nov 12"],
-      purpose: "Weddings, business launch, property purchase",
-      color: "from-green-400 to-teal-500",
-    },
-    {
-      name: "Ekadashi Dates",
-      description: "Spiritual fasting days for purification",
-      dates: ["11th of each lunar month", "Special: Nirjala Ekadashi"],
-      purpose: "Spiritual growth, meditation, prayers",
-      color: "from-blue-400 to-purple-500",
-    },
-    {
-      name: "Purnima (Full Moon)",
-      description: "Monthly full moon for maximum spiritual energy",
-      dates: ["Monthly on full moon night", "Special: Guru Purnima"],
-      purpose: "Meditation, prayers, spiritual practices",
-      color: "from-yellow-400 to-orange-500",
-    },
-    {
-      name: "Amavasya (New Moon)",
-      description: "Monthly new moon for introspection",
-      dates: ["Monthly on new moon night", "Special: Diwali Amavasya"],
-      purpose: "Ancestor worship, new beginnings, reflection",
-      color: "from-purple-400 to-indigo-500",
-    },
-  ];
+  {
+    name: "Shubh Muhurat Days",
+    description: "Most auspicious days for new beginnings",
+    dates: ["Jan 14", "Mar 30", "Apr 19", "Nov 8", "Nov 12"],
+    purpose: "Weddings, business launch, property purchase",
+    color: "from-green-400 to-teal-500",
+  },
+  {
+    name: "Ekadashi Dates",
+    description: "Spiritual fasting days for purification",
+    dates: ["11th of each lunar month", "Special: Nirjala Ekadashi (Jun 5)"],
+    purpose: "Spiritual growth, meditation, prayers",
+    color: "from-blue-400 to-purple-500",
+  },
+  {
+    name: "Purnima (Full Moon)",
+    description: "Monthly full moon for maximum spiritual energy",
+    dates: ["Monthly on full moon night", "Special: Guru Purnima (Jul 1)"],
+    purpose: "Meditation, prayers, spiritual practices",
+    color: "from-yellow-400 to-orange-500",
+  },
+  {
+    name: "Amavasya (New Moon)",
+    description: "Monthly new moon for introspection",
+    dates: ["Monthly on new moon night", "Special: Diwali Amavasya (Nov 8)"],
+    purpose: "Ancestor worship, new beginnings, reflection",
+    color: "from-purple-400 to-indigo-500",
+  },
+];
 
   return (
     <>
@@ -220,7 +218,7 @@ export default function Festivals2025() {
               transition={{ duration: 0.8 }}
             >
               <div className="text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-red-600 to-pink-600">
-                2025
+                {currentYear}
               </div>
               <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-800">
                 Festival Calendar
@@ -269,7 +267,7 @@ export default function Festivals2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                Major Festivals 2025
+                Major Festivals {currentYear}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 The most significant Hindu festivals with dates, rituals, and
@@ -296,7 +294,7 @@ export default function Festivals2025() {
                         {festival.name}
                       </CardTitle>
                       <p className="text-sm text-orange-600 font-semibold">
-                        {festival.date}
+                        {festival.date} {currentYear}
                       </p>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -347,7 +345,7 @@ export default function Festivals2025() {
                 Monthly Festival Calendar
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                Complete month-wise festival guide for 2025
+                Complete month-wise festival guide for {currentYear}
               </p>
             </motion.div>
 
@@ -397,7 +395,7 @@ export default function Festivals2025() {
               className="text-center mb-12"
             >
               <h2 className="text-4xl font-bold mb-4 text-gray-800">
-                Auspicious Periods 2025
+                Auspicious Periods {currentYear}
               </h2>
               <p className="text-lg text-gray-600 max-w-3xl mx-auto">
                 Special spiritual periods and muhurat dates for important
@@ -486,15 +484,16 @@ export default function Festivals2025() {
                     Get Muhurat Timing
                   </Button>
                 </Link>
-                <Link href="/astrologers">
-                  <Button
+                {/* <Link href="/astrologers"> */}
+                  <Button type="button"
+                  onClick={openAstroWhatsApp}
                     size="lg"
                     variant="outline"
                     className="border-white text-orange-600 hover:bg-white hover:text-orange-600 font-bold px-8 py-4 text-lg"
                   >
                     Consult Astrologer
                   </Button>
-                </Link>
+                {/* </Link> */}
               </div>
             </motion.div>
           </div>

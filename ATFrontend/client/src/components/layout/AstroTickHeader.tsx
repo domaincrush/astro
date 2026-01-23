@@ -33,6 +33,9 @@ import {
   Stars,
   Sunrise,
   Sparkles,
+  ChevronLeft,
+  ChevronRight,
+  MessageCircleMore,
 } from "lucide-react";
 import { Button } from "src/components/ui/button";
 import {
@@ -45,32 +48,33 @@ import { useAuth } from "src/hooks/useAuth";
 import { cn } from "src/lib/utils";
 import { useLanguage } from "src/contexts/LanguageContext";
 import LanguageSelector from "src/components/layout/LanguageSelector";
-import { openAstroWhatsApp } from "../../utils/whatsapp";
+import { openAstroWhatsApp, openBannerWhatsApp } from "../../utils/whatsapp";
 
 export default function AstroTickHeader() {
+  const currentYear = new Date().getFullYear();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [location] = useLocation();
   const [, setLocation] = useLocation();
-const logout = () => {
-  localStorage.clear();
-  window.location.href = "/login";
- }  
- const userData = (localStorage.getItem("user"))
+  const logout = () => {
+    localStorage.clear();
+    window.location.href = "/login";
+  };
+  const userData = localStorage.getItem("user");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [user, setUser] = useState({});
-useEffect(() => { 
-  console.log(userData)
-  if(userData){
-    setIsAuthenticated(true)
-    setIsAdmin(JSON.parse(userData).role === 'admin')
-    setUser(userData)
-  }else {
-    setIsAdmin(false)
-    setIsAuthenticated(false)
-    setUser({})
-  }
-},[userData])
+  useEffect(() => {
+    console.log(userData);
+    if (userData) {
+      setIsAuthenticated(true);
+      setIsAdmin(JSON.parse(userData).role === "admin");
+      setUser(userData);
+    } else {
+      setIsAdmin(false);
+      setIsAuthenticated(false);
+      setUser({});
+    }
+  }, [userData]);
   const { t, currentLanguage } = useLanguage();
 
   const texts = [
@@ -403,31 +407,31 @@ useEffect(() => {
   const year2025Items = [
     {
       href: "/year-2025/horoscope",
-      label: "Horoscope 2025",
+      label: `Horoscope ${currentYear}`,
       icon: Star,
       description: "Complete yearly horoscope predictions for all zodiac signs",
     },
     {
       href: "/year-2025/numerology",
-      label: "Numerology 2025",
+      label: `Numerology ${currentYear}`,
       icon: Calculator,
       description: "Numerological predictions and insights for the year",
     },
     {
       href: "/year-2025/tarot",
-      label: "Tarot 2025",
+      label: `Tarot ${currentYear}`,
       icon: Zap,
       description: "Tarot predictions and guidance for the year ahead",
     },
     {
       href: "/year-2025/festivals",
-      label: "Festivals 2025",
+      label: `Festivals ${currentYear}`,
       icon: Calendar,
       description: "Complete calendar of Hindu festivals and auspicious dates",
     },
     {
       href: "/year-2025/planet-transits",
-      label: "Planet Transit 2025",
+      label: `Planet Transit ${currentYear}`,
       icon: Sun,
       description: "Planetary movements and their effects throughout the year",
     },
@@ -587,7 +591,7 @@ useEffect(() => {
       const hindiTranslations: Record<string, string> = {
         "horoscopes.daily": "राशिफल",
         "header.kundli": "कुंडली",
-        "navigation.year2025": "वर्ष 2025",
+        "navigation.year2025": "वर्ष",
         "navigation.freeAstrologyTools": "मुफ्त ज्योतिष उपकरण",
         "navigation.astrologyReports": "ज्योतिष रिपोर्ट",
         "navigation.panchangMuhurat": "पंचांग और मुहूर्त",
@@ -613,7 +617,7 @@ useEffect(() => {
       dropdown: kundliItems,
     },
     {
-      label: tt("navigation.year2025", "Year 2025"),
+      label: `${tt("navigation.year", "Year")} ${currentYear}`,
       dropdown: year2025Items,
     },
     {
@@ -643,227 +647,45 @@ useEffect(() => {
   //   });
   // }
 
+  /* ===== Banner Slider State ===== */
+  // Mobile banners
+const mobileBanners = ["/Ban1.jpeg", "/Ban2.jpeg", "/Ban3.jpeg"];
+// Tablet + Desktop banners
+const desktopBanners = ["/Banner1.png", "/Banner2.png", "/Banner3.png"];
+  const [bannerIndex, setBannerIndex] = useState(0);
+
+  useEffect(() => {
+  const interval = setInterval(() => {
+    setBannerIndex((prev) => (prev + 1) % mobileBanners.length);
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, []);
+
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 shadow-sm sticky top-0 z-50">
       {/* Logo Section - Above Navigation like AstroYogi */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-2">
+          <div className="flex justify-between items-center py-2 ">
             {/* Logo - Left Side */}
             <Link
               href="/"
               className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
-              <div className="relative w-14 h-14">
-                {/* Cosmic nebula background */}
-                <div className="absolute inset-0 w-14 h-14 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 rounded-full shadow-2xl"></div>
-                <div className="absolute inset-0.5 w-13 h-13 bg-gradient-to-tr from-orange-400 via-red-500 to-purple-700 rounded-full opacity-85"></div>
-
-                {/* Cosmic Precision Symbol */}
-                <svg
-                  className="absolute inset-0 w-14 h-14"
-                  viewBox="0 0 56 56"
-                  fill="none"
-                >
-                  <defs>
-                    {/* Cosmic energy gradient */}
-                    <radialGradient id="cosmicEnergy" cx="50%" cy="50%" r="70%">
-                      <stop offset="0%" stopColor="#ffffff" stopOpacity="1" />
-                      <stop
-                        offset="30%"
-                        stopColor="#fbbf24"
-                        stopOpacity="0.9"
-                      />
-                      <stop
-                        offset="70%"
-                        stopColor="#ec4899"
-                        stopOpacity="0.7"
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor="#8b5cf6"
-                        stopOpacity="0.5"
-                      />
-                    </radialGradient>
-
-                    {/* Mystical glow filter */}
-                    <filter id="mysticalGlow">
-                      <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
-                      <feMerge>
-                        <feMergeNode in="coloredBlur" />
-                        <feMergeNode in="SourceGraphic" />
-                      </feMerge>
-                    </filter>
-
-                    {/* Sacred geometry pattern */}
-                    <pattern
-                      id="sacredPattern"
-                      x="0"
-                      y="0"
-                      width="8"
-                      height="8"
-                      patternUnits="userSpaceOnUse"
-                    >
-                      <circle
-                        cx="4"
-                        cy="4"
-                        r="0.5"
-                        fill="white"
-                        opacity="0.1"
-                      />
-                    </pattern>
-                  </defs>
-
-                  {/* Sacred geometry base */}
-                  <circle
-                    cx="28"
-                    cy="28"
-                    r="26"
-                    fill="url(#sacredPattern)"
-                    opacity="0.3"
-                  />
-
-                  {/* Central cosmic mandala */}
-                  <g transform="translate(28,28)">
-                    {/* Outer cosmic ring */}
-                    <circle
-                      r="16"
-                      stroke="white"
-                      strokeWidth="0.5"
-                      fill="none"
-                      opacity="0.2"
-                    />
-
-                    {/* Sacred hexagon (wisdom symbol) */}
-                    <path
-                      d="M -8,-14 L 8,-14 L 16,0 L 8,14 L -8,14 L -16,0 Z"
-                      stroke="white"
-                      strokeWidth="0.8"
-                      fill="none"
-                      opacity="0.3"
-                    />
-
-                    {/* Central cosmic eye/consciousness */}
-                    <circle
-                      r="8"
-                      fill="url(#cosmicEnergy)"
-                      opacity="0.9"
-                      filter="url(#mysticalGlow)"
-                    />
-
-                    {/* Precision tick mark integrated as cosmic needle */}
-                    <g transform="rotate(-15)">
-                      <path
-                        d="M -3,0 L 0,-6 L 3,0 L 1,4 L -1,4 Z"
-                        fill="white"
-                        opacity="0.95"
-                        filter="url(#mysticalGlow)"
-                      />
-                      {/* Cosmic alignment line */}
-                      <line
-                        x1="0"
-                        y1="-6"
-                        x2="0"
-                        y2="-12"
-                        stroke="white"
-                        strokeWidth="1"
-                        opacity="0.7"
-                      />
-                    </g>
-
-                    {/* Inner energy vortex */}
-                    <circle r="3" fill="white" opacity="0.8" />
-                    <circle r="1.5" fill="url(#cosmicEnergy)" opacity="1" />
-                  </g>
-
-                  {/* Zodiac constellation points */}
-                  <g fill="white" opacity="0.4">
-                    {/* Primary constellation points */}
-                    <circle cx="28" cy="6" r="1" opacity="0.6" />
-                    <circle cx="50" cy="28" r="1" opacity="0.6" />
-                    <circle cx="28" cy="50" r="1" opacity="0.6" />
-                    <circle cx="6" cy="28" r="1" opacity="0.6" />
-
-                    {/* Secondary constellation points */}
-                    <circle cx="43" cy="13" r="0.7" opacity="0.4" />
-                    <circle cx="43" cy="43" r="0.7" opacity="0.4" />
-                    <circle cx="13" cy="43" r="0.7" opacity="0.4" />
-                    <circle cx="13" cy="13" r="0.7" opacity="0.4" />
-
-                    {/* Tertiary star field */}
-                    <circle cx="35" cy="10" r="0.3" />
-                    <circle cx="46" cy="21" r="0.3" />
-                    <circle cx="46" cy="35" r="0.3" />
-                    <circle cx="35" cy="46" r="0.3" />
-                    <circle cx="21" cy="46" r="0.3" />
-                    <circle cx="10" cy="35" r="0.3" />
-                    <circle cx="10" cy="21" r="0.3" />
-                    <circle cx="21" cy="10" r="0.3" />
-                  </g>
-
-                  {/* Mystic zodiac symbols - very subtle */}
-                  <g
-                    fill="white"
-                    fontSize="6"
-                    textAnchor="middle"
-                    opacity="0.2"
-                  >
-                    <text x="28" y="10">
-                      ♈
-                    </text>
-                    <text x="40" y="13">
-                      ♉
-                    </text>
-                    <text x="46" y="21">
-                      ♊
-                    </text>
-                    <text x="46" y="28">
-                      ♋
-                    </text>
-                    <text x="46" y="35">
-                      ♌
-                    </text>
-                    <text x="40" y="43">
-                      ♍
-                    </text>
-                    <text x="28" y="46">
-                      ♎
-                    </text>
-                    <text x="16" y="43">
-                      ♏
-                    </text>
-                    <text x="10" y="35">
-                      ♐
-                    </text>
-                    <text x="10" y="28">
-                      ♑
-                    </text>
-                    <text x="10" y="21">
-                      ♒
-                    </text>
-                    <text x="16" y="13">
-                      ♓
-                    </text>
-                  </g>
-
-                  {/* Cosmic energy rays */}
-                  <g stroke="white" strokeWidth="0.3" opacity="0.15">
-                    <line x1="28" y1="0" x2="28" y2="8" />
-                    <line x1="56" y1="28" x2="48" y2="28" />
-                    <line x1="28" y1="56" x2="28" y2="48" />
-                    <line x1="0" y1="28" x2="8" y2="28" />
-                  </g>
-                </svg>
-
-                {/* Cosmic aura effect */}
-                <div className="absolute -inset-2 w-18 h-18 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full opacity-10 blur-md"></div>
+              <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center border border-gray-200">
+                <img
+                  src="/Logo1.jpg"
+                  alt="AstroTick Logo"
+                  className="w-full h-full object-cover scale-150"
+                />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-2xl font-bold bg-[#f8f2cd] bg-clip-text text-transparent">
                   AstroTick
                 </span>
-                <span className="text-xs text-gray-500 -mt-1">
-                  Vedic Astrology
+                <span className="text-sm font-bold text-[#f8f2cd] -mt-1">
+                  Your Future. On Time
                 </span>
               </div>
             </Link>
@@ -1024,14 +846,18 @@ useEffect(() => {
               {/* Chat with Astrologer Button - Desktop */}
               <div className="hidden md:block">
                 {/* <Link href="/astrologers"> */}
-                  <Button type="button"
+                <Button
+                  type="button"
                   onClick={openAstroWhatsApp}
-                  className="bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 hover:scale-105 px-6 py-3 flex items-center space-x-2 text-sm whitespace-nowrap transition-all duration-300 shadow-lg rounded-lg">
-                    <div className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse shadow-sm"></div>
-                    <span className="font-medium">
-                      {tt("header.talkToAstrologer", "Chat with Astrologer")}
-                    </span>
-                  </Button>
+                  className="bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 hover:scale-105 px-6 py-3 flex items-center space-x-1 text-sm whitespace-nowrap transition-all duration-300 shadow-lg rounded-lg"
+                >
+                  <div className=" shadow-sm">
+                    <MessageCircleMore className="w-6 h-6 text-green-400 rounded-full animate-pulse scale-150" />
+                  </div>
+                  <span className="font-medium">
+                    {tt("header.talkToAstrologer", "Chat with Astrologer")}
+                  </span>
+                </Button>
                 {/* </Link> */}
               </div>
             </div>
@@ -1219,15 +1045,19 @@ useEffect(() => {
 
                 {/* Chat with Astrologer Button - Top of Mobile Menu */}
                 {/* <Link href="/astrologers"> */}
-                  <Button type="button"
-                    className="bg-purple-600 text-white hover:bg-purple-700 w-full py-3 rounded-lg flex items-center justify-center gap-2"
-                    // onClick={() => setIsMenuOpen(false)}
-                    onClick={() => { setIsMenuOpen(false); openAstroWhatsApp();}}
-                  >
-                    <div className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse shadow-sm"></div>
-                    <MessageCircle className="h-5 w-5" />
-                    Chat with Astrologer
-                  </Button>
+                <Button
+                  type="button"
+                  className="bg-purple-600 text-white hover:bg-purple-700 w-full py-3 rounded-lg flex items-center justify-center gap-2"
+                  // onClick={() => setIsMenuOpen(false)}
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    openAstroWhatsApp();
+                  }}
+                >
+                  <div className="w-2.5 h-2.5 bg-green-400 rounded-full animate-pulse shadow-sm"></div>
+                  <MessageCircle className="h-5 w-5" />
+                  Chat with Astrologer
+                </Button>
                 {/* </Link> */}
 
                 {mainNavItems.map((item) => {
@@ -1350,10 +1180,10 @@ useEffect(() => {
           </div>
         )}
       </div>
-      <section className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 py-3 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center flex-col gap-4 md:flex-row md:gap-4">
-            {/* <Button
+      {/* <section className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 py-3 relative"> */}
+      {/* <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"> */}
+      {/* <div className="flex justify-center flex-col gap-4 md:flex-row md:gap-4"> */}
+      {/* <Button
               onClick={() => {
                 console.log("Free Premium Report button clicked");
                 trackClick("free-premium-report-header");
@@ -1365,7 +1195,7 @@ useEffect(() => {
               <Crown className="h-5 w-5 mr-2" />
               🎉 Free Premium Report 🎉
             </Button> */}
-            <Button
+      {/* <Button
               onClick={() => {
                 setLocation("/ask-a-free-question");
               }}
@@ -1380,10 +1210,74 @@ useEffect(() => {
               >
                 {texts[index]}
               </span>
-            </Button>
-          </div>
-        </div>
-      </section>
+            </Button> */}
+      {/* </div> */}
+      {/* </div> */}
+      {/* </section> */}
+      {/* ================= BANNER SECTION (HOME ONLY) ================= */}
+      {location === "/" && (
+  <section className="relative w-full overflow-hidden">
+    
+    {/* ================= MOBILE BANNER ================= */}
+    <img
+      src={mobileBanners[bannerIndex]}
+      alt={`Mobile Banner ${bannerIndex + 1}`}
+      onClick={openBannerWhatsApp}
+      className="
+        w-full h-[220px]
+        object-cover
+        md:hidden
+        transition-all duration-700
+      "
+    />
+
+    {/* ================= TABLET + DESKTOP BANNER ================= */}
+    <img
+      src={desktopBanners[bannerIndex]}
+      alt={`Desktop Banner ${bannerIndex + 1}`}
+      onClick={openBannerWhatsApp}
+      className="
+        hidden md:block
+        w-full
+        h-[260px] lg:h-[340px]
+        object-contain lg:object-cover
+        transition-all duration-700
+      "
+    />
+
+    {/* Left Arrow */}
+    <button
+      onClick={() =>
+        setBannerIndex(
+          bannerIndex === 0
+            ? mobileBanners.length - 1
+            : bannerIndex - 1
+        )
+      }
+      className="absolute left-3 top-1/2 -translate-y-1/2 
+        bg-black/30 text-white p-2 rounded-full 
+        opacity-40 hover:opacity-100 
+        transition-all duration-300"
+    >
+      <ChevronLeft className="h-6 w-6" />
+    </button>
+
+    {/* Right Arrow */}
+    <button
+      onClick={() =>
+        setBannerIndex((bannerIndex + 1) % mobileBanners.length)
+      }
+      className="absolute right-3 top-1/2 -translate-y-1/2 
+        bg-black/30 text-white p-2 rounded-full 
+        opacity-40 hover:opacity-100 
+        transition-all duration-300"
+    >
+      <ChevronRight className="h-6 w-6" />
+    </button>
+
+  </section>
+)}
+      {/* ================= END BANNER SECTION ================= */}
     </header>
   );
 }

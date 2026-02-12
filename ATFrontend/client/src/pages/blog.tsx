@@ -328,7 +328,8 @@ export default function Blog() {
           {/* Featured Article - Only show on first page */}
           {currentPage === 1 &&
             filteredArticles &&
-            filteredArticles.length > 0 && (() => {
+            filteredArticles.length > 0 &&
+            (() => {
               // ✅ Pick article in selected language, else fallback to English
               const featuredArticle =
                 filteredArticles.find((a) => a.language === selectedLanguage) ||
@@ -366,7 +367,11 @@ export default function Blog() {
                         <div className="flex items-center gap-6 text-gray-500 text-sm mb-6">
                           <div className="flex items-center gap-2">
                             <Calendar size={16} />
-                            <span>{formatDate(new Date(featuredArticle.publishedAt))}</span>
+                            <span>
+                              {formatDate(
+                                new Date(featuredArticle.publishedAt),
+                              )}
+                            </span>
                           </div>
                           <div className="flex items-center gap-2">
                             <Clock size={16} />
@@ -399,132 +404,127 @@ export default function Blog() {
               );
             })()}
 
-
           {/* Articles Grid */}
-          <div className="mb-12">
-            <div className="flex justify-between items-center mb-8">
-              <div>
-                <h2 className="text-2xl font-semibold text-gray-900">
-                  {currentPage === 1
-                    ? "Latest Articles"
-                    : `Articles - Page ${currentPage}`}
-                </h2>
-                {totalArticles > 0 && (
-                  <p className="text-gray-600 text-sm mt-1">
-                    Showing {startIndex + 1}-{Math.min(endIndex, totalArticles)}{" "}
-                    of {totalArticles} articles
-                  </p>
-                )}
-              </div>
+          <div className="mb-16">
+            {/* Section Header */}
+            <div className="mb-10">
+              <h2 className="text-3xl font-bold text-gray-900">
+                {currentPage === 1
+                  ? "Latest Articles"
+                  : `Articles - Page ${currentPage}`}
+              </h2>
+
+              {totalArticles > 0 && (
+                <p className="text-gray-500 mt-2">
+                  Showing {startIndex + 1}–{Math.min(endIndex, totalArticles)}{" "}
+                  of {totalArticles}
+                </p>
+              )}
             </div>
 
+            {/* Empty State */}
             {filteredArticles.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">📚</div>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              <div className="text-center py-20">
+                <h3 className="text-2xl font-semibold mb-4">
                   No Articles Available
                 </h3>
-                <p className="text-gray-600 mb-6">
-                  No articles are currently available in{" "}
-                  {SUPPORTED_LANGUAGES.find(
-                    (lang) => lang.code === selectedLanguage,
-                  )?.name || selectedLanguage}
-                  .
-                </p>
+
                 <button
                   onClick={() => setSelectedLanguage("en")}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:from-blue-500 hover:to-purple-500 transition-all duration-300"
+                  className="px-6 py-3 rounded-full bg-indigo-600 text-white"
                 >
                   View English Articles
                 </button>
               </div>
             ) : (
               <>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="space-y-10">
                   {(currentPage === 1
                     ? currentArticles.slice(1)
                     : currentArticles
                   ).map((article) => (
                     <article
                       key={article.id}
-                      className="bg-white/90 backdrop-blur-md rounded-xl overflow-hidden hover:bg-white/95 transition-all duration-300 group shadow-lg hover:shadow-xl"
+                      className="group border-b pb-10 last:border-none"
                     >
-                      {article.featuredImage && (
-                        <div className="h-48 overflow-hidden">
-                          <img
-                            src={article.featuredImage}
-                            alt={article.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
+                      <div className="grid md:grid-cols-[320px_1fr] gap-8 items-start">
+                        {/* Article Image */}
+                        {article.featuredImage && (
+                          <Link href={`/blog/${article.slug}`}>
+                            <div className="overflow-hidden rounded-xl">
+                              <img
+                                src={article.featuredImage}
+                                alt={article.title}
+                                className="w-full h-56 object-cover group-hover:scale-105 transition duration-500"
+                              />
+                            </div>
+                          </Link>
+                        )}
 
-                      <div className="p-6">
-                        <div className="flex items-center gap-2 mb-3">
+                        {/* Article Content */}
+                        <div>
+                          {/* Category */}
                           <span
-                            className="px-2 py-1 rounded-full text-xs font-medium text-white"
+                            className="text-xs font-semibold px-3 py-1 rounded-full text-white"
                             style={{
                               backgroundColor:
                                 filteredCategories?.find(
                                   (c) => c.name === article.category,
-                                )?.color || "#8B5CF6",
+                                )?.color || "#6366f1",
                             }}
                           >
                             {article.category}
                           </span>
-                        </div>
 
-                        <Link href={`/blog/${article.slug}`}>
-                          <h3 className="text-xl font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors line-clamp-2">
-                            {article.title}
-                          </h3>
-                        </Link>
+                          {/* Title */}
+                          <Link href={`/blog/${article.slug}`}>
+                            <h3 className="text-2xl font-bold text-gray-900 mt-3 mb-3 group-hover:text-indigo-600 transition">
+                              {article.title}
+                            </h3>
+                          </Link>
 
-                        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                          {article.excerpt}
-                        </p>
+                          {/* Excerpt */}
+                          <p className="text-gray-600 mb-5 leading-relaxed line-clamp-3">
+                            {article.excerpt}
+                          </p>
 
-                        <div className="flex items-center justify-between text-gray-500 text-xs mb-4">
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1">
-                              <Clock size={12} />
-                              <span>{article.readTime} min</span>
+                          {/* Tags */}
+                          {article.tags?.length > 0 && (
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {article.tags.slice(0, 3).map((tag) => (
+                                <span
+                                  key={tag}
+                                  className="px-3 py-1 bg-gray-100 rounded-full text-xs text-gray-600"
+                                >
+                                  #{tag}
+                                </span>
+                              ))}
                             </div>
-                            <div className="flex items-center gap-1">
-                              <Eye size={12} />
-                              <span>{article.viewCount}</span>
-                            </div>
+                          )}
+
+                          {/* Meta */}
+                          <div className="flex items-center gap-6 text-sm text-gray-500">
+                            <span className="flex items-center gap-1">
+                              <Clock size={14} />
+                              {article.readTime} min read
+                            </span>
+
+                            <span className="flex items-center gap-1">
+                              <Eye size={14} />
+                              {article.viewCount}
+                            </span>
+
+                            <span>
+                              {formatDate(new Date(article.publishedAt))}
+                            </span>
                           </div>
-                          <span>
-                            {formatDate(new Date(article.publishedAt))}
-                          </span>
                         </div>
-
-                        {article.tags && article.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {article.tags.slice(0, 3).map((tag) => (
-                              <span
-                                key={tag}
-                                className="flex items-center gap-1 px-2 py-1 bg-gray-100 rounded text-xs text-gray-600"
-                              >
-                                <Tag size={10} />
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-
-                        <Link href={`/blog/${article.slug}`}>
-                          <button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 rounded-lg font-medium hover:from-blue-500 hover:to-purple-500 transition-all duration-300 shadow-md">
-                            Read More
-                          </button>
-                        </Link>
                       </div>
                     </article>
                   ))}
                 </div>
 
-                {/* Pagination Controls */}
+                {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="flex justify-center items-center mt-12 gap-2">
                     {/* Previous Button */}
@@ -603,7 +603,7 @@ export default function Blog() {
           </div>
 
           {/* Newsletter Signup */}
-          <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-8 text-center shadow-lg">
+          {/* <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-8 text-center shadow-lg">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
               Stay Connected with the Cosmos
             </h3>
@@ -621,7 +621,7 @@ export default function Blog() {
                 Subscribe
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
         <Footer />
       </div>

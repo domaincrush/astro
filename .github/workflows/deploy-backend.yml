@@ -1,0 +1,86 @@
+name: Astro Backend Build & Deploy
+
+on:
+  workflow_dispatch:
+  # push:
+  #   paths:
+  #     - 'ATFrontend/**'
+  #   branches:
+  #     - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ATBackend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        env:
+          DB_HOSTNAME: ${{ vars.DB_HOSTNAME }}
+          DB_USERNAME: ${{ vars.DB_USERNAME }}
+          DB_PASSWORD: ${{ vars.DB_PASSWORD }}
+          ASTRO_DOMAIN: ${{ vars.ASTRO_DOMAIN }}
+        run: |
+          echo "${{ vars.ASTRO_BACKEND_ENVS }}" > .env.template
+          envsubst < .env.template > .env.final
+          echo "ENV_FILE_CONTENT<<EOF" >> $GITHUB_ENV
+          cat .env.final >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Deploy Backend via Frontend Jump Host
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ vars.ASTRO_FRONTEND_SERVER_IP }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          envs: ENV_FILE_CONTENT
+          script: |
+           ssh -o StrictHostKeyChecking=no ${{ vars.SERVER_USER }}@${{ vars.ASTRO_BACKEND_IPS }} << 'EOF'
+           set -e
+           export NVM_DIR="$HOME/.nvm"
+           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+           source $NVM_DIR/nvm.sh
+
+           APP_DIR="$HOME/backend/astro"
+           rm -rf  $APP_DIR/.[^.]*
+           rm -rf $APP_DIR/*
+           
+           if [ ! -d "$APP_DIR/.git" ]; then
+             git clone --depth=1 https://github.com/domaincrush/astro.git $APP_DIR
+           fi
+
+           cd $APP_DIR/ATBackend
+           cat << 'ENV_EOF' > $APP_DIR/ATBackend/.env
+           ${{ env.ENV_FILE_CONTENT }}
+           ENV_EOF
+           
+           npm install
+           echo "completed npm install"
+           npm run build
+           echo "completed npm run build"
+
+           if [ ! -d "venv" ]; then
+             python3 -m venv venv
+           fi
+
+           source venv/bin/activate
+           [ -f requirements.txt ] && pip install -r requirements.txt
+           deactivate
+           echo "completed python venv"
+
+
+           if pm2 list | grep -q "backend-app"; then
+             pm2 restart backend-app --update-env
+           else
+             pm2 start npm --name "backend-app"  --cwd $APP_DIR/ATBackend -- start
+           fi
+           echo "completed pm2 intialization"
+           pm2 save
+
+           EOF

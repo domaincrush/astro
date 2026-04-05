@@ -7,7 +7,7 @@
     "dev:debug": "cross-env NODE_ENV=development nodemon --watch server --ext ts,js,json --inspect-brk --exec \"tsx server/index.ts\"",
     "dev": "cross-env NODE_ENV=development nodemon --watch server --ext ts,js,json --exec \"tsx server/index.ts\"",
     "build": "esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
+    "start": "NODE_ENV=production node --env-file=.env dist/index.js",
     "check": "tsc",
    "generate": "drizzle-kit generate",
   "migrate": "drizzle-kit push",

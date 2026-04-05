@@ -1,0 +1,52 @@
+name: Astro Frontend Build & Deploy
+
+on:
+  workflow_dispatch:
+  # push:
+  #   paths:
+  #     - 'ATFrontend/**'
+  #   branches:
+  #     - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ATFrontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build React app
+        run: npm run build
+
+      - name: Clean remote directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ vars.ASTRO_FRONTEND_SERVER_IP }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo rm -rf /var/www/html/${{vars.PROJECT_ASTRO}}/*
+            # sudo chown ubuntu:ubuntu -R /var/www/html/${{vars.PROJECT_ASTRO}}
+
+      - name: Deploy to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ vars.ASTRO_FRONTEND_SERVER_IP }}
+          username: ${{ vars.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "ATFrontend/dist/public/*"
+          target: "/var/www/html/${{vars.PROJECT_ASTRO}}"
+          strip_components: 3

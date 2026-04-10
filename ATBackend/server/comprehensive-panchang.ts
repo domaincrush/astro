@@ -359,7 +359,7 @@ export class ComprehensivePanchangEngine {
   }
 
   async getComprehensivePanchang(date: string, latitude: number, longitude: number, timezone: string = 'Asia/Kolkata'): Promise<PanchangData> {
-const [day, month, year] = date.split("-");
+const [day, month, year] = date.split("-").reverse();
 const targetDate = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
   console.log(targetDate)
     const inputData = {

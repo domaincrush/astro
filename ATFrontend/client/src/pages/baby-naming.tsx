@@ -19,6 +19,7 @@ import Footer from "src/components/layout/Footer";
 import { LocationSearch } from "src/components/LocationSearch";
 import { Baby, Calendar, Clock, MapPin } from "lucide-react";
 import { useRef } from "react";
+import { openAstroWhatsApp, openPremiumReportWhatsApp } from "../utils/whatsapp";
 
 export default function BabyNaming() {
   const [birthDate, setBirthDate] = useState("");
@@ -742,14 +743,14 @@ export default function BabyNaming() {
                 for your baby's future
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <a
-                  href="/premium-report"
+                <a onClick={openPremiumReportWhatsApp}
+                  // href="/premium-report"
                   className="bg-white text-mystical-blue px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                 >
                   Premium Birth Chart
                 </a>
-                <a
-                  href="/astrologers"
+                <a onClick={openAstroWhatsApp}
+                  // href="/astrologers"
                   className="bg-white/20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition-colors backdrop-blur-sm"
                 >
                   Consult Expert

@@ -1,9 +1,19 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "src/components/ui/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "src/components/ui/tabs";
 import { Badge } from "src/components/ui/badge";
 import { useToast } from "src/hooks/use-toast";
 import { useAuth } from "src/hooks/useAuth";
@@ -53,6 +63,8 @@ import {
   DollarSign,
   Plane,
   FileSpreadsheet,
+  Phone,
+  Plus,
 } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "src/components/ui/avatar";
 import LocationSearch from "src/components/LocationSearch";
@@ -85,6 +97,12 @@ import {
 } from "src/hooks/useAnalytics";
 import { useLanguage } from "src/contexts/LanguageContext";
 import type { Astrologer } from "@shared/schema";
+import { AnimatePresence } from "framer-motion";
+import {
+  openAstroWhatsApp,
+  openPremiumReportWhatsApp,
+  openYearlyReportWhatsApp,
+} from "../utils/whatsapp";
 
 // Panchang API response type
 interface PanchangApiResponse {
@@ -184,6 +202,7 @@ function EnhancedHome() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { t, currentLanguage } = useLanguage();
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
   // Analytics tracking hooks
   const { trackClick, trackCTA } = useClickTracking();
@@ -200,6 +219,7 @@ function EnhancedHome() {
   }>({ boy: null, girl: null });
   const [activeTab, setActiveTab] = useState("generate");
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
   // Form setup
   const kundliForm = useForm<KundliFormData>({
@@ -265,6 +285,12 @@ function EnhancedHome() {
       service: "Astrologer Consultation",
       verified: true,
     },
+  ];
+
+  const visibleTestimonials = [
+    testimonials[currentTestimonial],
+    testimonials[(currentTestimonial + 1) % testimonials.length],
+    testimonials[(currentTestimonial + 2) % testimonials.length],
   ];
 
   // Enhanced service cards with detailed information (AstroYogi/AstroSage inspired)
@@ -401,23 +427,23 @@ function EnhancedHome() {
       return;
     }
 
-    const hasRefreshed = sessionStorage.getItem('enhanced-home-refreshed');
+    const hasRefreshed = sessionStorage.getItem("enhanced-home-refreshed");
     if (!hasRefreshed) {
-      sessionStorage.setItem('enhanced-home-refreshed', 'true');
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(registrations => {
-          registrations.forEach(registration => registration.unregister());
+      sessionStorage.setItem("enhanced-home-refreshed", "true");
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          registrations.forEach((registration) => registration.unregister());
         });
       }
       // window.location.reload(); // avoided to prevent loops
     }
 
     const handleBeforeUnload = () => {
-      sessionStorage.removeItem('enhanced-home-refreshed');
+      sessionStorage.removeItem("enhanced-home-refreshed");
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
@@ -539,10 +565,109 @@ function EnhancedHome() {
     setLocation(`/payment?${paymentParams.toString()}`);
   };
 
+  const faqs = [
+    {
+      question: "How accurate are your astrology predictions?",
+      answer:
+        "Our predictions are based on authentic Vedic astrology principles using Swiss Ephemeris calculations. With over 20 years of experience and 100+ expert astrologers, we maintain high accuracy standards.",
+    },
+    {
+      question: "What makes your kundli different from others?",
+      answer:
+        "We use authentic Jyotisha calculations with zero hardcoded values. Our system processes real astronomical data to generate precise birth charts, dasha periods, and predictions.",
+    },
+    {
+      question: "Can I chat with astrologers anytime?",
+      answer:
+        "Yes! Our platform has 100+ expert astrologers available 24/7. You can chat, call, or video call with certified Vedic astrology experts whenever you need guidance.",
+    },
+    {
+      question: "How do I know which astrologer to choose?",
+      answer:
+        "Each astrologer has detailed profiles showing their specializations, experience, ratings, and user reviews. You can filter by expertise areas like marriage, career, health, or finances.",
+    },
+    {
+      question: "What's included in the Premium Life Report?",
+      answer:
+        "Our Premium Life Report includes 82 comprehensive sections covering personality analysis, career predictions, health insights, relationship compatibility, remedial measures, and much more.",
+    },
+    {
+      question: "Is my personal information secure?",
+      answer:
+        "Absolutely! We use industry-standard encryption and security measures to protect your personal data. Your birth details and consultations are kept completely confidential.",
+    },
+  ];
+
+  const GuideCard = ({
+  title,
+  children,
+  isHovered,
+  onMouseEnter,
+  onMouseLeave,
+  onReadMore,
+}: {
+  title: string;
+  children: React.ReactNode;
+  isHovered: boolean;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  onReadMore: () => void;
+}) => {
+  return (
+    <motion.div
+      whileHover={{ scale: 1.08 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+      className={`${isHovered ? "bg-white/80" : "bg-gradient-to-r from-[#FF7107] to-[#9C21EA]"} backdrop-blur-sm rounded-3xl p-8 border border-orange-200/40 shadow-lg hover:shadow-2xl relative overflow-hidden`}
+      style={{ flex: isHovered ? "2 1 0%" : "1 1 0%", height: isHovered ? 'auto' : '410px' }}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+    >
+      {/* COLLAPSED VIEW */}
+      <div className={isHovered ? "hidden" : "flex flex-col justify-between h-full"}>
+        <h3 className="text-2xl font-bold text-white mb-6">{title}</h3>
+
+        <div className="flex justify-between items-center">
+          <Button className="rounded-full" onClick={onReadMore}>Read More</Button>
+          <div className="bg-blue-500 rounded-full p-3 cursor-pointer" onClick={onReadMore}>
+            <ArrowRight className="h-5 w-5 text-white -rotate-45" />
+          </div>
+        </div>
+      </div>
+
+      {/* EXPANDED VIEW */}
+      <div className={isHovered ? "" : "hidden"}>
+        <h3 className="text-2xl font-bold text-orange-900 mb-6">{title}</h3>
+
+        <div className="mb-6">{children}</div>
+
+        <div className="flex justify-between items-center">
+          <Button className="rounded-full" onClick={onReadMore}>Read More</Button>
+          <div className="bg-blue-500 rounded-full p-3 cursor-pointer" onClick={onReadMore}>
+            <ArrowRight className="h-5 w-5 text-white" />
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const MiniPoint = ({
+  icon,
+  title,
+}: {
+  icon: React.ReactNode;
+  title: string;
+}) => (
+  <div className="flex items-center gap-3 bg-orange-100/60 rounded-xl p-4">
+    <div className="text-amber-600">{icon}</div>
+    <span className="font-medium text-orange-900">{title}</span>
+  </div>
+);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative overflow-hidden">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 opacity-15">
+      <div className="absolute inset-0 opacity-15 pointer-events-none">
         <div className="absolute top-20 left-20 w-32 h-32 bg-gradient-to-r from-orange-200 to-amber-200 rounded-full animate-pulse"></div>
         <div className="absolute top-40 right-20 w-24 h-24 bg-gradient-to-r from-yellow-200 to-orange-200 rounded-full animate-bounce"></div>
         <div className="absolute bottom-20 left-40 w-20 h-20 bg-gradient-to-r from-amber-200 to-yellow-200 rounded-full animate-pulse"></div>
@@ -603,7 +728,7 @@ function EnhancedHome() {
       {/* Enhanced Hero Section */}
       <section className="relative py-12 overflow-hidden">
         {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl animate-pulse"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-pink-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
@@ -611,263 +736,283 @@ function EnhancedHome() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             {/* Left Content - Astrology Services */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="lg:pr-8"
-            >
-              <div className="text-center lg:text-left mb-8">
+            <div className="w-full mx-auto px-2 sm:px-4 lg:px-4">
+              <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-orange-900 mb-4">
-                  Free Astrology Services
+                  Today's Astrology Prediction
                 </h2>
                 <p className="text-xl text-orange-700">
-                  Comprehensive collection of Vedic astrology tools and services
-                  for all your spiritual needs
+                  Discover what the stars have in store for your zodiac sign
+                  today
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {/* Free Services Quicklinks */}
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/kundli")}
-                    >
-                      <Star className="h-8 w-8 text-white" />
+              {/* Zodiac Signs Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
+                {/* Aries */}
+                <motion.button
+                  type="button"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.1 }}
+                  onClick={() => setLocation("/daily-horoscope/aries")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-200 hover:border-amber-200 text-center cursor-pointer ">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center ">
+                      <img
+                        src="/api/zodiac-image/Aries.jpg"
+                        alt="Aries"
+                        className="w-20 h-20 object-cover opacity-70  group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                        onLoad={() => {}}
+                        onError={(e) => {
+                          console.log("Failed to load Aries image");
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/kundli")}
-                    >
-                      Free Kundli
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Aries
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/kundli-matching")}
-                    >
-                      <Heart className="h-8 w-8 text-white" />
+                {/* Taurus */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  onClick={() => setLocation("/daily-horoscope/taurus")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Taurus.jpg"
+                        alt="Taurus"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                        onLoad={() => {}}
+                        onError={(e) => {
+                          console.log("Failed to load Taurus image:", e);
+                          e.currentTarget.style.display = "none";
+                        }}
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/kundli-matching")}
-                    >
-                      Kundli Matching
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Taurus
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/panchang")}
-                    >
-                      <Calendar className="h-8 w-8 text-white" />
+                {/* Gemini */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  onClick={() => setLocation("/daily-horoscope/gemini")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Gemini.jpg"
+                        alt="Gemini"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/panchang")}
-                    >
-                      Daily Panchang
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Gemini
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/daily-horoscope")}
-                    >
-                      <Sun className="h-8 w-8 text-white" />
+                {/* Cancer */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                  onClick={() => setLocation("/daily-horoscope/cancer")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Cancer.jpg"
+                        alt="Cancer"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/daily-horoscope")}
-                    >
-                      Daily Horoscope
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Cancer
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/moon-sign-checker")}
-                    >
-                      <Moon className="h-8 w-8 text-white" />
+                {/* Leo */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.5 }}
+                  onClick={() => setLocation("/daily-horoscope/leo")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Leo.jpg"
+                        alt="Leo"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/moon-sign-checker")}
-                    >
-                      Moon Sign
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Leo
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/nakshatra-finder")}
-                    >
-                      <Sparkles className="h-8 w-8 text-white" />
+                {/* Virgo */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  onClick={() => setLocation("/daily-horoscope/virgo")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Virgo.jpg"
+                        alt="Virgo"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/nakshatra-finder")}
-                    >
-                      Nakshatra Finder
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Virgo
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/dasha-calculator")}
-                    >
-                      <Clock className="h-8 w-8 text-white" />
+                {/* Libra */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.7 }}
+                  onClick={() => setLocation("/daily-horoscope/libra")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Libra.jpg"
+                        alt="Libra"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/dasha-calculator")}
-                    >
-                      Dasha Calculator
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Libra
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/numerology")}
-                    >
-                      <Hash className="h-8 w-8 text-white" />
+                {/* Scorpio */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.8 }}
+                  onClick={() => setLocation("/daily-horoscope/scorpio")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Scorpio.jpg"
+                        alt="Scorpio"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/numerology")}
-                    >
-                      Numerology
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Scorpio
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/lagna-calculator")}
-                    >
-                      <Star className="h-8 w-8 text-white" />
+                {/* Sagittarius */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.9 }}
+                  onClick={() => setLocation("/daily-horoscope/sagittarius")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Sagittarius.jpg"
+                        alt="Sagittarius"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/lagna-calculator")}
-                    >
-                      Lagna Calculator
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Sagittarius
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/dosham-detector")}
-                    >
-                      <AlertCircle className="h-8 w-8 text-white" />
+                {/* Capricorn */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.0 }}
+                  onClick={() => setLocation("/daily-horoscope/capricorn")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Capricorn.jpg"
+                        alt="Capricorn"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/dosham-detector")}
-                    >
-                      Dosham Detector
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Capricorn
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-gray-500 to-gray-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/sade-sati")}
-                    >
-                      <Clock className="h-8 w-8 text-white" />
+                {/* Aquarius */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.1 }}
+                  onClick={() => setLocation("/daily-horoscope/aquarius")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Aquarius.jpg"
+                        alt="Aquarius"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/sade-sati")}
-                    >
-                      Sade Sati Calculator
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Aquarius
                     </h3>
                   </div>
-                </div>
+                </motion.button>
 
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-red-700 to-red-800 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/lal-kitab")}
-                    >
-                      <Lightbulb className="h-8 w-8 text-white" />
+                {/* Pisces */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 1.2 }}
+                  onClick={() => setLocation("/daily-horoscope/pisces")}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
+                    <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
+                      <img
+                        src="/api/zodiac-image/Pisces.jpg"
+                        alt="Pisces"
+                        className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
+                      />
                     </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/lal-kitab")}
-                    >
-                      Lal Kitab Status
+                    <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
+                      Pisces
                     </h3>
                   </div>
-                </div>
-
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/baby-naming")}
-                    >
-                      <Users className="h-8 w-8 text-white" />
-                    </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/baby-naming")}
-                    >
-                      Baby Name Generator
-                    </h3>
-                  </div>
-                </div>
-
-                <div className="group">
-                  <div className="text-center">
-                    <div
-                      className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
-                      onClick={() => setLocation("/lucky-numbers")}
-                    >
-                      <Target className="h-8 w-8 text-white" />
-                    </div>
-                    <h3
-                      className="text-sm font-semibold text-orange-900 cursor-pointer"
-                      onClick={() => setLocation("/lucky-numbers")}
-                    >
-                      Lucky Numbers
-                    </h3>
-                  </div>
-                </div>
+                </motion.button>
               </div>
-            </motion.div>
+            </div>
 
             {/* Right Content - Enhanced Forms */}
             <motion.div
@@ -1376,287 +1521,270 @@ function EnhancedHome() {
       </section>
 
       {/* Today's Astrology Prediction - Zodiac Section */}
-      <section className="py-16 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
+      <section className="py-8 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-orange-900 mb-4">
-              Today's Astrology Prediction
-            </h2>
-            <p className="text-xl text-orange-700">
-              Discover what the stars have in store for your zodiac sign today
-            </p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="lg:pr-8"
+          >
+            <div className="text-center lg:text-left mb-8">
+              <h2 className="text-3xl font-bold text-orange-900 mb-4">
+                Free Astrology Reading
+              </h2>
+              <p className="text-xl text-orange-700">
+                Comprehensive collection of Vedic astrology tools and services
+                for all your spiritual needs
+              </p>
+            </div>
 
-          {/* Zodiac Signs Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 mb-8">
-            {/* Aries */}
-            <motion.button
-              type="button"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              onClick={() => setLocation("/daily-horoscope/aries")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-200 hover:border-amber-200 text-center cursor-pointer ">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center ">
-                  <img
-                    src="/api/zodiac-image/Aries.jpg"
-                    alt="Aries"
-                    className="w-20 h-20 object-cover opacity-70  group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                    onLoad={() => {}}
-                    onError={(e) => {
-                      console.log("Failed to load Aries image");
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
+            <div className="grid grid-cols-2 md:grid-cols-7 gap-6">
+              {/* Free Services Quicklinks */}
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/kundli")}
+                  >
+                    <Star className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/kundli")}
+                  >
+                    Free Kundli
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Aries
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Taurus */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              onClick={() => setLocation("/daily-horoscope/taurus")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Taurus.jpg"
-                    alt="Taurus"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                    onLoad={() => {}}
-                    onError={(e) => {
-                      console.log("Failed to load Taurus image:", e);
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/kundli-matching")}
+                  >
+                    <Heart className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/kundli-matching")}
+                  >
+                    Kundli Matching
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Taurus
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Gemini */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              onClick={() => setLocation("/daily-horoscope/gemini")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Gemini.jpg"
-                    alt="Gemini"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/panchang")}
+                  >
+                    <Calendar className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/panchang")}
+                  >
+                    Daily Panchang
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Gemini
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Cancer */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              onClick={() => setLocation("/daily-horoscope/cancer")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Cancer.jpg"
-                    alt="Cancer"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/daily-horoscope")}
+                  >
+                    <Sun className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/daily-horoscope")}
+                  >
+                    Daily Horoscope
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Cancer
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Leo */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              onClick={() => setLocation("/daily-horoscope/leo")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Leo.jpg"
-                    alt="Leo"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/moon-sign-checker")}
+                  >
+                    <Moon className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/moon-sign-checker")}
+                  >
+                    Moon Sign
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Leo
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Virgo */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              onClick={() => setLocation("/daily-horoscope/virgo")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Virgo.jpg"
-                    alt="Virgo"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/nakshatra-finder")}
+                  >
+                    <Sparkles className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/nakshatra-finder")}
+                  >
+                    Nakshatra Finder
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Virgo
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Libra */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              onClick={() => setLocation("/daily-horoscope/libra")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Libra.jpg"
-                    alt="Libra"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/dasha-calculator")}
+                  >
+                    <Clock className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/dasha-calculator")}
+                  >
+                    Dasha Calculator
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Libra
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Scorpio */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              onClick={() => setLocation("/daily-horoscope/scorpio")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Scorpio.jpg"
-                    alt="Scorpio"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-rose-500 to-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/numerology")}
+                  >
+                    <Hash className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/numerology")}
+                  >
+                    Numerology
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Scorpio
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Sagittarius */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.9 }}
-              onClick={() => setLocation("/daily-horoscope/sagittarius")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Sagittarius.jpg"
-                    alt="Sagittarius"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/lagna-calculator")}
+                  >
+                    <Star className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/lagna-calculator")}
+                  >
+                    Lagna Calculator
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Sagittarius
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Capricorn */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.0 }}
-              onClick={() => setLocation("/daily-horoscope/capricorn")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Capricorn.jpg"
-                    alt="Capricorn"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/dosham-detector")}
+                  >
+                    <AlertCircle className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/dosham-detector")}
+                  >
+                    Dosham Detector
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Capricorn
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Aquarius */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.1 }}
-              onClick={() => setLocation("/daily-horoscope/aquarius")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Aquarius.jpg"
-                    alt="Aquarius"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-gray-500 to-gray-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/sade-sati")}
+                  >
+                    <Clock className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/sade-sati")}
+                  >
+                    Sade Sati Calculator
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Aquarius
-                </h3>
               </div>
-            </motion.button>
 
-            {/* Pisces */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.2 }}
-              onClick={() => setLocation("/daily-horoscope/pisces")}
-            >
-              <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 border border-amber-100 hover:border-amber-200 text-center">
-                <div className="w-16 h-16 mx-auto mb-3 flex items-center justify-center">
-                  <img
-                    src="/api/zodiac-image/Pisces.jpg"
-                    alt="Pisces"
-                    className="w-20 h-20 object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-300 border rounded-md"
-                  />
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-red-700 to-red-800 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/lal-kitab")}
+                  >
+                    <Lightbulb className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/lal-kitab")}
+                  >
+                    Lal Kitab Status
+                  </h3>
                 </div>
-                <h3 className="text-sm font-semibold text-amber-700 group-hover:text-amber-800">
-                  Pisces
-                </h3>
               </div>
-            </motion.button>
-          </div>
+
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/baby-naming")}
+                  >
+                    <Users className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/baby-naming")}
+                  >
+                    Baby Name Generator
+                  </h3>
+                </div>
+              </div>
+
+              <div className="group">
+                <div className="text-center">
+                  <div
+                    className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform duration-300 cursor-pointer"
+                    onClick={() => setLocation("/lucky-numbers")}
+                  >
+                    <Target className="h-8 w-8 text-white" />
+                  </div>
+                  <h3
+                    className="text-sm font-semibold text-orange-900 cursor-pointer"
+                    onClick={() => setLocation("/lucky-numbers")}
+                  >
+                    Lucky Numbers
+                  </h3>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Live Astrologers Section */}
-      <section className="py-16 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
+      <section className="relative z-20 py-16 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-orange-900 mb-4">
@@ -1677,9 +1805,10 @@ function EnhancedHome() {
                 <Card
                   key={index}
                   className="group hover:shadow-xl transition-all duration-300 border-0 bg-gradient-to-br from-white to-gray-50 cursor-pointer"
-                  onClick={() =>
-                    setLocation(`/astrologer/${astrologerNameSlug}`)
-                  }
+                  // onClick={() => setLocation(`/astrologer/${astrologerNameSlug}`) }
+                  onClick={() => {
+                    openAstroWhatsApp();
+                  }}
                 >
                   <CardContent className="p-8">
                     <div className="flex items-center justify-between mb-6">
@@ -1760,9 +1889,10 @@ function EnhancedHome() {
 
                     <div className="flex gap-2">
                       <Button
+                        // onClick={(e) => { e.stopPropagation(); handleStartChat(astrologer); }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleStartChat(astrologer);
+                          openAstroWhatsApp();
                         }}
                         className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
                         disabled={!astrologer.isOnline}
@@ -1781,9 +1911,10 @@ function EnhancedHome() {
                       </Button>
                       <Button
                         variant="outline"
+                        // onClick={(e) => { e.stopPropagation(); setLocation(`/astrologer/${astrologerNameSlug}`); }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          setLocation(`/astrologer/${astrologerNameSlug}`);
+                          openAstroWhatsApp();
                         }}
                         className="border-amber-200 hover:bg-amber-50"
                       >
@@ -1798,7 +1929,12 @@ function EnhancedHome() {
 
           <div className="text-center mt-12">
             <Button
-              onClick={() => setLocation("/astrologers")}
+              // onClick={() => setLocation("/astrologers")}
+              onClick={(e) => {
+                e.stopPropagation();
+                openAstroWhatsApp();
+              }}
+              type="button"
               size="lg"
               variant="outline"
               className="border-amber-500 text-amber-600 hover:bg-amber-50"
@@ -1840,19 +1976,21 @@ function EnhancedHome() {
             </div>
 
             {/* First Row - Five Elements of Panchang */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <Moon className="h-8 w-8 text-blue-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-blue-600 text-white text-xs px-2 py-1">
                       Live
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-blue-900 mb-2">
-                      Tithi
-                    </h3>
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <Moon className="h-6 w-6 text-blue-600" />
+                      <h3 className="text-lg font-semibold text-blue-900 leading-none">
+                        Tithi
+                      </h3>
+                    </div>
                     <p className="text-xl font-bold text-blue-600 mb-1">
                       {todaysPanchang.data.tithi?.name}
                     </p>
@@ -1865,16 +2003,18 @@ function EnhancedHome() {
 
               <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <Star className="h-8 w-8 text-purple-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-purple-600 text-white text-xs px-2 py-1">
                       Live
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-purple-900 mb-2">
-                      Nakshatra
-                    </h3>
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <Star className="h-6 w-6 text-purple-600" />
+                      <h3 className="text-lg font-semibold text-purple-900 leading-none">
+                        Nakshatra
+                      </h3>
+                    </div>
                     <p className="text-xl font-bold text-purple-600 mb-1">
                       {todaysPanchang.data.nakshatra?.name}
                     </p>
@@ -1887,16 +2027,18 @@ function EnhancedHome() {
 
               <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <Zap className="h-8 w-8 text-indigo-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-indigo-600 text-white text-xs px-2 py-1">
                       Live
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-indigo-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <Zap className="h-6 w-6 text-indigo-600" />
+                    <h3 className="text-lg font-semibold text-indigo-900 leading-none">
                       Yoga
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-indigo-600 mb-1">
                       {todaysPanchang.data.yoga?.name}
                     </p>
@@ -1909,16 +2051,18 @@ function EnhancedHome() {
 
               <Card className="bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <Target className="h-8 w-8 text-teal-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-teal-600 text-white text-xs px-2 py-1">
                       Live
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-teal-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <Target className="h-6 w-6 text-teal-600" />
+                    <h3 className="text-lg font-semibold text-teal-900 leading-none">
                       Karana
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-teal-600 mb-1">
                       {todaysPanchang.data.karana?.name}
                     </p>
@@ -1931,16 +2075,18 @@ function EnhancedHome() {
 
               <Card className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <Calendar className="h-8 w-8 text-amber-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-amber-600 text-white text-xs px-2 py-1">
                       Today
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-amber-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <Calendar className="h-6 w-6 text-amber-600" />
+                    <h3 className="text-lg font-semibold text-amber-900 leading-none">
                       Vara
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-amber-600 mb-1">
                       {todaysPanchang.data.vara?.english}
                     </p>
@@ -1950,22 +2096,20 @@ function EnhancedHome() {
                   </div>
                 </CardContent>
               </Card>
-            </div>
-
-            {/* Second Row - Timing Information */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               <Card className="bg-gradient-to-br from-rose-50 to-rose-100 border-rose-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <Sun className="h-8 w-8 text-rose-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-rose-600 text-white text-xs px-2 py-1">
                       Sunrise
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-rose-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <Sun className="h-6 w-6 text-rose-600" />
+                    <h3 className="text-lg font-semibold text-rose-900 leading-none">
                       Sunrise
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-rose-600 mb-1">
                       {todaysPanchang.data.sunrise}
                     </p>
@@ -1976,16 +2120,18 @@ function EnhancedHome() {
 
               <Card className="bg-gradient-to-br from-slate-50 to-slate-100 border-slate-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <Moon className="h-8 w-8 text-slate-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-slate-600 text-white text-xs px-2 py-1">
                       Sunset
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <Moon className="h-6 w-6 text-slate-600" />
+                    <h3 className="text-lg font-semibold text-slate-900 leading-none">
                       Sunset
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-slate-600 mb-1">
                       {todaysPanchang.data.sunset}
                     </p>
@@ -1996,16 +2142,18 @@ function EnhancedHome() {
 
               <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <AlertCircle className="h-8 w-8 text-red-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-red-600 text-white text-xs px-2 py-1">
                       Avoid
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-red-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <AlertCircle className="h-6 w-6 text-red-600" />
+                    <h3 className="text-lg font-semibold text-red-900 leading-none">
                       Rahu Kaal
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-red-600 mb-1">
                       {
                         todaysPanchang.data.inauspicious_timings?.rahu_kaal
@@ -2022,16 +2170,18 @@ function EnhancedHome() {
 
               <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <CheckCircle className="h-8 w-8 text-green-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-green-600 text-white text-xs px-2 py-1">
                       Auspicious
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-green-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <CheckCircle className="h-6 w-6 text-green-600" />
+                    <h3 className="text-lg font-semibold text-green-900 leading-none">
                       Abhijit Muhurta
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-green-600 mb-1">
                       {
                         todaysPanchang.data.auspicious_timings?.abhijit_muhurta
@@ -2048,22 +2198,20 @@ function EnhancedHome() {
                   </div>
                 </CardContent>
               </Card>
-            </div>
-
-            {/* Third Row - Additional Timing Information */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card className="bg-gradient-to-br from-cyan-50 to-cyan-100 border-cyan-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <Timer className="h-8 w-8 text-cyan-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-cyan-600 text-white text-xs px-2 py-1">
                       Sacred
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-cyan-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <Timer className="h-6 w-6 text-cyan-600" />
+                    <h3 className="text-lg font-semibold text-cyan-900 leading-none">
                       Brahma Muhurta
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-cyan-600 mb-1">
                       {
                         todaysPanchang.data.auspicious_timings?.brahma_muhurta
@@ -2083,16 +2231,18 @@ function EnhancedHome() {
 
               <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <TrendingDown className="h-8 w-8 text-orange-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-orange-600 text-white text-xs px-2 py-1">
                       Avoid
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-orange-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <TrendingDown className="h-6 w-6 text-orange-600" />
+                    <h3 className="text-lg font-semibold text-orange-900 leading-none">
                       Yamaganda
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-orange-600 mb-1">
                       {
                         todaysPanchang.data.inauspicious_timings?.yamaganda
@@ -2109,16 +2259,18 @@ function EnhancedHome() {
 
               <Card className="bg-gradient-to-br from-violet-50 to-violet-100 border-violet-200 h-full">
                 <CardContent className="p-6 h-full flex flex-col justify-between">
-                  <div className="flex items-center justify-between mb-4">
-                    <Info className="h-8 w-8 text-violet-600" />
+                  <div className="flex items-center justify-end mb-4">
                     <Badge className="bg-violet-600 text-white text-xs px-2 py-1">
                       Location
                     </Badge>
                   </div>
                   <div className="flex-1 text-center">
-                    <h3 className="text-lg font-semibold text-violet-900 mb-2">
+                    <div className="flex justify-center items-center gap-2 mb-2">
+                      <Info className="h-6 w-6 text-violet-600" />
+                    <h3 className="text-lg font-semibold text-violet-900 leading-none">
                       Location
                     </h3>
+                    </div>
                     <p className="text-xl font-bold text-violet-600 mb-1">
                       Delhi
                     </p>
@@ -2173,7 +2325,11 @@ function EnhancedHome() {
 
                 <Button
                   className="w-full bg-white text-indigo-600 hover:bg-indigo-50"
-                  onClick={() => setLocation("/report")}
+                  // onClick={() => setLocation("/report")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openPremiumReportWhatsApp();
+                  }}
                 >
                   <Crown className="h-4 w-4 mr-2" />
                   Get Premium Report
@@ -2208,7 +2364,11 @@ function EnhancedHome() {
                 </div>
                 <Button
                   className="w-full bg-white text-blue-600 hover:bg-blue-50"
-                  onClick={() => setLocation("/astrologers")}
+                  // onClick={() => setLocation("/astrologers")}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openAstroWhatsApp();
+                  }}
                 >
                   <MessageCircle className="h-4 w-4 mr-2" />
                   Chat with Expert
@@ -2243,7 +2403,11 @@ function EnhancedHome() {
                 </div>
                 <Button
                   className="w-full bg-white text-green-600 hover:bg-green-50"
-                  onClick={() => setLocation("/premium-report")}
+                  // onClick={() => setLocation("/premium-report")}\
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    openYearlyReportWhatsApp();
+                  }}
                 >
                   <BarChart3 className="h-4 w-4 mr-2" />
                   View Yearly Report
@@ -2267,482 +2431,579 @@ function EnhancedHome() {
           </div>
 
           <div className="relative">
-            <Card className="bg-white border-0 shadow-2xl max-w-4xl mx-auto">
-              <CardContent className="p-12">
-                <div className="text-center">
-                  <div className="flex justify-center mb-6">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="h-6 w-6 text-amber-500 fill-current"
-                      />
-                    ))}
-                  </div>
+            <div className="relative flex justify-center items-center gap-6">
+              {visibleTestimonials.map((testimonial, slotIndex) => {
+                const isCenter = slotIndex === 1;
 
-                  <blockquote className="text-xl text-gray-700 mb-8 italic leading-relaxed">
-                    "{testimonials[currentTestimonial].text}"
-                  </blockquote>
+                return (
+                  <motion.div
+                    key={`${testimonial.name}-${slotIndex}`}
+                    initial={false}
+                    animate={{
+                      scale: isCenter ? 1.1 : 0.95,
+                      y: isCenter ? -14 : 0,
+                      opacity: isCenter ? 1 : 0.65,
+                    }}
+                    transition={{
+                      duration: 0.6,
+                      ease: "easeInOut",
+                    }}
+                    className={`w-full max-w-sm ${isCenter ? "z-20" : "z-10"}`}
+                  >
+                    <Card className="bg-white border-0 shadow-[0_5px_5px_3.75px_#F97316]">
+                      <CardContent className="p-8 text-center">
+                        {/* User Header */}
+                        <div className="flex justify-center mb-6">
+                          <div className="flex items-center gap-4 text-left">
+                            {/* Avatar */}
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                              {testimonial.name.charAt(0)}
+                            </div>
 
-                  <div className="flex items-center justify-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full flex items-center justify-center text-white font-bold">
-                      {testimonials[currentTestimonial].name.charAt(0)}
-                    </div>
-                    <div className="text-left">
-                      <div className="flex items-center gap-2">
-                        <p className="font-semibold text-gray-900">
-                          {testimonials[currentTestimonial].name}
+                            {/* User Details */}
+                            <div className="flex flex-col">
+                              {/* Name + Verified */}
+                              <div className="flex items-center gap-2">
+                                <p className="font-semibold text-gray-900 text-lg">
+                                  {testimonial.name}
+                                </p>
+                                {testimonial.verified && (
+                                  <CheckCircle className="h-4 w-4 text-green-500" />
+                                )}
+                              </div>
+
+                              {/* Stars */}
+                              <div className="flex gap-1 mt-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star
+                                    key={i}
+                                    className="h-4 w-4 text-amber-500 fill-current"
+                                  />
+                                ))}
+                              </div>
+
+                              {/* Location */}
+                              <p className="text-sm text-gray-500 mt-1">
+                                {testimonial.location}
+                              </p>
+
+                              {/* Service */}
+                              <p className="text-sm text-amber-600 font-medium">
+                                {testimonial.service}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        {/* Review Text */}
+                        <p className="text-gray-700 italic leading-relaxed text-center">
+                          “{testimonial.text}”
                         </p>
-                        {testimonials[currentTestimonial].verified && (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        )}
-                      </div>
-                      <p className="text-gray-600 text-sm">
-                        {testimonials[currentTestimonial].location}
-                      </p>
-                      <p className="text-amber-600 text-sm">
-                        {testimonials[currentTestimonial].service}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Testimonial indicators */}
-            <div className="flex justify-center mt-8 gap-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentTestimonial
-                      ? "bg-amber-500"
-                      : "bg-gray-300"
-                  }`}
-                />
-              ))}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </div>
       </section>
 
       {/* Comprehensive Astrology Guide Section */}
-      <section className="py-20 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative overflow-hidden">
-        {/* Background cosmic elements */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-20 left-20 w-96 h-96 border border-orange-200/20 rounded-full"></div>
-          <div className="absolute bottom-20 right-20 w-80 h-80 border border-orange-200/20 rounded-full"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-orange-200/10 rounded-full"></div>
-        </div>
+<section className="py-20 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative overflow-hidden">
+  {/* Background cosmic elements (UNCHANGED) */}
+  <div className="absolute inset-0 opacity-10">
+    <div className="absolute top-20 left-20 w-96 h-96 border border-orange-200/20 rounded-full"></div>
+    <div className="absolute bottom-20 right-20 w-80 h-80 border border-orange-200/20 rounded-full"></div>
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-orange-200/10 rounded-full"></div>
+  </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-orange-900">
-                🔮 Unlock Your Destiny with AstroTick
-              </h2>
-              <p className="text-xl md:text-2xl text-orange-700 max-w-4xl mx-auto leading-relaxed">
-                Your Gateway to Vedic Astrology, Horoscopes & Expert
-                Consultations
-              </p>
-              <p className="text-lg text-orange-600 max-w-5xl mx-auto mt-6 leading-relaxed">
-                AstroTick is your one-stop destination for personalized
-                astrology predictions, in-depth birth chart analysis, and
-                transformative insights rooted in ancient Vedic wisdom. Whether
-                you're seeking guidance in love, career, health, or spiritual
-                growth, our expert astrologers are here to illuminate your path
-                and help you make empowered decisions.
-              </p>
-            </motion.div>
-          </div>
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+    {/* HEADER – UNCHANGED */}
+    <div className="text-center mb-16">
+      <h2 className="text-4xl md:text-5xl font-bold mb-6 text-orange-900">
+        🔮 Unlock Your Destiny with AstroTick
+      </h2>
+      <p className="text-xl md:text-2xl text-orange-700 max-w-4xl mx-auto">
+        Your Gateway to Vedic Astrology, Horoscopes & Expert Consultations
+      </p>
+    </div>
 
-          {/* What is Astrology Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-16"
-          >
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-orange-200/30">
-              <h3 className="text-3xl font-bold mb-6 flex items-center text-orange-900">
-                <Star className="h-8 w-8 mr-3 text-amber-500" />
-                🌟 What Is Astrology?
-              </h3>
-              <p className="text-lg text-orange-700 leading-relaxed mb-4">
-                Astrology is an ancient science that studies the influence of
+    {/* CARDS GRID */}
+    <div className="flex gap-8 mb-12">
+      {/* CARD 1 – WHAT IS ASTROLOGY */}
+      <GuideCard
+        title="🌟 What Is Astrology?"
+        isHovered={hoveredCard === 0}
+        onMouseEnter={() => setHoveredCard(0)}
+        onMouseLeave={() => setHoveredCard(null)}
+        onReadMore={() => setLocation('/learn-astrology/basics')}
+      >
+        <p className="text-orange-700 leading-relaxed mb-4">
+          Astrology is an ancient science that studies the influence of
                 celestial bodies—planets, stars, and constellations—on human
                 life. By analyzing your natal chart or kundli, astrologers
                 interpret how planetary positions at the time of your birth
                 shape your personality, behavior, relationships, and life
                 events.
-              </p>
-              <p className="text-lg text-orange-700 leading-relaxed">
-                There are several branches of astrology, with Vedic astrology
+        </p>
+        <p className="text-orange-700 leading-relaxed">
+         There are several branches of astrology, with Vedic astrology
                 (Jyotish Shastra) being one of the most accurate and time-tested
                 systems. It includes concepts like dashas (planetary periods),
                 nakshatras (constellations), and transits (Gochara)—each
                 offering deep insight into your karmic blueprint.
-              </p>
-            </div>
-          </motion.div>
+        </p>
+      </GuideCard>
 
-          {/* Why Astrology Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mb-16"
-          >
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-orange-200/30">
-              <h3 className="text-3xl font-bold mb-6 flex items-center text-orange-900">
-                <Shield className="h-8 w-8 mr-3 text-amber-500" />
-                🧿 Why Astrology? The Need in Today's Modern World
-              </h3>
-              <p className="text-lg text-orange-700 leading-relaxed mb-6">
-                In an age of uncertainty, astrology provides clarity and
-                foresight. Here's why astrology matters more than ever:
-              </p>
+      {/* CARD 2 – WHY ASTROLOGY */}
+<GuideCard
+  title="🧿 Why Astrology in the Modern World?"
+  isHovered={hoveredCard === 1}
+  onMouseEnter={() => setHoveredCard(1)}
+  onMouseLeave={() => setHoveredCard(null)}
+  onReadMore={() => setLocation('/learn-astrology/basics')}
+>
+  {/* Intro Paragraph */}
+  <p className="text-sm text-orange-700 leading-relaxed mb-4">
+    In an age of uncertainty, astrology provides clarity and foresight.
+    Here's why astrology matters more than ever:
+  </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="bg-orange-100/50 rounded-2xl p-6 border border-orange-200/30">
-                  <div className="flex items-center mb-3">
-                    <Target className="h-6 w-6 text-amber-600 mr-3" />
-                    <h4 className="text-xl font-semibold text-orange-900">
-                      🔍 Self-Discovery
-                    </h4>
-                  </div>
-                  <p className="text-orange-700">
-                    Understand your true nature, talents, and limitations.
-                  </p>
-                </div>
+  {/* Points Grid */}
+  <div className={`grid gap-4 ${hoveredCard === 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+    {/* Self Discovery */}
+    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Target className="h-4 w-4 text-amber-600" />
+        <h4 className="text-sm font-semibold text-orange-900">
+          🔍 Self-Discovery
+        </h4>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Understand your true nature, talents, and limitations.
+      </p>
+    </div>
 
-                <div className="bg-orange-100/50 rounded-2xl p-6 border border-orange-200/30">
-                  <div className="flex items-center mb-3">
-                    <Heart className="h-6 w-6 text-amber-600 mr-3" />
-                    <h4 className="text-xl font-semibold text-orange-900">
-                      💑 Relationship Compatibility
-                    </h4>
-                  </div>
-                  <p className="text-orange-700">
-                    Discover romantic compatibility through kundli matching and
-                    synastry.
-                  </p>
-                </div>
+    {/* Relationship Compatibility */}
+    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Heart className="h-4 w-4 text-amber-600" />
+        <h4 className="text-sm font-semibold text-orange-900">
+          💑 Relationship Compatibility
+        </h4>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Discover romantic compatibility through kundli matching and synastry.
+      </p>
+    </div>
 
-                <div className="bg-orange-100/50 rounded-2xl p-6 border border-orange-200/30">
-                  <div className="flex items-center mb-3">
-                    <TrendingUp className="h-6 w-6 text-amber-600 mr-3" />
-                    <h4 className="text-xl font-semibold text-orange-900">
-                      💼 Career Guidance
-                    </h4>
-                  </div>
-                  <p className="text-orange-700">
-                    Choose the right career path based on your planetary
-                    strengths.
-                  </p>
-                </div>
+    {/* Career Guidance */}
+    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+      <div className="flex items-center gap-2 mb-2">
+        <TrendingUp className="h-4 w-4 text-amber-600" />
+        <h4 className="text-sm font-semibold text-orange-900">
+          💼 Career Guidance
+        </h4>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Choose the right career path based on your planetary strengths.
+      </p>
+    </div>
 
-                <div className="bg-orange-100/50 rounded-2xl p-6 border border-orange-200/30">
-                  <div className="flex items-center mb-3">
-                    <Clock className="h-6 w-6 text-amber-600 mr-3" />
-                    <h4 className="text-xl font-semibold text-orange-900">
-                      ⏳ Timing is Everything
-                    </h4>
-                  </div>
-                  <p className="text-orange-700">
-                    Leverage muhurats and favorable planetary periods for
-                    important decisions.
-                  </p>
-                </div>
+    {/* Timing */}
+    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Clock className="h-4 w-4 text-amber-600" />
+        <h4 className="text-sm font-semibold text-orange-900">
+          ⏳ Timing Is Everything
+        </h4>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Leverage muhurats and favorable planetary periods for important decisions.
+      </p>
+    </div>
 
-                <div className="bg-orange-100/50 rounded-2xl p-6 border border-orange-200/30">
-                  <div className="flex items-center mb-3">
-                    <Sparkles className="h-6 w-6 text-amber-600 mr-3" />
-                    <h4 className="text-xl font-semibold text-orange-900">
-                      💫 Spiritual Growth
-                    </h4>
-                  </div>
-                  <p className="text-orange-700">
-                    Align with your soul's purpose and evolve spiritually.
-                  </p>
-                </div>
+    {/* Spiritual Growth */}
+    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Sparkles className="h-4 w-4 text-amber-600" />
+        <h4 className="text-sm font-semibold text-orange-900">
+          💫 Spiritual Growth
+        </h4>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Align with your soul’s purpose and evolve spiritually.
+      </p>
+    </div>
 
-                <div className="bg-orange-100/50 rounded-2xl p-6 border border-orange-200/30">
-                  <div className="flex items-center mb-3">
-                    <Shield className="h-6 w-6 text-amber-600 mr-3" />
-                    <h4 className="text-xl font-semibold text-orange-900">
-                      🛡️ Remedial Measures
-                    </h4>
-                  </div>
-                  <p className="text-orange-700">
-                    Neutralize negative planetary effects with remedies like
-                    mantras, gemstones, and rituals.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+    {/* Remedies */}
+    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Shield className="h-4 w-4 text-amber-600" />
+        <h4 className="text-sm font-semibold text-orange-900">
+          🛡️ Remedial Measures
+        </h4>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Neutralize negative planetary effects with mantras, gemstones, and rituals.
+      </p>
+    </div>
+  </div>
+</GuideCard>
 
-          {/* Our Services Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mb-16"
-          >
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-orange-200/30">
-              <h3 className="text-3xl font-bold mb-8 flex items-center text-orange-900">
-                <Globe className="h-8 w-8 mr-3 text-amber-500" />
-                🗺️ Explore Our Astrology Services
-              </h3>
-              <p className="text-lg text-orange-700 leading-relaxed mb-8">
-                AstroTick brings the power of astrology to your fingertips with
-                real-time guidance, intelligent tools, and verified astrologers
-                available 24/7.
-              </p>
+      {/* CARD 3 – SERVICES */}
+<GuideCard
+  title="🗺️ Explore Our Astrology Services"
+  isHovered={hoveredCard === 2}
+  onMouseEnter={() => setHoveredCard(2)}
+  onMouseLeave={() => setHoveredCard(null)}
+  onReadMore={() => setLocation('/learn-astrology/planets')}
+>
+  {/* Section Heading (inside card) */}
+  <h4 className="text-sm font-semibold text-orange-900 mb-2">
+    🗺️ Explore Our Astrology Services
+  </h4>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl p-6 border border-blue-400/30">
-                  <h4 className="text-xl font-bold mb-3 flex items-center">
-                    <Sun className="h-6 w-6 mr-2 text-orange-400" />
-                    🪐 Vedic Astrology (Jyotish)
-                  </h4>
-                  <p className="text-orange-700">
-                    Explore your dashas, nakshatras, yogas, and planetary
-                    placements to decode your destiny.
-                  </p>
-                </div>
+  {/* Intro Paragraph */}
+  <p className="text-sm text-orange-700 leading-relaxed mb-4">
+    AstroTick brings the power of astrology to your fingertips with real-time
+    guidance, intelligent tools, and verified astrologers available 24/7.
+  </p>
 
-                <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-6 border border-purple-400/30">
-                  <h4 className="text-xl font-bold mb-3 flex items-center">
-                    <Globe className="h-6 w-6 mr-2 text-blue-400" />
-                    🌍 Western Astrology
-                  </h4>
-                  <p className="text-orange-700">
-                    Understand your personality, life cycles, and transits based
-                    on the Sun sign system and psychological archetypes.
-                  </p>
-                </div>
+  {/* Services List */}
+  <div className={`grid gap-4 ${hoveredCard === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+    {/* Vedic Astrology */}
+    <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-400/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Sun className="h-4 w-4 text-orange-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          🪐 Vedic Astrology (Jyotish)
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Explore your dashas, nakshatras, yogas, and planetary placements to decode
+        your destiny.
+      </p>
+    </div>
 
-                <div className="bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-2xl p-6 border border-red-400/30">
-                  <h4 className="text-xl font-bold mb-3 flex items-center">
-                    <Hash className="h-6 w-6 mr-2 text-yellow-400" />
-                    🧘 Chinese & Numerology Systems
-                  </h4>
-                  <p className="text-orange-700">
-                    Tap into ancient Chinese astrology, numerology, and elements
-                    to broaden your cosmic understanding.
-                  </p>
-                </div>
+    {/* Western Astrology */}
+    <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-400/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Globe className="h-4 w-4 text-blue-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          🌍 Western Astrology
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Understand your personality, life cycles, and transits through Sun signs
+        and psychological archetypes.
+      </p>
+    </div>
 
-                <div className="bg-gradient-to-br from-pink-500/20 to-rose-500/20 rounded-2xl p-6 border border-pink-400/30">
-                  <h4 className="text-xl font-bold mb-3 flex items-center">
-                    <Heart className="h-6 w-6 mr-2 text-pink-400" />
-                    💕 Love & Marriage Compatibility
-                  </h4>
-                  <p className="text-orange-700">
-                    Get your kundli matched, find auspicious marriage dates, and
-                    gain insights into relationship harmony.
-                  </p>
-                </div>
+    {/* Chinese & Numerology */}
+    <div className="bg-red-500/10 rounded-xl p-4 border border-red-400/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Hash className="h-4 w-4 text-yellow-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          🧘 Chinese & Numerology Systems
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Tap into Chinese astrology, numerology, and elemental systems to broaden
+        your cosmic understanding.
+      </p>
+    </div>
 
-                <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl p-6 border border-green-400/30">
-                  <h4 className="text-xl font-bold mb-3 flex items-center">
-                    <TrendingUp className="h-6 w-6 mr-2 text-green-400" />
-                    💼 Career & Finance Readings
-                  </h4>
-                  <p className="text-orange-700">
-                    Plan your career or business with precision using career
-                    astrology and financial forecasting.
-                  </p>
-                </div>
+    {/* Love & Marriage */}
+    <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-400/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Heart className="h-4 w-4 text-pink-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          💕 Love & Marriage Compatibility
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Get your kundli matched, find auspicious marriage dates, and gain insights
+        into relationship harmony.
+      </p>
+    </div>
 
-                <div className="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-2xl p-6 border border-indigo-400/30">
-                  <h4 className="text-xl font-bold mb-3 flex items-center">
-                    <Lightbulb className="h-6 w-6 mr-2 text-yellow-400" />
-                    🕉️ Remedies & Healing
-                  </h4>
-                  <p className="text-orange-700">
-                    Get personalized astrological remedies including gemstone
-                    suggestions, yantras, rituals, and spiritual practices.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+    {/* Career & Finance */}
+    <div className="bg-green-500/10 rounded-xl p-4 border border-green-400/30">
+      <div className="flex items-center gap-2 mb-2">
+        <TrendingUp className="h-4 w-4 text-green-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          💼 Career & Finance Readings
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Plan your career or business with precision using career astrology and
+        financial forecasting.
+      </p>
+    </div>
 
-          {/* Birth Chart Analysis Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className="mb-16"
-          >
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-orange-200/30">
-              <h3 className="text-3xl font-bold mb-6 flex items-center text-orange-900">
-                <Target className="h-8 w-8 mr-3 text-amber-500" />
-                🧭 Personalized Birth Chart (Kundli) Analysis
-              </h3>
-              <p className="text-lg text-orange-700 leading-relaxed mb-6">
-                Your birth chart, or natal chart, is a cosmic map of your life.
-                At AstroTick, our astrologers create detailed horoscope charts
-                using your date, time, and place of birth to deliver:
-              </p>
+    {/* Remedies & Healing */}
+    <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-400/30">
+      <div className="flex items-center gap-2 mb-2">
+        <Lightbulb className="h-4 w-4 text-yellow-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          🕉️ Remedies & Healing
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Get personalized remedies including gemstones, yantras, rituals, and
+        spiritual practices.
+      </p>
+    </div>
+  </div>
+</GuideCard>
+    </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-400 mr-3" />
-                    <span className="text-orange-700">
-                      ✅ Personality insights
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-400 mr-3" />
-                    <span className="text-orange-700">
-                      ✅ Strengths & weaknesses
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-400 mr-3" />
-                    <span className="text-orange-700">
-                      ✅ Timing for success
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-400 mr-3" />
-                    <span className="text-orange-700">
-                      ✅ Relationship insights
-                    </span>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-400 mr-3" />
-                    <span className="text-orange-700">
-                      ✅ Health and well-being trends
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-400 mr-3" />
-                    <span className="text-orange-700">
-                      ✅ Transit & dasha analysis
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <CheckCircle className="h-5 w-5 text-green-400 mr-3" />
-                    <span className="text-orange-700">
-                      ✅ Life purpose guidance
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+    {/* SECOND ROW – CENTERED */}
+    <div className="flex gap-8 justify-center max-w-5xl mx-auto">
+      {/* CARD 4 – BIRTH CHART */}
+<GuideCard
+  title="🧭 Personalized Birth Chart Analysis"
+  isHovered={hoveredCard === 3}
+  onMouseEnter={() => setHoveredCard(3)}
+  onMouseLeave={() => setHoveredCard(null)}
+  onReadMore={() => setLocation('/learn-astrology/birth-chart')}
+>
+  {/* Section Heading */}
+  <h4 className="text-sm font-semibold text-orange-900 mb-2">
+    🧭 Personalized Birth Chart (Kundli) Analysis
+  </h4>
 
-          {/* Why Choose AstroTick Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.0 }}
-            className="mb-16"
-          >
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-orange-200/30">
-              <h3 className="text-3xl font-bold mb-8 flex items-center text-orange-900">
-                <Crown className="h-8 w-8 mr-3 text-amber-500" />
-                💡 Why Choose AstroTick?
-              </h3>
+  {/* Intro Paragraph */}
+  <p className="text-sm text-orange-700 leading-relaxed mb-4">
+    Your birth chart, or natal chart, is a cosmic map of your life. At AstroTick,
+    our astrologers create detailed horoscope charts using your date, time, and
+    place of birth to deliver deep, meaningful insights about your life journey.
+  </p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-400 mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-orange-900 mb-1">
-                      ✅ Authentic Vedic Astrologers
-                    </h4>
-                    <p className="text-orange-700 text-sm">
-                      with decades of experience
-                    </p>
-                  </div>
-                </div>
+  {/* Insight Cards */}
+  <div className={`grid gap-4 ${hoveredCard === 3 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+    {/* Personality Insights */}
+    <div className="bg-orange-500/10 rounded-xl p-4 border border-orange-300/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Target className="h-4 w-4 text-amber-600" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Personality Insights
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Understand your natural behavior patterns, mindset, emotional tendencies,
+        and how you interact with the world around you.
+      </p>
+    </div>
 
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-400 mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-orange-900 mb-1">
-                      ✅ Live Consultations
-                    </h4>
-                    <p className="text-orange-700 text-sm">
-                      via Call, Chat, or Video
-                    </p>
-                  </div>
-                </div>
+    {/* Strengths & Weaknesses */}
+    <div className="bg-yellow-500/10 rounded-xl p-4 border border-yellow-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <CheckCircle className="h-4 w-4 text-green-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Strengths & Weaknesses
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Identify your natural talents, hidden strengths, and areas that need
+        balance or conscious improvement.
+      </p>
+    </div>
 
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-400 mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-orange-900 mb-1">
-                      ✅ Free Daily Horoscopes
-                    </h4>
-                    <p className="text-orange-700 text-sm">& Panchang</p>
-                  </div>
-                </div>
+    {/* Timing for Success */}
+    <div className="bg-green-500/10 rounded-xl p-4 border border-green-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Clock className="h-4 w-4 text-green-600" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Timing for Success
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Discover favorable periods for career growth, business decisions,
+        marriage, education, and major life events.
+      </p>
+    </div>
 
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-400 mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-orange-900 mb-1">
-                      ✅ Accurate Predictions
-                    </h4>
-                    <p className="text-orange-700 text-sm">
-                      & Customized Remedies
-                    </p>
-                  </div>
-                </div>
+    {/* Relationship Insights */}
+    <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Heart className="h-4 w-4 text-pink-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Relationship Insights
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Gain clarity about love, marriage compatibility, emotional bonding, and
+        relationship challenges through planetary analysis.
+      </p>
+    </div>
 
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-400 mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-orange-900 mb-1">
-                      ✅ Secure & Confidential
-                    </h4>
-                    <p className="text-orange-700 text-sm">Platform</p>
-                  </div>
-                </div>
+    {/* Health & Well-being */}
+    <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Shield className="h-4 w-4 text-blue-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Health & Well-being Trends
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Understand health sensitivities, stress patterns, and long-term wellness
+        trends indicated in your horoscope.
+      </p>
+    </div>
 
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-green-400 mt-1" />
-                  <div>
-                    <h4 className="font-semibold text-orange-900 mb-1">
-                      ✅ Globally Accessible
-                    </h4>
-                    <p className="text-orange-700 text-sm">
-                      India, USA, UK, UAE & More
-                    </p>
-                  </div>
-                </div>
-              </div>
+    {/* Transit & Dasha Analysis */}
+    <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Sun className="h-4 w-4 text-purple-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Transit & Dasha Analysis
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Analyze current and upcoming planetary periods (Dashas) and transits to
+        prepare for opportunities and challenges ahead.
+      </p>
+    </div>
 
-              <p className="text-lg text-orange-700 leading-relaxed mt-8">
-                Whether you're searching for the best astrologer near you or
-                exploring astrology for the first time, AstroTick combines
-                tradition with technology to deliver trustworthy
-                guidance—anytime, anywhere.
-              </p>
-            </div>
-          </motion.div>
+    {/* Life Purpose Guidance */}
+    <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Sparkles className="h-4 w-4 text-indigo-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Life Purpose Guidance
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Discover your soul’s purpose, karmic lessons, and the deeper meaning of
+        your life path through your birth chart.
+      </p>
+    </div>
+  </div>
+</GuideCard>
 
-          {/* Call to Action */}
+      {/* CARD 5 – WHY CHOOSE */}
+<GuideCard
+  title="💡 Why Choose AstroTick?"
+  isHovered={hoveredCard === 4}
+  onMouseEnter={() => setHoveredCard(4)}
+  onMouseLeave={() => setHoveredCard(null)}
+  onReadMore={() => setLocation('/learn-astrology/advanced')}
+>
+  {/* Section Heading */}
+  <h4 className="text-sm font-semibold text-orange-900 mb-2">
+    💡 Why Choose AstroTick?
+  </h4>
+
+  {/* Intro Line (optional subtle lead-in) */}
+  <p className="text-sm text-orange-700 leading-relaxed mb-4">
+    AstroTick blends ancient Vedic wisdom with modern technology to deliver
+    accurate, trustworthy, and accessible astrology guidance for everyone.
+  </p>
+
+  {/* Feature Cards */}
+  <div className={`grid gap-4 ${hoveredCard === 4 ? 'grid-cols-2' : 'grid-cols-1'}`}>
+    {/* Authentic Astrologers */}
+    <div className="bg-green-500/10 rounded-xl p-4 border border-green-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <CheckCircle className="h-4 w-4 text-green-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Authentic Vedic Astrologers
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Consult certified Vedic astrologers with decades of experience in
+        horoscope analysis, remedies, and traditional Jyotish practices.
+      </p>
+    </div>
+
+    {/* Live Consultations */}
+    <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Phone className="h-4 w-4 text-blue-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Live Consultations
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Connect instantly via chat, voice call, or video call and receive
+        real-time guidance from expert astrologers.
+      </p>
+    </div>
+
+    {/* Accurate Predictions */}
+    <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Target className="h-4 w-4 text-purple-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Accurate Predictions
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Get precise predictions backed by planetary transits, dashas, nakshatras,
+        and time-tested astrological calculations.
+      </p>
+    </div>
+
+    {/* Secure & Confidential */}
+    <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Shield className="h-4 w-4 text-amber-600" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Secure & Confidential Platform
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Your personal details, birth data, and consultations are fully encrypted
+        and handled with strict privacy standards.
+      </p>
+    </div>
+
+    {/* Free Content */}
+    <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Sparkles className="h-4 w-4 text-pink-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Free Daily Horoscopes & Panchang
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Access daily horoscopes, Panchang, muhurat timings, and astrological
+        insights absolutely free.
+      </p>
+    </div>
+
+    {/* Global Access */}
+    <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-400/40">
+      <div className="flex items-center gap-2 mb-2">
+        <Globe className="h-4 w-4 text-indigo-500" />
+        <h5 className="text-sm font-semibold text-orange-900">
+          Globally Accessible
+        </h5>
+      </div>
+      <p className="text-xs text-orange-700 leading-relaxed">
+        Trusted by users across India, USA, UK, UAE, and many other countries
+        worldwide.
+      </p>
+    </div>
+  </div>
+
+  {/* Closing Paragraph */}
+  <p className="text-sm text-orange-700 leading-relaxed mt-5">
+    Whether you're searching for the best astrologer near you or exploring
+    astrology for the first time, AstroTick combines tradition with technology
+    to deliver reliable guidance — anytime, anywhere.
+  </p>
+</GuideCard>
+    </div>
+  </div>
+  {/* Call to Action */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.2 }}
-            className="text-center"
+            className="text-center mt-10"
           >
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-orange-200/30">
               <h3 className="text-3xl font-bold mb-6 flex items-center justify-center text-orange-900">
@@ -2764,7 +3025,11 @@ function EnhancedHome() {
               <Button
                 size="lg"
                 className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0 hover:scale-105 transition-all duration-300"
-                onClick={() => setLocation("/premium-report")}
+                // onClick={() => setLocation("/premium-report")}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  openPremiumReportWhatsApp();
+                }}
               >
                 <Sparkles className="h-5 w-5 mr-2" />
                 🔮 Discover Your Future with Personalized Readings
@@ -2776,11 +3041,10 @@ function EnhancedHome() {
               </p>
             </div>
           </motion.div>
-        </div>
-      </section>
+</section>
 
       {/* FAQ Section */}
-      <section className="py-16 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
+      <section className="py-6 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-orange-900 mb-4">
@@ -2791,79 +3055,60 @@ function EnhancedHome() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            <div className="space-y-6">
-              <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  How accurate are your astrology predictions?
-                </h3>
-                <p className="text-gray-600">
-                  Our predictions are based on authentic Vedic astrology
-                  principles using Swiss Ephemeris calculations. With over 20
-                  years of experience and 100+ expert astrologers, we maintain
-                  high accuracy standards.
-                </p>
-              </div>
+          <div className="max-w-4xl mx-auto space-y-4">
+            {faqs.map((faq, index) => {
+              const isOpen = openFAQ === index;
 
-              <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  What makes your kundli different from others?
-                </h3>
-                <p className="text-gray-600">
-                  We use authentic Jyotisha calculations with zero hardcoded
-                  values. Our system processes real astronomical data to
-                  generate precise birth charts, dasha periods, and predictions.
-                </p>
-              </div>
+              return (
+                <div
+                  key={index}
+                  className={`rounded-xl shadow-sm overflow-hidden transition-colors duration-300 ${
+                    isOpen
+                      ? "bg-white"
+                      : "bg-gradient-to-r from-orange-500/10 to-purple-600/10"
+                  }`}
+                >
+                  {/* QUESTION ROW */}
+                  <button
+                    type="button"
+                    onClick={() => setOpenFAQ(isOpen ? null : index)}
+                    className="w-full flex items-center justify-between px-6 py-5 text-left"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {faq.question}
+                    </h3>
 
-              <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  Can I chat with astrologers anytime?
-                </h3>
-                <p className="text-gray-600">
-                  Yes! Our platform has 100+ expert astrologers available 24/7.
-                  You can chat, call, or video call with certified Vedic
-                  astrology experts whenever you need guidance.
-                </p>
-              </div>
-            </div>
+                    {/* ROTATING ICON */}
+                    <motion.span
+                      animate={{ rotate: isOpen ? 45 : 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors duration-300 ${
+                        isOpen
+                          ? "bg-purple-100 text-purple-600"
+                          : "bg-white text-orange-600"
+                      }`}
+                    >
+                      <Plus className="h-5 w-5" />
+                    </motion.span>
+                  </button>
 
-            <div className="space-y-6">
-              <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  How do I know which astrologer to choose?
-                </h3>
-                <p className="text-gray-600">
-                  Each astrologer has detailed profiles showing their
-                  specializations, experience, ratings, and user reviews. You
-                  can filter by expertise areas like marriage, career, health,
-                  or finances.
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  What's included in the Premium Life Report?
-                </h3>
-                <p className="text-gray-600">
-                  Our Premium Life Report includes 82 comprehensive sections
-                  covering personality analysis, career predictions, health
-                  insights, relationship compatibility, remedial measures, and
-                  much more.
-                </p>
-              </div>
-
-              <div className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 rounded-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  Is my personal information secure?
-                </h3>
-                <p className="text-gray-600">
-                  Absolutely! We use industry-standard encryption and security
-                  measures to protect your personal data. Your birth details and
-                  consultations are kept completely confidential.
-                </p>
-              </div>
-            </div>
+                  {/* ANSWER */}
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: "easeInOut" }}
+                        className="px-6 pb-5 text-gray-600 leading-relaxed overflow-hidden"
+                      >
+                        {faq.answer}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

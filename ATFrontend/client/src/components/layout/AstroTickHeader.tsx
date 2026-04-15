@@ -649,22 +649,22 @@ export default function AstroTickHeader() {
 
   /* ===== Banner Slider State ===== */
   // Mobile banners
-const mobileBanners = ["/Ban1.jpeg", "/Ban2.jpeg", "/Ban3.jpeg"];
-// Tablet + Desktop banners
-const desktopBanners = ["/Banner1.png", "/Banner2.png", "/Banner3.png"];
+  const mobileBanners = ["/Ban1.jpeg", "/Ban2.jpeg", "/Ban3.jpeg"];
+  // Tablet + Desktop banners
+  const desktopBanners = ["/Banner1.png", "/Banner2.png", "/Banner3.png"];
   const [bannerIndex, setBannerIndex] = useState(0);
 
   useEffect(() => {
-  const interval = setInterval(() => {
-    setBannerIndex((prev) => (prev + 1) % mobileBanners.length);
-  }, 5000);
+    const interval = setInterval(() => {
+      setBannerIndex((prev) => (prev + 1) % mobileBanners.length);
+    }, 5000);
 
-  return () => clearInterval(interval);
-}, []);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <header className="bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 shadow-sm sticky top-0 z-50">
-      {/* Logo Section - Above Navigation like AstroYogi */}
+      {/* Logo Section */}
       <div className="bg-gradient-to-r from-purple-600 via-pink-500 to-red-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-2 ">
@@ -834,10 +834,15 @@ const desktopBanners = ["/Banner1.png", "/Banner2.png", "/Banner3.png"];
               {/* Free Premium Report Button - Desktop */}
               <div className="hidden md:block">
                 <Link href="/reports/premium">
-                  <Button className="bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white px-4 py-2 rounded-lg shadow-lg transition-all duration-300 font-semibold">
+                  <Button className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-3 md:px-3 lg:px-4 py-2 rounded-lg shadow-lg transition-all duration-300 font-semibold">
+                    {/* Tablet → ICON ONLY */}
                     <div className="flex items-center gap-2">
                       <span className="text-lg">🎁</span>
-                      <span>Free Premium Report</span>
+
+                      {/* Show text ONLY on large screens */}
+                      <span className="hidden lg:inline">
+                        Free Premium Report
+                      </span>
                     </div>
                   </Button>
                 </Link>
@@ -849,12 +854,12 @@ const desktopBanners = ["/Banner1.png", "/Banner2.png", "/Banner3.png"];
                 <Button
                   type="button"
                   onClick={openAstroWhatsApp}
-                  className="bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 hover:scale-105 px-6 py-3 flex items-center space-x-1 text-sm whitespace-nowrap transition-all duration-300 shadow-lg rounded-lg"
+                  className="bg-gradient-to-r from-purple-600 to-purple-700 text-white hover:from-purple-700 hover:to-purple-800 hover:scale-105 px-3 md:px-3 lg:px-6 py-2 md:py-2 lg:py-3 flex items-center space-x-1 text-sm whitespace-nowrap transition-all duration-300 shadow-lg rounded-lg"
                 >
                   <div className=" shadow-sm">
                     <MessageCircleMore className="w-6 h-6 text-green-400 rounded-full animate-pulse scale-150" />
                   </div>
-                  <span className="font-medium">
+                  <span className="hidden lg:inline font-medium">
                     {tt("header.talkToAstrologer", "Chat with Astrologer")}
                   </span>
                 </Button>
@@ -1216,67 +1221,63 @@ const desktopBanners = ["/Banner1.png", "/Banner2.png", "/Banner3.png"];
       {/* </section> */}
       {/* ================= BANNER SECTION (HOME ONLY) ================= */}
       {location === "/" && (
-  <section className="relative w-full overflow-hidden">
-    
-    {/* ================= MOBILE BANNER ================= */}
-    <img
-      src={mobileBanners[bannerIndex]}
-      alt={`Mobile Banner ${bannerIndex + 1}`}
-      onClick={openBannerWhatsApp}
-      className="
+        <section className="relative w-full overflow-hidden">
+          {/* ================= MOBILE BANNER ================= */}
+          <img
+            src={mobileBanners[bannerIndex]}
+            alt={`Mobile Banner ${bannerIndex + 1}`}
+            onClick={openBannerWhatsApp}
+            className="
         w-full h-[220px]
         object-cover
         md:hidden
         transition-all duration-700
       "
-    />
+          />
 
-    {/* ================= TABLET + DESKTOP BANNER ================= */}
-    <img
-      src={desktopBanners[bannerIndex]}
-      alt={`Desktop Banner ${bannerIndex + 1}`}
-      onClick={openBannerWhatsApp}
-      className="
+          {/* ================= TABLET + DESKTOP BANNER ================= */}
+          <img
+            src={desktopBanners[bannerIndex]}
+            alt={`Desktop Banner ${bannerIndex + 1}`}
+            onClick={openBannerWhatsApp}
+            className="
         hidden md:block
         w-full
         h-[260px] lg:h-[340px]
         object-contain lg:object-cover
         transition-all duration-700
       "
-    />
+          />
 
-    {/* Left Arrow */}
-    <button
-      onClick={() =>
-        setBannerIndex(
-          bannerIndex === 0
-            ? mobileBanners.length - 1
-            : bannerIndex - 1
-        )
-      }
-      className="absolute left-3 top-1/2 -translate-y-1/2 
+          {/* Left Arrow */}
+          <button
+            onClick={() =>
+              setBannerIndex(
+                bannerIndex === 0 ? mobileBanners.length - 1 : bannerIndex - 1,
+              )
+            }
+            className="absolute left-3 top-1/2 -translate-y-1/2 
         bg-black/30 text-white p-2 rounded-full 
         opacity-40 hover:opacity-100 
         transition-all duration-300"
-    >
-      <ChevronLeft className="h-6 w-6" />
-    </button>
+          >
+            <ChevronLeft className="h-6 w-6" />
+          </button>
 
-    {/* Right Arrow */}
-    <button
-      onClick={() =>
-        setBannerIndex((bannerIndex + 1) % mobileBanners.length)
-      }
-      className="absolute right-3 top-1/2 -translate-y-1/2 
+          {/* Right Arrow */}
+          <button
+            onClick={() =>
+              setBannerIndex((bannerIndex + 1) % mobileBanners.length)
+            }
+            className="absolute right-3 top-1/2 -translate-y-1/2 
         bg-black/30 text-white p-2 rounded-full 
         opacity-40 hover:opacity-100 
         transition-all duration-300"
-    >
-      <ChevronRight className="h-6 w-6" />
-    </button>
-
-  </section>
-)}
+          >
+            <ChevronRight className="h-6 w-6" />
+          </button>
+        </section>
+      )}
       {/* ================= END BANNER SECTION ================= */}
     </header>
   );

@@ -275,7 +275,7 @@ export default function LoveHoroscope() {
           <p className="md:text-lg text-gray-600 max-w-3xl mx-auto">
             Discover your romantic destiny through authentic Vedic astrology.
             Get personalized love insights or analyze compatibility between two
-            people.
+            people. and
           </p>
         </div>
 
@@ -1161,9 +1161,8 @@ export default function LoveHoroscope() {
             </Card>
           </div>
         )}
-
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 }

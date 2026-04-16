@@ -479,7 +479,7 @@ async function executeDrikPanchang(date: string, latitude: number, longitude: nu
     const enginePath = 'server/drik-panchang-corrected.py';
     
     // Execute Python engine with arguments
-    const pythonProcess = spawn('python3', [enginePath, date, latitude.toString(), longitude.toString(), 'Asia/Kolkata'], {
+    const pythonProcess = spawn(process.env.PYTHON3, [enginePath, date, latitude.toString(), longitude.toString(), 'Asia/Kolkata'], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     
@@ -520,7 +520,7 @@ async function executeEnhancedDetailedPanchang(date: string, latitude: number, l
     const enginePath = 'server/enhanced-detailed-panchang.py';
     
     // Execute Python engine with arguments
-    const pythonProcess = spawn('python3', [enginePath, date, latitude.toString(), longitude.toString()], {
+    const pythonProcess = spawn(process.env.PYTHON3, [enginePath, date, latitude.toString(), longitude.toString()], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     
@@ -20379,7 +20379,7 @@ console.log('completed')
       };
       
       // Execute Lal Kitab analysis using Python engine with Jyotisha integration
-      const pythonProcess = spawn('python3', [
+      const pythonProcess = spawn(process.env.PYTHON3, [
         path.join(process.cwd(), 'server', 'lal-kitab-jyotisha.py'),
         JSON.stringify(birthData)
       ]);
@@ -32639,7 +32639,7 @@ function generateBabyNames(data: any): any[] {
 
       // Execute Shadbala calculation using dynamic import
       const childProcess = await import('child_process');
-      const pythonProcess = childProcess.spawn('python3', ['server/authentic-shadbala-calculator.py'], {
+      const pythonProcess = childProcess.spawn(process.env.PYTHON3, ['server/authentic-shadbala-calculator.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
@@ -32740,7 +32740,7 @@ function generateBabyNames(data: any): any[] {
 
       // Execute dosha detection using dynamic import
       const childProcess = await import('child_process');
-      const pythonProcess = childProcess.spawn('python3', ['server/enhanced-dosha-detector.py'], {
+      const pythonProcess = childProcess.spawn(process.env.PYTHON3, ['server/enhanced-dosha-detector.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
@@ -34175,7 +34175,7 @@ function generateBabyNames(data: any): any[] {
 
       // Call our premium report API to get actual data
       const { spawn } = await import('child_process');
-      const python = spawn('python3', ['server/premium-report-engine.py'], {
+      const python = spawn(process.env.PYTHON3, ['server/premium-report-engine.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
@@ -34307,7 +34307,7 @@ function generateBabyNames(data: any): any[] {
       };
 
       // Call authentic dasha timeline Python script
-      const pythonProcess = spawn('python3', ['server/authentic-dasha-timeline.py'], {
+      const pythonProcess = spawn(process.env.PYTHON3, ['server/authentic-dasha-timeline.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
@@ -36039,8 +36039,8 @@ function generateBabyNames(data: any): any[] {
       // Use the existing Jyotisha calculation to get planetary longitudes
       const { spawn } = await import('child_process');
       const path = await import('path');
-      
-      const jyotishaProcess = spawn('python3', [
+
+      const jyotishaProcess = spawn(process.env.PYTHON3, [
         path.default.join(__dirname, 'jyotisha-engine.py')
       ], { 
         stdio: ['pipe', 'pipe', 'pipe'],
@@ -36090,7 +36090,7 @@ function generateBabyNames(data: any): any[] {
           }
 
           // Now calculate navamsa using the VargaCalculator
-          const vargaProcess = spawn('python3', ['-c', `
+          const vargaProcess = spawn(process.env.PYTHON3, ['-c', `
 import sys
 import json
 sys.path.append('${__dirname}')

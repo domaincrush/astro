@@ -205,7 +205,7 @@ export class JyotishaHoroscopeGenerator {
    */
   private static async calculateJyotishaTransits(date: string): Promise<JyotishaTransitData> {
     return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python3', ['server/jyotisha-engine.py'], {
+      const pythonProcess = spawn(process.env.PYTHON3, ['server/jyotisha-engine.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 

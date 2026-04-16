@@ -102,7 +102,7 @@ export class JyotishaPanchangCalculator {
    */
   static async calculatePanchang(panchangData: PanchangData): Promise<PanchangResult> {
     return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python3', [
+      const pythonProcess = spawn(process.env.PYTHON3, [
         'server/panchang-jyotisha-engine.py',
         JSON.stringify(panchangData)
       ]);

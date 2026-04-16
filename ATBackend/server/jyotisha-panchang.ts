@@ -203,7 +203,7 @@ except Exception as e:
     sys.exit(1)
 `;
 
-    const pythonProcess = spawn('python3', ['-c', pythonScript]);
+    const pythonProcess = spawn(process.env.PYTHON3, ['-c', pythonScript]);
     
     let output = '';
     let error = '';

@@ -18,8 +18,9 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
+// connectionString: "postgresql://ansari:6298@localhost:5432/astrotickdb",
 export const pool = new Pool({ 
-  connectionString: "postgresql://ansari:6298@localhost:5432/astrotickdb",
+  connectionString: process.env.DATABASE_URL,
   max: 50,        // Optimized max connections for production load
   min: 10,        // Minimum pool size for better availability
   idleTimeoutMillis: 30000,  // Close idle connections after 30s

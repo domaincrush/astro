@@ -95,7 +95,7 @@ export class JyotishaOfficialFallback {
     
     return new Promise((resolve, reject) => {
       const startTime = Date.now();
-      const pythonProcess = spawn('python3', [this.ENGINE_PATH]);
+      const pythonProcess = spawn(process.env.PYTHON3, [this.ENGINE_PATH]);
 
       let stdout = '';
       let stderr = '';

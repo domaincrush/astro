@@ -132,7 +132,7 @@ export class DrikPanchangaInterface {
         });
 
         // Spawn Python process
-        const pythonProcess = spawn('python3', [this.PYTHON_ENGINE_PATH, inputData]);
+        const pythonProcess = spawn(process.env.PYTHON3, [this.PYTHON_ENGINE_PATH, inputData]);
 
         let stdout = '';
         let stderr = '';

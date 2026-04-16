@@ -598,71 +598,549 @@ function EnhancedHome() {
     },
   ];
 
+  const [pinnedCard, setPinnedCard] = useState<number | null>(null);
+
   const GuideCard = ({
-  title,
-  children,
-  isHovered,
-  onMouseEnter,
-  onMouseLeave,
-  onReadMore,
-}: {
-  title: string;
-  children: React.ReactNode;
-  isHovered: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  onReadMore: () => void;
-}) => {
-  return (
-    <motion.div
-      whileHover={{ scale: 1.08 }}
-      transition={{ duration: 0.4, ease: "easeInOut" }}
-      className={`${isHovered ? "bg-white/80" : "bg-gradient-to-r from-[#FF7107] to-[#9C21EA]"} backdrop-blur-sm rounded-3xl p-8 border border-orange-200/40 shadow-lg hover:shadow-2xl relative overflow-hidden`}
-      style={{ flex: isHovered ? "2 1 0%" : "1 1 0%", height: isHovered ? 'auto' : '410px' }}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      {/* COLLAPSED VIEW */}
-      <div className={isHovered ? "hidden" : "flex flex-col justify-between h-full"}>
-        <h3 className="text-2xl font-bold text-white mb-6">{title}</h3>
+    title,
+    children,
+    isHovered,
+    onMouseEnter,
+    onMouseLeave,
+    isPinned,
+    onCardClick,
+    onReadMore,
+  }: {
+    title: string;
+    children: React.ReactNode;
+    isHovered: boolean;
+    onMouseEnter: () => void;
+    onMouseLeave: () => void;
+    isPinned: boolean;
+    onCardClick: () => void;
+    onReadMore: () => void;
+  }) => {
+    const isExpanded = isHovered || isPinned;
 
-        <div className="flex justify-between items-center">
-          <Button className="rounded-full" onClick={onReadMore}>Read More</Button>
-          <div className="bg-blue-500 rounded-full p-3 cursor-pointer" onClick={onReadMore}>
-            <ArrowRight className="h-5 w-5 text-white -rotate-45" />
+    return (
+      <motion.div
+        layout
+        transition={{
+          layout: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+        }}
+        className={`${
+          isExpanded
+            ? "bg-white/80"
+            : "bg-gradient-to-r from-[#FF7107] to-[#9C21EA]"
+        } backdrop-blur-sm rounded-3xl p-8 border border-orange-200/40 shadow-lg hover:shadow-2xl relative overflow-hidden cursor-pointer`}
+        style={{
+          flex: isExpanded ? "2 1 0%" : "1 1 0%",
+          minHeight: "410px",
+          outline: isPinned ? "2px solid #f97316" : "none",
+        }}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onCardClick}
+      >
+        {/* Pinned indicator */}
+        <AnimatePresence>
+          {isPinned && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-3 right-3 bg-orange-500 text-white text-xs px-2 py-0.5 rounded-full z-10"
+            >
+              📌 Pinned
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* COLLAPSED VIEW */}
+        <AnimatePresence mode="wait">
+          {!isExpanded ? (
+            <motion.div
+              key="collapsed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="flex flex-col justify-between h-full"
+              style={{ minHeight: "346px" }}
+            >
+              <h3 className="text-2xl font-bold text-white mb-6">{title}</h3>
+              <div className="flex justify-between items-center">
+                <Button
+                  className="rounded-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onReadMore();
+                  }}
+                >
+                  Read More
+                </Button>
+                <div
+                  className="bg-blue-500 rounded-full p-3 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onReadMore();
+                  }}
+                >
+                  <ArrowRight className="h-5 w-5 text-white -rotate-45" />
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="expanded"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut", delay: 0.1 }}
+            >
+              <h3 className="text-2xl font-bold text-orange-900 mb-6">
+                {title}
+              </h3>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: "easeOut", delay: 0.15 }}
+                className="mb-6"
+              >
+                {children}
+              </motion.div>
+              <div className="flex justify-between items-center">
+                <Button
+                  className="rounded-full"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onReadMore();
+                  }}
+                >
+                  Read More
+                </Button>
+                <div
+                  className="bg-blue-500 rounded-full p-3 cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onReadMore();
+                  }}
+                >
+                  <ArrowRight className="h-5 w-5 text-white" />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    );
+  };
+
+  const MobileGuideCards = ({
+    setLocation,
+  }: {
+    setLocation: (path: string) => void;
+  }) => {
+    const [openCard, setOpenCard] = useState<number | null>(null);
+
+    const cards = [
+      {
+        title: "🌟 What Is Astrology?",
+        readMore: "/learn-astrology/basics",
+        content: (
+          <>
+            <p className="text-orange-700 leading-relaxed mb-3 text-sm">
+              Astrology is an ancient science that studies the influence of
+              celestial bodies—planets, stars, and constellations—on human life.
+              By analyzing your natal chart or kundli, astrologers interpret how
+              planetary positions at the time of your birth shape your
+              personality, behavior, relationships, and life events.
+            </p>
+            <p className="text-orange-700 leading-relaxed text-sm">
+              There are several branches of astrology, with Vedic astrology
+              (Jyotish Shastra) being one of the most accurate and time-tested
+              systems. It includes concepts like dashas (planetary periods),
+              nakshatras (constellations), and transits (Gochara)—each offering
+              deep insight into your karmic blueprint.
+            </p>
+          </>
+        ),
+      },
+      {
+        title: "🧿 Why Astrology in the Modern World?",
+        readMore: "/learn-astrology/basics",
+        content: (
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              {
+                icon: <Target className="h-4 w-4 text-amber-600" />,
+                title: "🔍 Self-Discovery",
+                desc: "Understand your true nature, talents, and limitations.",
+              },
+              {
+                icon: <Heart className="h-4 w-4 text-amber-600" />,
+                title: "💑 Relationship Compatibility",
+                desc: "Discover romantic compatibility through kundli matching and synastry.",
+              },
+              {
+                icon: <TrendingUp className="h-4 w-4 text-amber-600" />,
+                title: "💼 Career Guidance",
+                desc: "Choose the right career path based on your planetary strengths.",
+              },
+              {
+                icon: <Clock className="h-4 w-4 text-amber-600" />,
+                title: "⏳ Timing Is Everything",
+                desc: "Leverage muhurats and favorable planetary periods for important decisions.",
+              },
+              {
+                icon: <Sparkles className="h-4 w-4 text-amber-600" />,
+                title: "💫 Spiritual Growth",
+                desc: "Align with your soul's purpose and evolve spiritually.",
+              },
+              {
+                icon: <Shield className="h-4 w-4 text-amber-600" />,
+                title: "🛡️ Remedial Measures",
+                desc: "Neutralize negative planetary effects with mantras, gemstones, and rituals.",
+              },
+            ].map((item, i) => (
+              <div
+                key={i}
+                className="bg-orange-100/50 rounded-xl p-3 border border-orange-200/30"
+              >
+                <div className="flex items-center gap-2 mb-1">
+                  {item.icon}
+                  <h4 className="text-sm font-semibold text-orange-900">
+                    {item.title}
+                  </h4>
+                </div>
+                <p className="text-xs text-orange-700">{item.desc}</p>
+              </div>
+            ))}
           </div>
-        </div>
-      </div>
-
-      {/* EXPANDED VIEW */}
-      <div className={isHovered ? "" : "hidden"}>
-        <h3 className="text-2xl font-bold text-orange-900 mb-6">{title}</h3>
-
-        <div className="mb-6">{children}</div>
-
-        <div className="flex justify-between items-center">
-          <Button className="rounded-full" onClick={onReadMore}>Read More</Button>
-          <div className="bg-blue-500 rounded-full p-3 cursor-pointer" onClick={onReadMore}>
-            <ArrowRight className="h-5 w-5 text-white" />
+        ),
+      },
+      {
+        title: "🗺️ Explore Our Astrology Services",
+        readMore: "/learn-astrology/planets",
+        content: (
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              {
+                icon: <Sun className="h-4 w-4 text-orange-500" />,
+                title: "🪐 Vedic Astrology (Jyotish)",
+                desc: "Explore your dashas, nakshatras, yogas, and planetary placements to decode your destiny.",
+                bg: "bg-blue-500/10 border-blue-400/30",
+              },
+              {
+                icon: <Globe className="h-4 w-4 text-blue-500" />,
+                title: "🌍 Western Astrology",
+                desc: "Understand your personality, life cycles, and transits through Sun signs.",
+                bg: "bg-purple-500/10 border-purple-400/30",
+              },
+              {
+                icon: <Hash className="h-4 w-4 text-yellow-500" />,
+                title: "🧘 Chinese & Numerology",
+                desc: "Tap into Chinese astrology, numerology, and elemental systems.",
+                bg: "bg-red-500/10 border-red-400/30",
+              },
+              {
+                icon: <Heart className="h-4 w-4 text-pink-500" />,
+                title: "💕 Love & Marriage Compatibility",
+                desc: "Get your kundli matched and find auspicious marriage dates.",
+                bg: "bg-pink-500/10 border-pink-400/30",
+              },
+              {
+                icon: <TrendingUp className="h-4 w-4 text-green-500" />,
+                title: "💼 Career & Finance Readings",
+                desc: "Plan your career or business with precision using career astrology.",
+                bg: "bg-green-500/10 border-green-400/30",
+              },
+              {
+                icon: <Lightbulb className="h-4 w-4 text-yellow-500" />,
+                title: "🕉️ Remedies & Healing",
+                desc: "Get personalized remedies including gemstones, yantras, rituals.",
+                bg: "bg-indigo-500/10 border-indigo-400/30",
+              },
+            ].map((item, i) => (
+              <div key={i} className={`rounded-xl p-3 border ${item.bg}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  {item.icon}
+                  <h5 className="text-sm font-semibold text-orange-900">
+                    {item.title}
+                  </h5>
+                </div>
+                <p className="text-xs text-orange-700">{item.desc}</p>
+              </div>
+            ))}
           </div>
-        </div>
+        ),
+      },
+      {
+        title: "🧭 Personalized Birth Chart Analysis",
+        readMore: "/learn-astrology/birth-chart",
+        content: (
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              {
+                icon: <Target className="h-4 w-4 text-amber-600" />,
+                title: "Personality Insights",
+                desc: "Understand your natural behavior patterns, mindset, emotional tendencies.",
+                bg: "bg-orange-500/10 border-orange-300/40",
+              },
+              {
+                icon: <CheckCircle className="h-4 w-4 text-green-500" />,
+                title: "Strengths & Weaknesses",
+                desc: "Identify your natural talents, hidden strengths, and areas that need balance.",
+                bg: "bg-yellow-500/10 border-yellow-400/40",
+              },
+              {
+                icon: <Clock className="h-4 w-4 text-green-600" />,
+                title: "Timing for Success",
+                desc: "Discover favorable periods for career growth, business decisions, marriage.",
+                bg: "bg-green-500/10 border-green-400/40",
+              },
+              {
+                icon: <Heart className="h-4 w-4 text-pink-500" />,
+                title: "Relationship Insights",
+                desc: "Gain clarity about love, marriage compatibility, and relationship challenges.",
+                bg: "bg-pink-500/10 border-pink-400/40",
+              },
+              {
+                icon: <Shield className="h-4 w-4 text-blue-500" />,
+                title: "Health & Well-being Trends",
+                desc: "Understand health sensitivities, stress patterns, and long-term wellness trends.",
+                bg: "bg-blue-500/10 border-blue-400/40",
+              },
+              {
+                icon: <Sparkles className="h-4 w-4 text-indigo-500" />,
+                title: "Life Purpose Guidance",
+                desc: "Discover your soul's purpose, karmic lessons, and the deeper meaning of your life path.",
+                bg: "bg-indigo-500/10 border-indigo-400/40",
+              },
+            ].map((item, i) => (
+              <div key={i} className={`rounded-xl p-3 border ${item.bg}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  {item.icon}
+                  <h5 className="text-sm font-semibold text-orange-900">
+                    {item.title}
+                  </h5>
+                </div>
+                <p className="text-xs text-orange-700">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        ),
+      },
+      {
+        title: "💡 Why Choose AstroTick?",
+        readMore: "/learn-astrology/advanced",
+        content: (
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              {
+                icon: <CheckCircle className="h-4 w-4 text-green-500" />,
+                title: "Authentic Vedic Astrologers",
+                desc: "Consult certified Vedic astrologers with decades of experience.",
+                bg: "bg-green-500/10 border-green-400/40",
+              },
+              {
+                icon: <Phone className="h-4 w-4 text-blue-500" />,
+                title: "Live Consultations",
+                desc: "Connect instantly via chat, voice call, or video call.",
+                bg: "bg-blue-500/10 border-blue-400/40",
+              },
+              {
+                icon: <Target className="h-4 w-4 text-purple-500" />,
+                title: "Accurate Predictions",
+                desc: "Get precise predictions backed by planetary transits and dashas.",
+                bg: "bg-purple-500/10 border-purple-400/40",
+              },
+              {
+                icon: <Shield className="h-4 w-4 text-amber-600" />,
+                title: "Secure & Confidential",
+                desc: "Your personal details and consultations are fully encrypted.",
+                bg: "bg-amber-500/10 border-amber-400/40",
+              },
+              {
+                icon: <Sparkles className="h-4 w-4 text-pink-500" />,
+                title: "Free Daily Horoscopes",
+                desc: "Access daily horoscopes, Panchang, and muhurat timings free.",
+                bg: "bg-pink-500/10 border-pink-400/40",
+              },
+              {
+                icon: <Globe className="h-4 w-4 text-indigo-500" />,
+                title: "Globally Accessible",
+                desc: "Trusted by users across India, USA, UK, UAE, and worldwide.",
+                bg: "bg-indigo-500/10 border-indigo-400/40",
+              },
+            ].map((item, i) => (
+              <div key={i} className={`rounded-xl p-3 border ${item.bg}`}>
+                <div className="flex items-center gap-2 mb-1">
+                  {item.icon}
+                  <h5 className="text-sm font-semibold text-orange-900">
+                    {item.title}
+                  </h5>
+                </div>
+                <p className="text-xs text-orange-700">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        ),
+      },
+    ];
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {cards.map((card, index) => {
+          const isOpen = openCard === index;
+          return (
+            <motion.div
+              key={index}
+              layout
+              transition={{ layout: { duration: 0.4, ease: [0.4, 0, 0.2, 1] } }}
+              className={`rounded-3xl border border-orange-200/40 shadow-lg overflow-hidden ${
+                isOpen
+                  ? "bg-white/80"
+                  : "bg-gradient-to-r from-[#FF7107] to-[#9C21EA]"
+              } ${
+                index === 4
+                  ? "md:col-span-2 md:max-w-[calc(50%-12px)] md:mx-auto w-full"
+                  : ""
+              }`}
+              style={{
+                minHeight: isOpen ? "auto" : "clamp(287px, 70vw, 328px)",
+              }}
+            >
+              {/* Collapsed state — title at top, buttons pinned to bottom */}
+              <AnimatePresence>
+                {!isOpen && (
+                  <motion.div
+                    key="collapsed"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex flex-col h-full p-6"
+                    style={{ minHeight: "clamp(287px, 70vw, 328px)" }}
+                  >
+                    {/* Toggle row — title + plus icon */}
+                    <button
+                      type="button"
+                      className="w-full text-left flex items-center justify-between mb-auto"
+                      onClick={() => setOpenCard(isOpen ? null : index)}
+                    >
+                      <h3 className="text-lg font-bold text-white">
+                        {card.title}
+                      </h3>
+                      <motion.span
+                        animate={{ rotate: 0 }}
+                        transition={{ duration: 0.25 }}
+                      >
+                        <Plus className="h-5 w-5 text-white" />
+                      </motion.span>
+                    </button>
+
+                    {/* Buttons pinned to bottom */}
+                    <div className="flex justify-between items-center mt-6">
+                      <Button
+                        className="rounded-full text-sm"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLocation(card.readMore);
+                        }}
+                      >
+                        Read More
+                      </Button>
+                      <div
+                        className="bg-blue-500 rounded-full p-2 cursor-pointer"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setLocation(card.readMore);
+                        }}
+                      >
+                        <ArrowRight className="h-4 w-4 text-white -rotate-45" />
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Expanded state — title + content + buttons */}
+              <AnimatePresence>
+                {isOpen && (
+                  <motion.div
+                    key="expanded-content"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                    className="overflow-hidden"
+                  >
+                    {/* Toggle row when expanded */}
+                    <button
+                      type="button"
+                      className="w-full text-left p-6 pb-0 flex items-center justify-between"
+                      onClick={() => setOpenCard(isOpen ? null : index)}
+                    >
+                      <h3 className="text-lg font-bold text-orange-900">
+                        {card.title}
+                      </h3>
+                      <motion.span
+                        animate={{ rotate: 45 }}
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                      >
+                        <Plus className="h-5 w-5 text-orange-600" />
+                      </motion.span>
+                    </button>
+
+                    <motion.div
+                      initial={{ y: 10 }}
+                      animate={{ y: 0 }}
+                      transition={{
+                        duration: 0.35,
+                        ease: "easeOut",
+                        delay: 0.1,
+                      }}
+                      className="px-6 pb-6 pt-4"
+                    >
+                      {card.content}
+                      <div className="flex justify-between items-center mt-4">
+                        <Button
+                          className="rounded-full text-sm"
+                          onClick={() => setLocation(card.readMore)}
+                        >
+                          Read More
+                        </Button>
+                        <div
+                          className="bg-blue-500 rounded-full p-2 cursor-pointer"
+                          onClick={() => setLocation(card.readMore)}
+                        >
+                          <ArrowRight className="h-4 w-4 text-white" />
+                        </div>
+                      </div>
+                    </motion.div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
       </div>
-    </motion.div>
+    );
+  };
+
+  const MiniPoint = ({
+    icon,
+    title,
+  }: {
+    icon: React.ReactNode;
+    title: string;
+  }) => (
+    <div className="flex items-center gap-3 bg-orange-100/60 rounded-xl p-4">
+      <div className="text-amber-600">{icon}</div>
+      <span className="font-medium text-orange-900">{title}</span>
+    </div>
   );
-};
-
-const MiniPoint = ({
-  icon,
-  title,
-}: {
-  icon: React.ReactNode;
-  title: string;
-}) => (
-  <div className="flex items-center gap-3 bg-orange-100/60 rounded-xl p-4">
-    <div className="text-amber-600">{icon}</div>
-    <span className="font-medium text-orange-900">{title}</span>
-  </div>
-);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative overflow-hidden">
@@ -2035,9 +2513,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <Zap className="h-6 w-6 text-indigo-600" />
-                    <h3 className="text-lg font-semibold text-indigo-900 leading-none">
-                      Yoga
-                    </h3>
+                      <h3 className="text-lg font-semibold text-indigo-900 leading-none">
+                        Yoga
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-indigo-600 mb-1">
                       {todaysPanchang.data.yoga?.name}
@@ -2059,9 +2537,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <Target className="h-6 w-6 text-teal-600" />
-                    <h3 className="text-lg font-semibold text-teal-900 leading-none">
-                      Karana
-                    </h3>
+                      <h3 className="text-lg font-semibold text-teal-900 leading-none">
+                        Karana
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-teal-600 mb-1">
                       {todaysPanchang.data.karana?.name}
@@ -2083,9 +2561,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <Calendar className="h-6 w-6 text-amber-600" />
-                    <h3 className="text-lg font-semibold text-amber-900 leading-none">
-                      Vara
-                    </h3>
+                      <h3 className="text-lg font-semibold text-amber-900 leading-none">
+                        Vara
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-amber-600 mb-1">
                       {todaysPanchang.data.vara?.english}
@@ -2106,9 +2584,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <Sun className="h-6 w-6 text-rose-600" />
-                    <h3 className="text-lg font-semibold text-rose-900 leading-none">
-                      Sunrise
-                    </h3>
+                      <h3 className="text-lg font-semibold text-rose-900 leading-none">
+                        Sunrise
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-rose-600 mb-1">
                       {todaysPanchang.data.sunrise}
@@ -2128,9 +2606,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <Moon className="h-6 w-6 text-slate-600" />
-                    <h3 className="text-lg font-semibold text-slate-900 leading-none">
-                      Sunset
-                    </h3>
+                      <h3 className="text-lg font-semibold text-slate-900 leading-none">
+                        Sunset
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-slate-600 mb-1">
                       {todaysPanchang.data.sunset}
@@ -2150,9 +2628,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <AlertCircle className="h-6 w-6 text-red-600" />
-                    <h3 className="text-lg font-semibold text-red-900 leading-none">
-                      Rahu Kaal
-                    </h3>
+                      <h3 className="text-lg font-semibold text-red-900 leading-none">
+                        Rahu Kaal
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-red-600 mb-1">
                       {
@@ -2178,9 +2656,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <CheckCircle className="h-6 w-6 text-green-600" />
-                    <h3 className="text-lg font-semibold text-green-900 leading-none">
-                      Abhijit Muhurta
-                    </h3>
+                      <h3 className="text-lg font-semibold text-green-900 leading-none">
+                        Abhijit Muhurta
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-green-600 mb-1">
                       {
@@ -2208,9 +2686,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <Timer className="h-6 w-6 text-cyan-600" />
-                    <h3 className="text-lg font-semibold text-cyan-900 leading-none">
-                      Brahma Muhurta
-                    </h3>
+                      <h3 className="text-lg font-semibold text-cyan-900 leading-none">
+                        Brahma Muhurta
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-cyan-600 mb-1">
                       {
@@ -2239,9 +2717,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <TrendingDown className="h-6 w-6 text-orange-600" />
-                    <h3 className="text-lg font-semibold text-orange-900 leading-none">
-                      Yamaganda
-                    </h3>
+                      <h3 className="text-lg font-semibold text-orange-900 leading-none">
+                        Yamaganda
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-orange-600 mb-1">
                       {
@@ -2267,9 +2745,9 @@ const MiniPoint = ({
                   <div className="flex-1 text-center">
                     <div className="flex justify-center items-center gap-2 mb-2">
                       <Info className="h-6 w-6 text-violet-600" />
-                    <h3 className="text-lg font-semibold text-violet-900 leading-none">
-                      Location
-                    </h3>
+                      <h3 className="text-lg font-semibold text-violet-900 leading-none">
+                        Location
+                      </h3>
                     </div>
                     <p className="text-xl font-bold text-violet-600 mb-1">
                       Delhi
@@ -2509,539 +2987,531 @@ const MiniPoint = ({
       </section>
 
       {/* Comprehensive Astrology Guide Section */}
-<section className="py-20 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative overflow-hidden">
-  {/* Background cosmic elements (UNCHANGED) */}
-  <div className="absolute inset-0 opacity-10">
-    <div className="absolute top-20 left-20 w-96 h-96 border border-orange-200/20 rounded-full"></div>
-    <div className="absolute bottom-20 right-20 w-80 h-80 border border-orange-200/20 rounded-full"></div>
-    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-orange-200/10 rounded-full"></div>
-  </div>
+      <section className="py-20 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 relative overflow-hidden">
+        {/* Background cosmic elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-96 h-96 border border-orange-200/20 rounded-full"></div>
+          <div className="absolute bottom-20 right-20 w-80 h-80 border border-orange-200/20 rounded-full"></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border border-orange-200/10 rounded-full"></div>
+        </div>
 
-  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-    {/* HEADER – UNCHANGED */}
-    <div className="text-center mb-16">
-      <h2 className="text-4xl md:text-5xl font-bold mb-6 text-orange-900">
-        🔮 Unlock Your Destiny with AstroTick
-      </h2>
-      <p className="text-xl md:text-2xl text-orange-700 max-w-4xl mx-auto">
-        Your Gateway to Vedic Astrology, Horoscopes & Expert Consultations
-      </p>
-    </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          {/* HEADER */}
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-orange-900">
+              🔮 Unlock Your Destiny with AstroTick
+            </h2>
+            <p className="text-xl md:text-2xl text-orange-700 max-w-4xl mx-auto">
+              Your Gateway to Vedic Astrology, Horoscopes & Expert Consultations
+            </p>
+          </div>
 
-    {/* CARDS GRID */}
-    <div className="flex gap-8 mb-12">
-      {/* CARD 1 – WHAT IS ASTROLOGY */}
-      <GuideCard
-        title="🌟 What Is Astrology?"
-        isHovered={hoveredCard === 0}
-        onMouseEnter={() => setHoveredCard(0)}
-        onMouseLeave={() => setHoveredCard(null)}
-        onReadMore={() => setLocation('/learn-astrology/basics')}
-      >
-        <p className="text-orange-700 leading-relaxed mb-4">
-          Astrology is an ancient science that studies the influence of
-                celestial bodies—planets, stars, and constellations—on human
-                life. By analyzing your natal chart or kundli, astrologers
-                interpret how planetary positions at the time of your birth
-                shape your personality, behavior, relationships, and life
-                events.
-        </p>
-        <p className="text-orange-700 leading-relaxed">
-         There are several branches of astrology, with Vedic astrology
-                (Jyotish Shastra) being one of the most accurate and time-tested
-                systems. It includes concepts like dashas (planetary periods),
-                nakshatras (constellations), and transits (Gochara)—each
-                offering deep insight into your karmic blueprint.
-        </p>
-      </GuideCard>
+          {/* ── DESKTOP LAYOUT ── */}
+          <div className="hidden lg:block">
+            {/* Row 1 — 3 cards */}
+            <div className="flex gap-8 mb-12">
+              <GuideCard
+                title="🌟 What Is Astrology?"
+                isHovered={hoveredCard === 0}
+                onMouseEnter={() => {
+                  if (pinnedCard === null) setHoveredCard(0);
+                }}
+                onMouseLeave={() => {
+                  if (pinnedCard === null) setHoveredCard(null);
+                }}
+                isPinned={pinnedCard === 0}
+                onCardClick={() => {
+                  setPinnedCard(pinnedCard === 0 ? null : 0);
+                  setHoveredCard(pinnedCard === 0 ? null : 0);
+                }}
+                onReadMore={() => setLocation("/learn-astrology/basics")}
+              >
+                <p className="text-orange-700 leading-relaxed mb-4">
+                  Astrology is an ancient science that studies the influence of
+                  celestial bodies—planets, stars, and constellations—on human
+                  life. By analyzing your natal chart or kundli, astrologers
+                  interpret how planetary positions at the time of your birth
+                  shape your personality, behavior, relationships, and life
+                  events.
+                </p>
+                <p className="text-orange-700 leading-relaxed">
+                  There are several branches of astrology, with Vedic astrology
+                  (Jyotish Shastra) being one of the most accurate and
+                  time-tested systems. It includes concepts like dashas
+                  (planetary periods), nakshatras (constellations), and transits
+                  (Gochara)—each offering deep insight into your karmic
+                  blueprint.
+                </p>
+              </GuideCard>
 
-      {/* CARD 2 – WHY ASTROLOGY */}
-<GuideCard
-  title="🧿 Why Astrology in the Modern World?"
-  isHovered={hoveredCard === 1}
-  onMouseEnter={() => setHoveredCard(1)}
-  onMouseLeave={() => setHoveredCard(null)}
-  onReadMore={() => setLocation('/learn-astrology/basics')}
->
-  {/* Intro Paragraph */}
-  <p className="text-sm text-orange-700 leading-relaxed mb-4">
-    In an age of uncertainty, astrology provides clarity and foresight.
-    Here's why astrology matters more than ever:
-  </p>
-
-  {/* Points Grid */}
-  <div className={`grid gap-4 ${hoveredCard === 1 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-    {/* Self Discovery */}
-    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Target className="h-4 w-4 text-amber-600" />
-        <h4 className="text-sm font-semibold text-orange-900">
-          🔍 Self-Discovery
-        </h4>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Understand your true nature, talents, and limitations.
-      </p>
-    </div>
-
-    {/* Relationship Compatibility */}
-    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Heart className="h-4 w-4 text-amber-600" />
-        <h4 className="text-sm font-semibold text-orange-900">
-          💑 Relationship Compatibility
-        </h4>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Discover romantic compatibility through kundli matching and synastry.
-      </p>
-    </div>
-
-    {/* Career Guidance */}
-    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
-      <div className="flex items-center gap-2 mb-2">
-        <TrendingUp className="h-4 w-4 text-amber-600" />
-        <h4 className="text-sm font-semibold text-orange-900">
-          💼 Career Guidance
-        </h4>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Choose the right career path based on your planetary strengths.
-      </p>
-    </div>
-
-    {/* Timing */}
-    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Clock className="h-4 w-4 text-amber-600" />
-        <h4 className="text-sm font-semibold text-orange-900">
-          ⏳ Timing Is Everything
-        </h4>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Leverage muhurats and favorable planetary periods for important decisions.
-      </p>
-    </div>
-
-    {/* Spiritual Growth */}
-    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Sparkles className="h-4 w-4 text-amber-600" />
-        <h4 className="text-sm font-semibold text-orange-900">
-          💫 Spiritual Growth
-        </h4>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Align with your soul’s purpose and evolve spiritually.
-      </p>
-    </div>
-
-    {/* Remedies */}
-    <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Shield className="h-4 w-4 text-amber-600" />
-        <h4 className="text-sm font-semibold text-orange-900">
-          🛡️ Remedial Measures
-        </h4>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Neutralize negative planetary effects with mantras, gemstones, and rituals.
-      </p>
-    </div>
-  </div>
-</GuideCard>
-
-      {/* CARD 3 – SERVICES */}
-<GuideCard
-  title="🗺️ Explore Our Astrology Services"
-  isHovered={hoveredCard === 2}
-  onMouseEnter={() => setHoveredCard(2)}
-  onMouseLeave={() => setHoveredCard(null)}
-  onReadMore={() => setLocation('/learn-astrology/planets')}
->
-  {/* Section Heading (inside card) */}
-  <h4 className="text-sm font-semibold text-orange-900 mb-2">
-    🗺️ Explore Our Astrology Services
-  </h4>
-
-  {/* Intro Paragraph */}
-  <p className="text-sm text-orange-700 leading-relaxed mb-4">
-    AstroTick brings the power of astrology to your fingertips with real-time
-    guidance, intelligent tools, and verified astrologers available 24/7.
-  </p>
-
-  {/* Services List */}
-  <div className={`grid gap-4 ${hoveredCard === 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-    {/* Vedic Astrology */}
-    <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-400/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Sun className="h-4 w-4 text-orange-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          🪐 Vedic Astrology (Jyotish)
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Explore your dashas, nakshatras, yogas, and planetary placements to decode
-        your destiny.
-      </p>
-    </div>
-
-    {/* Western Astrology */}
-    <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-400/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Globe className="h-4 w-4 text-blue-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          🌍 Western Astrology
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Understand your personality, life cycles, and transits through Sun signs
-        and psychological archetypes.
-      </p>
-    </div>
-
-    {/* Chinese & Numerology */}
-    <div className="bg-red-500/10 rounded-xl p-4 border border-red-400/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Hash className="h-4 w-4 text-yellow-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          🧘 Chinese & Numerology Systems
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Tap into Chinese astrology, numerology, and elemental systems to broaden
-        your cosmic understanding.
-      </p>
-    </div>
-
-    {/* Love & Marriage */}
-    <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-400/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Heart className="h-4 w-4 text-pink-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          💕 Love & Marriage Compatibility
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Get your kundli matched, find auspicious marriage dates, and gain insights
-        into relationship harmony.
-      </p>
-    </div>
-
-    {/* Career & Finance */}
-    <div className="bg-green-500/10 rounded-xl p-4 border border-green-400/30">
-      <div className="flex items-center gap-2 mb-2">
-        <TrendingUp className="h-4 w-4 text-green-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          💼 Career & Finance Readings
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Plan your career or business with precision using career astrology and
-        financial forecasting.
-      </p>
-    </div>
-
-    {/* Remedies & Healing */}
-    <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-400/30">
-      <div className="flex items-center gap-2 mb-2">
-        <Lightbulb className="h-4 w-4 text-yellow-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          🕉️ Remedies & Healing
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Get personalized remedies including gemstones, yantras, rituals, and
-        spiritual practices.
-      </p>
-    </div>
-  </div>
-</GuideCard>
-    </div>
-
-    {/* SECOND ROW – CENTERED */}
-    <div className="flex gap-8 justify-center max-w-5xl mx-auto">
-      {/* CARD 4 – BIRTH CHART */}
-<GuideCard
-  title="🧭 Personalized Birth Chart Analysis"
-  isHovered={hoveredCard === 3}
-  onMouseEnter={() => setHoveredCard(3)}
-  onMouseLeave={() => setHoveredCard(null)}
-  onReadMore={() => setLocation('/learn-astrology/birth-chart')}
->
-  {/* Section Heading */}
-  <h4 className="text-sm font-semibold text-orange-900 mb-2">
-    🧭 Personalized Birth Chart (Kundli) Analysis
-  </h4>
-
-  {/* Intro Paragraph */}
-  <p className="text-sm text-orange-700 leading-relaxed mb-4">
-    Your birth chart, or natal chart, is a cosmic map of your life. At AstroTick,
-    our astrologers create detailed horoscope charts using your date, time, and
-    place of birth to deliver deep, meaningful insights about your life journey.
-  </p>
-
-  {/* Insight Cards */}
-  <div className={`grid gap-4 ${hoveredCard === 3 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-    {/* Personality Insights */}
-    <div className="bg-orange-500/10 rounded-xl p-4 border border-orange-300/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Target className="h-4 w-4 text-amber-600" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Personality Insights
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Understand your natural behavior patterns, mindset, emotional tendencies,
-        and how you interact with the world around you.
-      </p>
-    </div>
-
-    {/* Strengths & Weaknesses */}
-    <div className="bg-yellow-500/10 rounded-xl p-4 border border-yellow-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <CheckCircle className="h-4 w-4 text-green-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Strengths & Weaknesses
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Identify your natural talents, hidden strengths, and areas that need
-        balance or conscious improvement.
-      </p>
-    </div>
-
-    {/* Timing for Success */}
-    <div className="bg-green-500/10 rounded-xl p-4 border border-green-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Clock className="h-4 w-4 text-green-600" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Timing for Success
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Discover favorable periods for career growth, business decisions,
-        marriage, education, and major life events.
-      </p>
-    </div>
-
-    {/* Relationship Insights */}
-    <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Heart className="h-4 w-4 text-pink-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Relationship Insights
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Gain clarity about love, marriage compatibility, emotional bonding, and
-        relationship challenges through planetary analysis.
-      </p>
-    </div>
-
-    {/* Health & Well-being */}
-    <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Shield className="h-4 w-4 text-blue-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Health & Well-being Trends
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Understand health sensitivities, stress patterns, and long-term wellness
-        trends indicated in your horoscope.
-      </p>
-    </div>
-
-    {/* Transit & Dasha Analysis */}
-    <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Sun className="h-4 w-4 text-purple-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Transit & Dasha Analysis
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Analyze current and upcoming planetary periods (Dashas) and transits to
-        prepare for opportunities and challenges ahead.
-      </p>
-    </div>
-
-    {/* Life Purpose Guidance */}
-    <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Sparkles className="h-4 w-4 text-indigo-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Life Purpose Guidance
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Discover your soul’s purpose, karmic lessons, and the deeper meaning of
-        your life path through your birth chart.
-      </p>
-    </div>
-  </div>
-</GuideCard>
-
-      {/* CARD 5 – WHY CHOOSE */}
-<GuideCard
-  title="💡 Why Choose AstroTick?"
-  isHovered={hoveredCard === 4}
-  onMouseEnter={() => setHoveredCard(4)}
-  onMouseLeave={() => setHoveredCard(null)}
-  onReadMore={() => setLocation('/learn-astrology/advanced')}
->
-  {/* Section Heading */}
-  <h4 className="text-sm font-semibold text-orange-900 mb-2">
-    💡 Why Choose AstroTick?
-  </h4>
-
-  {/* Intro Line (optional subtle lead-in) */}
-  <p className="text-sm text-orange-700 leading-relaxed mb-4">
-    AstroTick blends ancient Vedic wisdom with modern technology to deliver
-    accurate, trustworthy, and accessible astrology guidance for everyone.
-  </p>
-
-  {/* Feature Cards */}
-  <div className={`grid gap-4 ${hoveredCard === 4 ? 'grid-cols-2' : 'grid-cols-1'}`}>
-    {/* Authentic Astrologers */}
-    <div className="bg-green-500/10 rounded-xl p-4 border border-green-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <CheckCircle className="h-4 w-4 text-green-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Authentic Vedic Astrologers
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Consult certified Vedic astrologers with decades of experience in
-        horoscope analysis, remedies, and traditional Jyotish practices.
-      </p>
-    </div>
-
-    {/* Live Consultations */}
-    <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Phone className="h-4 w-4 text-blue-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Live Consultations
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Connect instantly via chat, voice call, or video call and receive
-        real-time guidance from expert astrologers.
-      </p>
-    </div>
-
-    {/* Accurate Predictions */}
-    <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Target className="h-4 w-4 text-purple-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Accurate Predictions
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Get precise predictions backed by planetary transits, dashas, nakshatras,
-        and time-tested astrological calculations.
-      </p>
-    </div>
-
-    {/* Secure & Confidential */}
-    <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Shield className="h-4 w-4 text-amber-600" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Secure & Confidential Platform
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Your personal details, birth data, and consultations are fully encrypted
-        and handled with strict privacy standards.
-      </p>
-    </div>
-
-    {/* Free Content */}
-    <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Sparkles className="h-4 w-4 text-pink-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Free Daily Horoscopes & Panchang
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Access daily horoscopes, Panchang, muhurat timings, and astrological
-        insights absolutely free.
-      </p>
-    </div>
-
-    {/* Global Access */}
-    <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-400/40">
-      <div className="flex items-center gap-2 mb-2">
-        <Globe className="h-4 w-4 text-indigo-500" />
-        <h5 className="text-sm font-semibold text-orange-900">
-          Globally Accessible
-        </h5>
-      </div>
-      <p className="text-xs text-orange-700 leading-relaxed">
-        Trusted by users across India, USA, UK, UAE, and many other countries
-        worldwide.
-      </p>
-    </div>
-  </div>
-
-  {/* Closing Paragraph */}
-  <p className="text-sm text-orange-700 leading-relaxed mt-5">
-    Whether you're searching for the best astrologer near you or exploring
-    astrology for the first time, AstroTick combines tradition with technology
-    to deliver reliable guidance — anytime, anywhere.
-  </p>
-</GuideCard>
-    </div>
-  </div>
-  {/* Call to Action */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="text-center mt-10"
-          >
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-orange-200/30">
-              <h3 className="text-3xl font-bold mb-6 flex items-center justify-center text-orange-900">
-                <Compass className="h-8 w-8 mr-3 text-amber-500" />
-                🧭 Begin Your Astrological Journey Today
-              </h3>
-
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-                <Button
-                  size="lg"
-                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 hover:scale-105 transition-all duration-300"
-                  onClick={() => setLocation("/kundli")}
+              <GuideCard
+                title="🧿 Why Astrology in the Modern World?"
+                isHovered={hoveredCard === 1}
+                onMouseEnter={() => {
+                  if (pinnedCard === null) setHoveredCard(1);
+                }}
+                onMouseLeave={() => {
+                  if (pinnedCard === null) setHoveredCard(null);
+                }}
+                isPinned={pinnedCard === 1}
+                onCardClick={() => {
+                  setPinnedCard(pinnedCard === 1 ? null : 1);
+                  setHoveredCard(pinnedCard === 1 ? null : 1);
+                }}
+                onReadMore={() => setLocation("/learn-astrology/basics")}
+              >
+                <p className="text-sm text-orange-700 leading-relaxed mb-4">
+                  In an age of uncertainty, astrology provides clarity and
+                  foresight. Here's why astrology matters more than ever:
+                </p>
+                <div
+                  className={`grid gap-4 ${hoveredCard === 1 ? "grid-cols-2" : "grid-cols-1"}`}
                 >
-                  <Target className="h-5 w-5 mr-2" />
-                  🔓 Get Your Free Birth Chart Now
-                </Button>
-              </div>
+                  <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="h-4 w-4 text-amber-600" />
+                      <h4 className="text-sm font-semibold text-orange-900">
+                        🔍 Self-Discovery
+                      </h4>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Understand your true nature, talents, and limitations.
+                    </p>
+                  </div>
+                  <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Heart className="h-4 w-4 text-amber-600" />
+                      <h4 className="text-sm font-semibold text-orange-900">
+                        💑 Relationship Compatibility
+                      </h4>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Discover romantic compatibility through kundli matching
+                      and synastry.
+                    </p>
+                  </div>
+                  <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendingUp className="h-4 w-4 text-amber-600" />
+                      <h4 className="text-sm font-semibold text-orange-900">
+                        💼 Career Guidance
+                      </h4>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Choose the right career path based on your planetary
+                      strengths.
+                    </p>
+                  </div>
+                  <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className="h-4 w-4 text-amber-600" />
+                      <h4 className="text-sm font-semibold text-orange-900">
+                        ⏳ Timing Is Everything
+                      </h4>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Leverage muhurats and favorable planetary periods for
+                      important decisions.
+                    </p>
+                  </div>
+                  <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sparkles className="h-4 w-4 text-amber-600" />
+                      <h4 className="text-sm font-semibold text-orange-900">
+                        💫 Spiritual Growth
+                      </h4>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Align with your soul's purpose and evolve spiritually.
+                    </p>
+                  </div>
+                  <div className="bg-orange-100/50 rounded-xl p-4 border border-orange-200/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Shield className="h-4 w-4 text-amber-600" />
+                      <h4 className="text-sm font-semibold text-orange-900">
+                        🛡️ Remedial Measures
+                      </h4>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Neutralize negative planetary effects with mantras,
+                      gemstones, and rituals.
+                    </p>
+                  </div>
+                </div>
+              </GuideCard>
 
+              <GuideCard
+                title="🗺️ Explore Our Astrology Services"
+                isHovered={hoveredCard === 2}
+                onMouseEnter={() => {
+                  if (pinnedCard === null) setHoveredCard(2);
+                }}
+                onMouseLeave={() => {
+                  if (pinnedCard === null) setHoveredCard(null);
+                }}
+                isPinned={pinnedCard === 2}
+                onCardClick={() => {
+                  setPinnedCard(pinnedCard === 2 ? null : 2);
+                  setHoveredCard(pinnedCard === 2 ? null : 2);
+                }}
+                onReadMore={() => setLocation("/learn-astrology/planets")}
+              >
+                <p className="text-sm text-orange-700 leading-relaxed mb-4">
+                  AstroTick brings the power of astrology to your fingertips
+                  with real-time guidance, intelligent tools, and verified
+                  astrologers available 24/7.
+                </p>
+                <div
+                  className={`grid gap-4 ${hoveredCard === 2 ? "grid-cols-2" : "grid-cols-1"}`}
+                >
+                  <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-400/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sun className="h-4 w-4 text-orange-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        🪐 Vedic Astrology (Jyotish)
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Explore your dashas, nakshatras, yogas, and planetary
+                      placements to decode your destiny.
+                    </p>
+                  </div>
+                  <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-400/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Globe className="h-4 w-4 text-blue-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        🌍 Western Astrology
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Understand your personality, life cycles, and transits
+                      through Sun signs and psychological archetypes.
+                    </p>
+                  </div>
+                  <div className="bg-red-500/10 rounded-xl p-4 border border-red-400/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Hash className="h-4 w-4 text-yellow-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        🧘 Chinese & Numerology Systems
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Tap into Chinese astrology, numerology, and elemental
+                      systems to broaden your cosmic understanding.
+                    </p>
+                  </div>
+                  <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-400/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Heart className="h-4 w-4 text-pink-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        💕 Love & Marriage Compatibility
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Get your kundli matched, find auspicious marriage dates,
+                      and gain insights into relationship harmony.
+                    </p>
+                  </div>
+                  <div className="bg-green-500/10 rounded-xl p-4 border border-green-400/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <TrendingUp className="h-4 w-4 text-green-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        💼 Career & Finance Readings
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Plan your career or business with precision using career
+                      astrology and financial forecasting.
+                    </p>
+                  </div>
+                  <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-400/30">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lightbulb className="h-4 w-4 text-yellow-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        🕉️ Remedies & Healing
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Get personalized remedies including gemstones, yantras,
+                      rituals, and spiritual practices.
+                    </p>
+                  </div>
+                </div>
+              </GuideCard>
+            </div>
+
+            {/* Row 2 — 2 cards centered */}
+            <div className="flex gap-8 justify-center max-w-5xl mx-auto">
+              <GuideCard
+                title="🧭 Personalized Birth Chart Analysis"
+                isHovered={hoveredCard === 3}
+                onMouseEnter={() => {
+                  if (pinnedCard === null) setHoveredCard(3);
+                }}
+                onMouseLeave={() => {
+                  if (pinnedCard === null) setHoveredCard(null);
+                }}
+                isPinned={pinnedCard === 3}
+                onCardClick={() => {
+                  setPinnedCard(pinnedCard === 3 ? null : 3);
+                  setHoveredCard(pinnedCard === 3 ? null : 3);
+                }}
+                onReadMore={() => setLocation("/learn-astrology/birth-chart")}
+              >
+                <p className="text-sm text-orange-700 leading-relaxed mb-4">
+                  Your birth chart, or natal chart, is a cosmic map of your
+                  life. At AstroTick, our astrologers create detailed horoscope
+                  charts using your date, time, and place of birth to deliver
+                  deep, meaningful insights about your life journey.
+                </p>
+                <div
+                  className={`grid gap-4 ${hoveredCard === 3 ? "grid-cols-2" : "grid-cols-1"}`}
+                >
+                  <div className="bg-orange-500/10 rounded-xl p-4 border border-orange-300/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="h-4 w-4 text-amber-600" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Personality Insights
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Understand your natural behavior patterns, mindset,
+                      emotional tendencies, and how you interact with the world
+                      around you.
+                    </p>
+                  </div>
+                  <div className="bg-yellow-500/10 rounded-xl p-4 border border-yellow-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Strengths & Weaknesses
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Identify your natural talents, hidden strengths, and areas
+                      that need balance or conscious improvement.
+                    </p>
+                  </div>
+                  <div className="bg-green-500/10 rounded-xl p-4 border border-green-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className="h-4 w-4 text-green-600" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Timing for Success
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Discover favorable periods for career growth, business
+                      decisions, marriage, education, and major life events.
+                    </p>
+                  </div>
+                  <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Heart className="h-4 w-4 text-pink-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Relationship Insights
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Gain clarity about love, marriage compatibility, emotional
+                      bonding, and relationship challenges through planetary
+                      analysis.
+                    </p>
+                  </div>
+                  <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Shield className="h-4 w-4 text-blue-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Health & Well-being Trends
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Understand health sensitivities, stress patterns, and
+                      long-term wellness trends indicated in your horoscope.
+                    </p>
+                  </div>
+                  <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sun className="h-4 w-4 text-purple-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Transit & Dasha Analysis
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Analyze current and upcoming planetary periods (Dashas)
+                      and transits to prepare for opportunities and challenges
+                      ahead.
+                    </p>
+                  </div>
+                  <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sparkles className="h-4 w-4 text-indigo-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Life Purpose Guidance
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Discover your soul's purpose, karmic lessons, and the
+                      deeper meaning of your life path through your birth chart.
+                    </p>
+                  </div>
+                </div>
+              </GuideCard>
+
+              <GuideCard
+                title="💡 Why Choose AstroTick?"
+                isHovered={hoveredCard === 4}
+                onMouseEnter={() => {
+                  if (pinnedCard === null) setHoveredCard(4);
+                }}
+                onMouseLeave={() => {
+                  if (pinnedCard === null) setHoveredCard(null);
+                }}
+                isPinned={pinnedCard === 4}
+                onCardClick={() => {
+                  setPinnedCard(pinnedCard === 4 ? null : 4);
+                  setHoveredCard(pinnedCard === 4 ? null : 4);
+                }}
+                onReadMore={() => setLocation("/learn-astrology/advanced")}
+              >
+                <p className="text-sm text-orange-700 leading-relaxed mb-4">
+                  AstroTick blends ancient Vedic wisdom with modern technology
+                  to deliver accurate, trustworthy, and accessible astrology
+                  guidance for everyone.
+                </p>
+                <div
+                  className={`grid gap-4 ${hoveredCard === 4 ? "grid-cols-2" : "grid-cols-1"}`}
+                >
+                  <div className="bg-green-500/10 rounded-xl p-4 border border-green-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Authentic Vedic Astrologers
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Consult certified Vedic astrologers with decades of
+                      experience in horoscope analysis, remedies, and
+                      traditional Jyotish practices.
+                    </p>
+                  </div>
+                  <div className="bg-blue-500/10 rounded-xl p-4 border border-blue-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Phone className="h-4 w-4 text-blue-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Live Consultations
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Connect instantly via chat, voice call, or video call and
+                      receive real-time guidance from expert astrologers.
+                    </p>
+                  </div>
+                  <div className="bg-purple-500/10 rounded-xl p-4 border border-purple-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="h-4 w-4 text-purple-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Accurate Predictions
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Get precise predictions backed by planetary transits,
+                      dashas, nakshatras, and time-tested astrological
+                      calculations.
+                    </p>
+                  </div>
+                  <div className="bg-amber-500/10 rounded-xl p-4 border border-amber-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Shield className="h-4 w-4 text-amber-600" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Secure & Confidential Platform
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Your personal details, birth data, and consultations are
+                      fully encrypted and handled with strict privacy standards.
+                    </p>
+                  </div>
+                  <div className="bg-pink-500/10 rounded-xl p-4 border border-pink-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sparkles className="h-4 w-4 text-pink-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Free Daily Horoscopes & Panchang
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Access daily horoscopes, Panchang, muhurat timings, and
+                      astrological insights absolutely free.
+                    </p>
+                  </div>
+                  <div className="bg-indigo-500/10 rounded-xl p-4 border border-indigo-400/40">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Globe className="h-4 w-4 text-indigo-500" />
+                      <h5 className="text-sm font-semibold text-orange-900">
+                        Globally Accessible
+                      </h5>
+                    </div>
+                    <p className="text-xs text-orange-700 leading-relaxed">
+                      Trusted by users across India, USA, UK, UAE, and many
+                      other countries worldwide.
+                    </p>
+                  </div>
+                </div>
+                <p className="text-sm text-orange-700 leading-relaxed mt-5">
+                  Whether you're searching for the best astrologer near you or
+                  exploring astrology for the first time, AstroTick combines
+                  tradition with technology to deliver reliable guidance —
+                  anytime, anywhere.
+                </p>
+              </GuideCard>
+            </div>
+          </div>
+
+          {/* ── TABLET & MOBILE LAYOUT (click to expand, no hover) ── */}
+          <div className="lg:hidden">
+            <MobileGuideCards setLocation={setLocation} />
+          </div>
+        </div>
+
+        {/* Call to Action */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 1.2 }}
+          className="text-center mt-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        >
+          <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-orange-200/30">
+            <h3 className="text-3xl font-bold mb-6 flex items-center justify-center text-orange-900">
+              <Compass className="h-8 w-8 mr-3 text-amber-500" />
+              🧭 Begin Your Astrological Journey Today
+            </h3>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0 hover:scale-105 transition-all duration-300"
-                // onClick={() => setLocation("/premium-report")}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openPremiumReportWhatsApp();
-                }}
+                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white border-0 hover:scale-105 transition-all duration-300"
+                onClick={() => setLocation("/kundli")}
               >
-                <Sparkles className="h-5 w-5 mr-2" />
-                🔮 Discover Your Future with Personalized Readings
+                <Target className="h-5 w-5 mr-2" />
+                🔓 Get Your Free Birth Chart Now
               </Button>
-
-              <p className="text-lg text-orange-700 mt-8 leading-relaxed">
-                Join the millions who trust astrology to align with their higher
-                purpose. At AstroTick, your stars have stories to tell.
-              </p>
             </div>
-          </motion.div>
-</section>
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0 hover:scale-105 transition-all duration-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                openPremiumReportWhatsApp();
+              }}
+            >
+              <Sparkles className="h-5 w-5 mr-2" />
+              🔮 Discover Your Future with Personalized Readings
+            </Button>
+            <p className="text-lg text-orange-700 mt-8 leading-relaxed">
+              Join the millions who trust astrology to align with their higher
+              purpose. At AstroTick, your stars have stories to tell.
+            </p>
+          </div>
+        </motion.div>
+      </section>
 
       {/* FAQ Section */}
       <section className="py-6 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">

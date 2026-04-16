@@ -1,5 +1,4 @@
-// const API_BASE_URL: string = (import.meta as any).env?.VITE_API_URL || "http://localhost:3001";
-const API_BASE_URL: string = (import.meta as any).env?.VITE_API_URL || "https://api.snagurum.in";
+const API_BASE_URL: string = (import.meta as any).env?.VITE_API_URL || "http://localhost:3001";
 
 if (typeof window !== "undefined" && typeof window.fetch === "function") {
   const originalFetch = window.fetch.bind(window);

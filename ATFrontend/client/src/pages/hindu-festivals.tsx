@@ -12,6 +12,7 @@ export default function HinduFestivals() {
   const [selectedMonth, setSelectedMonth] = useState<string>('all');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const currentYear = new Date().getFullYear();
 
   const months = [
     { value: 'all', label: 'All Months' },
@@ -29,64 +30,62 @@ export default function HinduFestivals() {
     { value: '12', label: 'December' }
   ];
 
-  const festivals2025 = [
-    // January 2025
-    { date: '2025-01-01', name: 'New Year', type: 'Modern', significance: 'Gregorian New Year celebration', tithi: 'Pratipada', paksha: 'Shukla', month: 'Paush', color: 'from-blue-400 to-cyan-500' },
-    { date: '2025-01-14', name: 'Makar Sankranti', type: 'Major', significance: 'Sun enters Capricorn, harvest festival', tithi: 'Pratipada', paksha: 'Shukla', month: 'Magh', color: 'from-orange-400 to-red-500' },
-    { date: '2025-01-15', name: 'Pongal', type: 'Regional', significance: 'Tamil harvest festival', tithi: 'Dwitiya', paksha: 'Shukla', month: 'Magh', color: 'from-green-400 to-teal-500' },
-    { date: '2025-01-26', name: 'Basant Panchami', type: 'Religious', significance: 'Goddess Saraswati worship', tithi: 'Panchami', paksha: 'Shukla', month: 'Magh', color: 'from-yellow-400 to-orange-500' },
-    
-    // February 2025
-    { date: '2025-02-12', name: 'Maha Shivratri', type: 'Major', significance: 'Great night of Lord Shiva', tithi: 'Chaturdashi', paksha: 'Krishna', month: 'Phalgun', color: 'from-purple-400 to-indigo-500' },
-    { date: '2025-02-13', name: 'Holi (Holika Dahan)', type: 'Major', significance: 'Bonfire night before Holi', tithi: 'Purnima', paksha: 'Shukla', month: 'Phalgun', color: 'from-pink-400 to-rose-500' },
-    { date: '2025-02-14', name: 'Holi', type: 'Major', significance: 'Festival of colors', tithi: 'Pratipada', paksha: 'Krishna', month: 'Chaitra', color: 'from-pink-400 to-rose-500' },
-    
-    // March 2025
-    { date: '2025-03-14', name: 'Ugadi/Gudi Padwa', type: 'Regional', significance: 'Telugu/Marathi New Year', tithi: 'Pratipada', paksha: 'Shukla', month: 'Chaitra', color: 'from-green-400 to-teal-500' },
-    { date: '2025-03-30', name: 'Chaitra Navratri Begins', type: 'Religious', significance: '9 nights of Goddess Durga', tithi: 'Pratipada', paksha: 'Shukla', month: 'Chaitra', color: 'from-orange-400 to-red-500' },
-    
-    // April 2025
-    { date: '2025-04-06', name: 'Rama Navami', type: 'Major', significance: 'Lord Rama\'s birth anniversary', tithi: 'Navami', paksha: 'Shukla', month: 'Chaitra', color: 'from-orange-400 to-red-500' },
-    { date: '2025-04-07', name: 'Chaitra Navratri Ends', type: 'Religious', significance: 'Last day of 9-day festival', tithi: 'Navami', paksha: 'Shukla', month: 'Chaitra', color: 'from-orange-400 to-red-500' },
-    { date: '2025-04-14', name: 'Baisakhi', type: 'Regional', significance: 'Sikh New Year, harvest festival', tithi: 'Pratipada', paksha: 'Shukla', month: 'Vaisakha', color: 'from-yellow-400 to-orange-500' },
-    { date: '2025-04-18', name: 'Hanuman Jayanti', type: 'Religious', significance: 'Lord Hanuman\'s birth anniversary', tithi: 'Purnima', paksha: 'Shukla', month: 'Chaitra', color: 'from-red-400 to-orange-500' },
-    
-    // May 2025
-    { date: '2025-05-23', name: 'Buddha Purnima', type: 'Religious', significance: 'Lord Buddha\'s birth anniversary', tithi: 'Purnima', paksha: 'Shukla', month: 'Vaisakha', color: 'from-blue-400 to-cyan-500' },
-    
-    // June 2025
-    { date: '2025-06-21', name: 'Jagannath Rath Yatra', type: 'Religious', significance: 'Chariot procession of Lord Jagannath', tithi: 'Dwitiya', paksha: 'Shukla', month: 'Ashadha', color: 'from-yellow-400 to-orange-500' },
-    
-    // July 2025
-    { date: '2025-07-16', name: 'Guru Purnima', type: 'Religious', significance: 'Teacher appreciation day', tithi: 'Purnima', paksha: 'Shukla', month: 'Ashadha', color: 'from-purple-400 to-indigo-500' },
-    
-    // August 2025
-    { date: '2025-08-09', name: 'Raksha Bandhan', type: 'Major', significance: 'Brother-sister bond celebration', tithi: 'Purnima', paksha: 'Shukla', month: 'Shravana', color: 'from-pink-400 to-rose-500' },
-    { date: '2025-08-16', name: 'Janmashtami', type: 'Major', significance: 'Lord Krishna\'s birth anniversary', tithi: 'Ashtami', paksha: 'Krishna', month: 'Bhadrapada', color: 'from-blue-400 to-cyan-500' },
-    { date: '2025-08-29', name: 'Ganesh Chaturthi', type: 'Major', significance: 'Lord Ganesha\'s birth anniversary', tithi: 'Chaturthi', paksha: 'Shukla', month: 'Bhadrapada', color: 'from-orange-400 to-red-500' },
-    
-    // September 2025
-    { date: '2025-09-07', name: 'Anant Chaturdashi', type: 'Religious', significance: 'Ganesh Visarjan day', tithi: 'Chaturdashi', paksha: 'Shukla', month: 'Bhadrapada', color: 'from-orange-400 to-red-500' },
-    { date: '2025-09-17', name: 'Pitru Paksha Begins', type: 'Religious', significance: 'Fortnight for ancestor worship', tithi: 'Pratipada', paksha: 'Krishna', month: 'Ashwin', color: 'from-gray-400 to-slate-500' },
-    
-    // October 2025
-    { date: '2025-10-01', name: 'Pitru Paksha Ends', type: 'Religious', significance: 'Last day of ancestor worship', tithi: 'Amavasya', paksha: 'Krishna', month: 'Ashwin', color: 'from-gray-400 to-slate-500' },
-    { date: '2025-10-02', name: 'Sharad Navratri Begins', type: 'Major', significance: '9 nights of Goddess Durga', tithi: 'Pratipada', paksha: 'Shukla', month: 'Ashwin', color: 'from-orange-400 to-red-500' },
-    { date: '2025-10-10', name: 'Dussehra', type: 'Major', significance: 'Victory of good over evil', tithi: 'Dashami', paksha: 'Shukla', month: 'Ashwin', color: 'from-orange-400 to-red-500' },
-    { date: '2025-10-20', name: 'Karva Chauth', type: 'Religious', significance: 'Wives fast for husbands\' longevity', tithi: 'Chaturthi', paksha: 'Krishna', month: 'Kartik', color: 'from-pink-400 to-rose-500' },
-    
-    // November 2025
-    { date: '2025-11-01', name: 'Dhanteras', type: 'Major', significance: 'Diwali celebrations begin', tithi: 'Trayodashi', paksha: 'Krishna', month: 'Kartik', color: 'from-yellow-400 to-orange-500' },
-    { date: '2025-11-02', name: 'Naraka Chaturdashi', type: 'Major', significance: 'Chhoti Diwali', tithi: 'Chaturdashi', paksha: 'Krishna', month: 'Kartik', color: 'from-yellow-400 to-orange-500' },
-    { date: '2025-11-03', name: 'Diwali', type: 'Major', significance: 'Festival of lights', tithi: 'Amavasya', paksha: 'Krishna', month: 'Kartik', color: 'from-yellow-400 to-orange-500' },
-    { date: '2025-11-04', name: 'Govardhan Puja', type: 'Religious', significance: 'Mountain worship, Annakut', tithi: 'Pratipada', paksha: 'Shukla', month: 'Kartik', color: 'from-green-400 to-teal-500' },
-    { date: '2025-11-05', name: 'Bhai Dooj', type: 'Religious', significance: 'Brother-sister celebration', tithi: 'Dwitiya', paksha: 'Shukla', month: 'Kartik', color: 'from-pink-400 to-rose-500' },
-    { date: '2025-11-15', name: 'Tulsi Vivah', type: 'Religious', significance: 'Marriage of Tulsi with Lord Vishnu', tithi: 'Dwadashi', paksha: 'Shukla', month: 'Kartik', color: 'from-green-400 to-teal-500' },
-    
-    // December 2025
-    { date: '2025-12-25', name: 'Christmas', type: 'Modern', significance: 'Christian festival', tithi: 'Purnima', paksha: 'Shukla', month: 'Paush', color: 'from-red-400 to-green-500' },
-    { date: '2025-12-31', name: 'New Year\'s Eve', type: 'Modern', significance: 'Year-end celebration', tithi: 'Saptami', paksha: 'Shukla', month: 'Paush', color: 'from-blue-400 to-cyan-500' }
-  ];
+  const festivals2026 = [
+  // January 2026
+  { date: '2026-01-01', name: 'New Year', type: 'Modern', significance: 'Gregorian New Year celebration', tithi: 'Pratipada', paksha: 'Shukla', month: 'Paush', color: 'from-blue-400 to-cyan-500' },
+  { date: '2026-01-14', name: 'Makar Sankranti', type: 'Major', significance: 'Sun enters Capricorn, harvest festival', tithi: 'Pratipada', paksha: 'Shukla', month: 'Magh', color: 'from-orange-400 to-red-500' },
+  { date: '2026-01-15', name: 'Pongal', type: 'Regional', significance: 'Tamil harvest festival', tithi: 'Dwitiya', paksha: 'Shukla', month: 'Magh', color: 'from-green-400 to-teal-500' },
+  { date: '2026-01-26', name: 'Basant Panchami', type: 'Religious', significance: 'Goddess Saraswati worship', tithi: 'Panchami', paksha: 'Shukla', month: 'Magh', color: 'from-yellow-400 to-orange-500' },
+
+  // February 2026
+  { date: '2026-02-15', name: 'Maha Shivratri', type: 'Major', significance: 'Great night of Lord Shiva', tithi: 'Chaturdashi', paksha: 'Krishna', month: 'Phalgun', color: 'from-purple-400 to-indigo-500' },
+
+  // March 2026
+  { date: '2026-03-03', name: 'Holi (Holika Dahan)', type: 'Major', significance: 'Bonfire night before Holi', tithi: 'Purnima', paksha: 'Shukla', month: 'Phalgun', color: 'from-pink-400 to-rose-500' },
+  { date: '2026-03-04', name: 'Holi', type: 'Major', significance: 'Festival of colors', tithi: 'Pratipada', paksha: 'Krishna', month: 'Chaitra', color: 'from-pink-400 to-rose-500' },
+  { date: '2026-03-20', name: 'Ugadi/Gudi Padwa', type: 'Regional', significance: 'Telugu/Marathi New Year', tithi: 'Pratipada', paksha: 'Shukla', month: 'Chaitra', color: 'from-green-400 to-teal-500' },
+  { date: '2026-03-20', name: 'Chaitra Navratri Begins', type: 'Religious', significance: '9 nights of Goddess Durga', tithi: 'Pratipada', paksha: 'Shukla', month: 'Chaitra', color: 'from-orange-400 to-red-500' },
+
+  // April 2026
+  { date: '2026-04-06', name: 'Rama Navami', type: 'Major', significance: 'Lord Rama birth anniversary', tithi: 'Navami', paksha: 'Shukla', month: 'Chaitra', color: 'from-orange-400 to-red-500' },
+  { date: '2026-04-07', name: 'Chaitra Navratri Ends', type: 'Religious', significance: 'Last day of Navratri', tithi: 'Navami', paksha: 'Shukla', month: 'Chaitra', color: 'from-orange-400 to-red-500' },
+  { date: '2026-04-14', name: 'Baisakhi', type: 'Regional', significance: 'Harvest festival', tithi: 'Pratipada', paksha: 'Shukla', month: 'Vaisakha', color: 'from-yellow-400 to-orange-500' },
+  { date: '2026-04-22', name: 'Hanuman Jayanti', type: 'Religious', significance: 'Hanuman birth anniversary', tithi: 'Purnima', paksha: 'Shukla', month: 'Chaitra', color: 'from-red-400 to-orange-500' },
+
+  // May 2026
+  { date: '2026-05-12', name: 'Buddha Purnima', type: 'Religious', significance: 'Lord Buddha birth', tithi: 'Purnima', paksha: 'Shukla', month: 'Vaisakha', color: 'from-blue-400 to-cyan-500' },
+
+  // June 2026
+  { date: '2026-06-20', name: 'Jagannath Rath Yatra', type: 'Religious', significance: 'Jagannath chariot festival', tithi: 'Dwitiya', paksha: 'Shukla', month: 'Ashadha', color: 'from-yellow-400 to-orange-500' },
+
+  // July 2026
+  { date: '2026-07-30', name: 'Guru Purnima', type: 'Religious', significance: 'Teacher day', tithi: 'Purnima', paksha: 'Shukla', month: 'Ashadha', color: 'from-purple-400 to-indigo-500' },
+
+  // August 2026
+  { date: '2026-08-29', name: 'Raksha Bandhan', type: 'Major', significance: 'Brother-sister bond', tithi: 'Purnima', paksha: 'Shukla', month: 'Shravana', color: 'from-pink-400 to-rose-500' },
+
+  // September 2026
+  { date: '2026-09-06', name: 'Janmashtami', type: 'Major', significance: 'Krishna birth', tithi: 'Ashtami', paksha: 'Krishna', month: 'Bhadrapada', color: 'from-blue-400 to-cyan-500' },
+  { date: '2026-09-17', name: 'Ganesh Chaturthi', type: 'Major', significance: 'Ganesha festival', tithi: 'Chaturthi', paksha: 'Shukla', month: 'Bhadrapada', color: 'from-orange-400 to-red-500' },
+  { date: '2026-09-27', name: 'Anant Chaturdashi', type: 'Religious', significance: 'Ganesh Visarjan', tithi: 'Chaturdashi', paksha: 'Shukla', month: 'Bhadrapada', color: 'from-orange-400 to-red-500' },
+
+  // October 2026
+  { date: '2026-10-02', name: 'Sharad Navratri Begins', type: 'Major', significance: 'Navratri begins', tithi: 'Pratipada', paksha: 'Shukla', month: 'Ashwin', color: 'from-orange-400 to-red-500' },
+  { date: '2026-10-11', name: 'Dussehra', type: 'Major', significance: 'Victory of good over evil', tithi: 'Dashami', paksha: 'Shukla', month: 'Ashwin', color: 'from-orange-400 to-red-500' },
+  { date: '2026-10-20', name: 'Karva Chauth', type: 'Religious', significance: 'Fast for husbands', tithi: 'Chaturthi', paksha: 'Krishna', month: 'Kartik', color: 'from-pink-400 to-rose-500' },
+
+  // November 2026
+  { date: '2026-11-08', name: 'Dhanteras', type: 'Major', significance: 'Diwali begins', tithi: 'Trayodashi', paksha: 'Krishna', month: 'Kartik', color: 'from-yellow-400 to-orange-500' },
+  { date: '2026-11-09', name: 'Naraka Chaturdashi', type: 'Major', significance: 'Chhoti Diwali', tithi: 'Chaturdashi', paksha: 'Krishna', month: 'Kartik', color: 'from-yellow-400 to-orange-500' },
+  { date: '2026-11-10', name: 'Diwali', type: 'Major', significance: 'Festival of lights', tithi: 'Amavasya', paksha: 'Krishna', month: 'Kartik', color: 'from-yellow-400 to-orange-500' },
+  { date: '2026-11-11', name: 'Govardhan Puja', type: 'Religious', significance: 'Annakut festival', tithi: 'Pratipada', paksha: 'Shukla', month: 'Kartik', color: 'from-green-400 to-teal-500' },
+  { date: '2026-11-12', name: 'Bhai Dooj', type: 'Religious', significance: 'Brother-sister bond', tithi: 'Dwitiya', paksha: 'Shukla', month: 'Kartik', color: 'from-pink-400 to-rose-500' },
+  { date: '2026-11-20', name: 'Tulsi Vivah', type: 'Religious', significance: 'Tulsi marriage', tithi: 'Dwadashi', paksha: 'Shukla', month: 'Kartik', color: 'from-green-400 to-teal-500' },
+
+  // December 2026
+  { date: '2026-12-25', name: 'Christmas', type: 'Modern', significance: 'Christian festival', tithi: 'Purnima', paksha: 'Shukla', month: 'Paush', color: 'from-red-400 to-green-500' },
+  { date: '2026-12-31', name: 'New Year\'s Eve', type: 'Modern', significance: 'Year end celebration', tithi: 'Saptami', paksha: 'Shukla', month: 'Paush', color: 'from-blue-400 to-cyan-500' }
+];
 
   const festivalTypes = [
     { value: 'all', label: 'All Types' },
@@ -96,7 +95,7 @@ export default function HinduFestivals() {
     { value: 'Modern', label: 'Modern Celebrations' }
   ];
 
-  const filteredFestivals = festivals2025.filter(festival => {
+  const filteredFestivals = festivals2026.filter(festival => {
     const matchesMonth = selectedMonth === 'all' || new Date(festival.date).getMonth() + 1 === parseInt(selectedMonth);
     const matchesType = selectedType === 'all' || festival.type === selectedType;
     const matchesSearch = !searchTerm || 
@@ -107,11 +106,11 @@ export default function HinduFestivals() {
   });
 
   const festivalStats = {
-    total: festivals2025.length,
-    major: festivals2025.filter(f => f.type === 'Major').length,
-    religious: festivals2025.filter(f => f.type === 'Religious').length,
-    regional: festivals2025.filter(f => f.type === 'Regional').length,
-    modern: festivals2025.filter(f => f.type === 'Modern').length
+    total: festivals2026.length,
+    major: festivals2026.filter(f => f.type === 'Major').length,
+    religious: festivals2026.filter(f => f.type === 'Religious').length,
+    regional: festivals2026.filter(f => f.type === 'Regional').length,
+    modern: festivals2026.filter(f => f.type === 'Modern').length
   };
 
   const formatDate = (dateString: string) => {
@@ -158,7 +157,7 @@ export default function HinduFestivals() {
               </div>
             </div>
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-orange-600 via-red-600 to-pink-600 bg-clip-text text-transparent mb-6">
-              Hindu Festivals 2025
+              Hindu Festivals {currentYear}
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               Complete calendar of Hindu festivals with authentic Panchang details, significance, and traditional observances
@@ -252,7 +251,7 @@ export default function HinduFestivals() {
                 </div>
                 <div className="text-center">
                   <Badge variant="outline" className="text-orange-600 border-orange-600">
-                    Showing {filteredFestivals.length} of {festivals2025.length} festivals
+                    Showing {filteredFestivals.length} of {festivals2026.length} festivals
                   </Badge>
                 </div>
               </CardContent>

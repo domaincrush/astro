@@ -75,22 +75,34 @@ export default function DashaCalculator() {
   };
 
   const validateAndSetTime = (h: string, min: string, meridian: string) => {
-    if (h && min && meridian) {
-      const hh = parseInt(h, 10);
-      const mm = parseInt(min, 10);
+  if (h && min && meridian) {
+    const hh = parseInt(h, 10);
+    const mm = parseInt(min, 10);
 
-      if (hh >= 1 && hh <= 12 && mm >= 0 && mm <= 59) {
-        setBirthTimeError("");
-        const formatted = `${h.padStart(2, "0")}:${min.padStart(2, "0")}`;
-        setBirthTime(formatted);
-        form.setValue("birthTime", formatted); // ✅ keep form in sync
-      } else {
-        setBirthTimeError("Please select a valid time");
-        setBirthTime("");
-        form.setValue("birthTime", ""); // ✅ reset form value
+    if (hh >= 1 && hh <= 12 && mm >= 0 && mm <= 59) {
+
+      let convertedHour = hh;
+
+      if (meridian === "PM" && hh !== 12) {
+        convertedHour = hh + 12;
       }
+      if (meridian === "AM" && hh === 12) {
+        convertedHour = 0;
+      }
+
+      const formatted = `${String(convertedHour).padStart(2, "0")}:${min.padStart(2, "0")}`;
+
+      setBirthTimeError("");
+      setBirthTime(formatted);
+      form.setValue("birthTime", formatted);
+
+    } else {
+      setBirthTimeError("Please select a valid time");
+      setBirthTime("");
+      form.setValue("birthTime", "");
     }
-  };
+  }
+};
 
   const form = useForm<DashaFormData>({
     resolver: zodResolver(dashaSchema),

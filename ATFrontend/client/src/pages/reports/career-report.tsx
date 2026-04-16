@@ -467,7 +467,7 @@ const CareerReport: React.FC = () => {
                     🎉 Your Career Analysis Report
                   </CardTitle>
                   <div className="flex justify-center gap-4 mt-4">
-                    <Button
+                    {/* <Button
                       onClick={handleDownloadPDF}
                       disabled={isGeneratingPDF}
                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
@@ -477,8 +477,8 @@ const CareerReport: React.FC = () => {
                       ) : (
                         <><Download className="mr-2 h-4 w-4" /> Download PDF Report</>
                       )}
-                    </Button>
-                    <Button
+                    </Button> */}
+                    {/* <Button
                       onClick={handleEmailReport}
                       disabled={isSendingEmail}
                       variant="outline"
@@ -489,7 +489,7 @@ const CareerReport: React.FC = () => {
                       ) : (
                         <><Mail className="mr-2 h-4 w-4" /> Email Report</>
                       )}
-                    </Button>
+                    </Button> */}
                   </div>
                 </CardHeader>
                 <CardContent>

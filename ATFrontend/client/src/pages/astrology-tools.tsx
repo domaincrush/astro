@@ -173,16 +173,10 @@ export default function AstrologyTools() {
     mutationFn: async (data: typeof formData) => {
       const response = await fetch('/api/kp-calculation', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       return await response.json();
     },
     onSuccess: () => {
@@ -210,10 +204,7 @@ export default function AstrologyTools() {
       });
       return;
     }
-    
-    // Track advanced calculation usage
     trackEvent('advanced_calculation_submitted', 'astrology_tools', 'advanced_analysis');
-    
     advancedCalculation.mutate(formData);
   };
 
@@ -223,21 +214,15 @@ export default function AstrologyTools() {
     <>
       <Helmet>
         <title>Free Astrology Tools | Vedic Calculators & Chart Analysis - AstroTick</title>
-        <meta name="description" content="Free Astrology Tools - Access comprehensive Vedic astrology calculators including birth charts, compatibility analysis, and horoscope tools. Advanced astronomical algorithms for accurate predictions." />
+        <meta name="description" content="Free Astrology Tools - Access comprehensive Vedic astrology calculators including birth charts, compatibility analysis, and horoscope tools." />
         <meta name="keywords" content="free astrology tools, Vedic calculators, birth chart generator, horoscope tools, astrology calculators, compatibility analysis, free Vedic astrology" />
         <link rel="canonical" href="https://astrotick.com/astrology-tools" />
-        
-        {/* Open Graph */}
         <meta property="og:title" content="Free Astrology Tools - AstroTick" />
         <meta property="og:description" content="Free Astrology Tools - Access comprehensive Vedic astrology calculators and advanced astronomical algorithms for accurate predictions." />
         <meta property="og:url" content="https://astrotick.com/astrology-tools" />
         <meta property="og:type" content="website" />
-        
-        {/* Twitter */}
         <meta name="twitter:title" content="Free Astrology Tools - AstroTick" />
         <meta name="twitter:description" content="Free Astrology Tools - Access comprehensive Vedic astrology calculators and advanced astronomical algorithms." />
-        
-        {/* Schema.org structured data */}
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -247,317 +232,305 @@ export default function AstrologyTools() {
             "url": "https://astrotick.com/astrology-tools",
             "applicationCategory": "LifestyleApplication",
             "operatingSystem": "Web Browser",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD"
-            }
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
           })}
         </script>
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-gray-900 dark:via-gray-800 dark:to-orange-900">
+      <div
+        className="min-h-screen w-full bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-gray-900 dark:via-gray-800 dark:to-orange-900"
+        style={{ overflowX: "hidden", maxWidth: "100vw" }}
+      >
         <AstroTickHeader />
-      
-      <div className="container mx-auto px-4 py-4">
-        <div className="max-w-6xl mx-auto">
-          {/* Hero Section */}
-          <div className="text-center mb-6">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Free Astrology Tools
-            </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Comprehensive astrological calculations and analysis tools powered by advanced astronomical algorithms
-            </p>
-          </div>
 
-          {/* Service Cards with Pricing */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {tools.map((tool) => (
-              <Card 
-                key={tool.id}
-                className={`relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                  activeTab === tool.id ? 'ring-2 ring-purple-500 shadow-lg' : ''
-                }`}
-              >
-                {tool.isPopular && (
-                  <div className="absolute top-0 right-0 bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-1 text-xs font-semibold rounded-bl-lg">
-                    Popular
-                  </div>
-                )}
-                
-                <CardContent className="p-6">
-                  <div 
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setActiveTab(tool.id);
-                      trackEvent('tool_selected', 'astrology_tools', tool.title);
-                    }}
-                  >
-                    <div className={`w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r ${tool.color} flex items-center justify-center text-white`}>
-                      {tool.icon}
+        <div
+          className="w-full px-4 py-4"
+          style={{ overflowX: "hidden" }}
+        >
+          <div className="w-full max-w-7xl mx-auto">
+
+            {/* Hero */}
+            <div className="text-center mb-6">
+              <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                Free Astrology Tools
+              </h1>
+              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Comprehensive astrological calculations and analysis tools powered by advanced astronomical algorithms
+              </p>
+            </div>
+
+            {/* Service Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              {tools.map((tool) => (
+                <Card
+                  key={tool.id}
+                  className={`relative overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                    activeTab === tool.id ? 'ring-2 ring-purple-500 shadow-lg' : ''
+                  }`}
+                >
+                  {tool.isPopular && (
+                    <div className="absolute top-0 right-0 bg-gradient-to-r from-pink-500 to-purple-600 text-white px-3 py-1 text-xs font-semibold rounded-bl-lg">
+                      Popular
                     </div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2 text-center">
-                      {tool.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
-                      {tool.description}
-                    </p>
-                  </div>
-
-                  {/* Pricing */}
-                  <div className="text-center mb-4">
-                    <div className="flex items-center justify-center gap-2 mb-2">
-                      <span className="text-2xl font-bold text-gray-900 dark:text-white">
-                        ₹{tool.price}
-                      </span>
-                      <span className="text-lg text-gray-500 dark:text-gray-400 line-through">
-                        ₹{tool.originalPrice}
-                      </span>
+                  )}
+                  <CardContent className="p-6">
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        setActiveTab(tool.id);
+                        trackEvent('tool_selected', 'astrology_tools', tool.title);
+                      }}
+                    >
+                      <div className={`w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-r ${tool.color} flex items-center justify-center text-white`}>
+                        {tool.icon}
+                      </div>
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-2 text-center">
+                        {tool.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 text-center mb-4">
+                        {tool.description}
+                      </p>
                     </div>
-                    <div className="text-xs text-green-600 dark:text-green-400 font-medium">
-                      Save ₹{tool.originalPrice - tool.price} ({Math.round(((tool.originalPrice - tool.price) / tool.originalPrice) * 100)}% off)
+
+                    <div className="text-center mb-4">
+                      <div className="flex items-center justify-center gap-2 mb-2">
+                        <span className="text-2xl font-bold text-gray-900 dark:text-white">
+                          ₹{tool.price}
+                        </span>
+                        <span className="text-lg text-gray-500 dark:text-gray-400 line-through">
+                          ₹{tool.originalPrice}
+                        </span>
+                      </div>
+                      <div className="text-xs text-green-600 dark:text-green-400 font-medium">
+                        Save ₹{tool.originalPrice - tool.price} ({Math.round(((tool.originalPrice - tool.price) / tool.originalPrice) * 100)}% off)
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Features */}
-                  <div className="mb-4">
-                    <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
-                      {tool.features.slice(0, 3).map((feature, idx) => (
-                        <li key={idx} className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                          {feature}
-                        </li>
-                      ))}
-                      {tool.features.length > 3 && (
-                        <li className="text-gray-500">
-                          +{tool.features.length - 3} more features
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-
-                  {/* Purchase Button */}
-                  <Button 
-                    className="w-full text-sm"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const paymentUrl = `/payment?service=${encodeURIComponent(tool.id)}&packageName=${encodeURIComponent(tool.title)}&amount=${tool.price}&description=${encodeURIComponent(tool.description)}`;
-                      window.location.href = paymentUrl;
-                      trackEvent('service_purchase_initiated', 'astrology_tools', tool.title);
-                    }}
-                  >
-                    <Coins className="h-4 w-4 mr-2" />
-                    Purchase Service
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Tool Content */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsContent value="birth-chart">
-              <BirthChartGenerator />
-            </TabsContent>
-
-            <TabsContent value="compatibility">
-              <CompatibilityCalculator />
-            </TabsContent>
-
-            <TabsContent value="daily-horoscope">
-              <DailyHoroscope />
-            </TabsContent>
-
-            <TabsContent value="advanced-calculations">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Input Form */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Star className="h-5 w-5 text-indigo-600" />
-                      Birth Details
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <form onSubmit={handleAdvancedSubmit} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="date" className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4" />
-                            Date
-                          </Label>
-                          <Input
-                            id="date"
-                            type="date"
-                            value={formData.date}
-                            onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="time" className="flex items-center gap-2">
-                            <Clock className="h-4 w-4" />
-                            Time
-                          </Label>
-                          <Input
-                            id="time"
-                            type="time"
-                            value={formData.time}
-                            onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="place" className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4" />
-                          Place
-                        </Label>
-                        <Input
-                          id="place"
-                          placeholder="City, Country"
-                          value={formData.place}
-                          onChange={(e) => setFormData(prev => ({ ...prev, place: e.target.value }))}
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="latitude">Latitude</Label>
-                          <Input
-                            id="latitude"
-                            placeholder="13.0827"
-                            value={formData.latitude}
-                            onChange={(e) => setFormData(prev => ({ ...prev, latitude: e.target.value }))}
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="longitude">Longitude</Label>
-                          <Input
-                            id="longitude"
-                            placeholder="80.2707"
-                            value={formData.longitude}
-                            onChange={(e) => setFormData(prev => ({ ...prev, longitude: e.target.value }))}
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <Button 
-                        type="submit" 
-                        className="w-full"
-                        disabled={advancedCalculation.isPending}
-                      >
-                        {advancedCalculation.isPending ? (
-                          <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            Calculating...
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Zap className="h-4 w-4" />
-                            Generate Advanced Analysis
-                          </div>
+                    <div className="mb-4">
+                      <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                        {tool.features.slice(0, 3).map((feature, idx) => (
+                          <li key={idx} className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                            {feature}
+                          </li>
+                        ))}
+                        {tool.features.length > 3 && (
+                          <li className="text-gray-500">+{tool.features.length - 3} more features</li>
                         )}
-                      </Button>
-                    </form>
+                      </ul>
+                    </div>
+
+                    <Button
+                      className="w-full text-sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const paymentUrl = `/payment?service=${encodeURIComponent(tool.id)}&packageName=${encodeURIComponent(tool.title)}&amount=${tool.price}&description=${encodeURIComponent(tool.description)}`;
+                        window.location.href = paymentUrl;
+                        trackEvent('service_purchase_initiated', 'astrology_tools', tool.title);
+                      }}
+                    >
+                      <Coins className="h-4 w-4 mr-2" />
+                      Purchase Service
+                    </Button>
                   </CardContent>
                 </Card>
+              ))}
+            </div>
 
-                {/* Results */}
-                {result && (
-                  <div className="space-y-6">
-                    {/* Enhanced Analysis Results */}
-                    {result.advancedAnalysis?.cuspalWealth && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center gap-2">
-                            <Coins className="h-5 w-5 text-yellow-500" />
-                            Wealth Analysis
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div className="flex items-center gap-3">
-                              <div className="w-3 h-3 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
-                              <span className="text-lg font-medium">
-                                Level {result.advancedAnalysis.cuspalWealth.level}
-                              </span>
-                            </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {result.advancedAnalysis.cuspalWealth.description}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
+            {/* Tab Content */}
+            <div style={{ overflowX: "hidden", width: "100%" }}>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsContent value="birth-chart">
+                  <BirthChartGenerator />
+                </TabsContent>
 
-                    {/* Planetary Cooperation */}
-                    {result.advancedAnalysis?.panchangaGroup && (
-                      <Card>
-                        <CardHeader>
-                          <CardTitle className="flex items-center gap-2">
-                            <Users className="h-5 w-5 text-blue-500" />
-                            Planetary Cooperation
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-4">
-                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                              <div 
-                                className="bg-blue-500 h-3 rounded-full transition-all duration-500"
-                                style={{ width: `${Math.min(result.advancedAnalysis.panchangaGroup.groupStrength, 100)}%` }}
-                              ></div>
-                            </div>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {result.advancedAnalysis.panchangaGroup.description}
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                              {result.advancedAnalysis.panchangaGroup.cooperatingPlanets?.map((planet: string, idx: number) => (
-                                <Badge key={idx} variant="secondary" className="text-xs">
-                                  {planet}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    )}
+                <TabsContent value="compatibility">
+                  <CompatibilityCalculator />
+                </TabsContent>
 
-                    {/* System Comparison */}
+                <TabsContent value="daily-horoscope">
+                  <DailyHoroscope />
+                </TabsContent>
+
+                <TabsContent value="advanced-calculations">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <Card>
                       <CardHeader>
-                        <CardTitle>Calculation Comparison</CardTitle>
+                        <CardTitle className="flex items-center gap-2">
+                          <Star className="h-5 w-5 text-indigo-600" />
+                          Birth Details
+                        </CardTitle>
                       </CardHeader>
                       <CardContent>
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                          <div>
-                            <p className="font-medium">Standard Ascendant</p>
-                            <p>{result.comparison.standardAscendant.toFixed(2)}°</p>
+                        <form onSubmit={handleAdvancedSubmit} className="space-y-4">
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="date" className="flex items-center gap-2">
+                                <Calendar className="h-4 w-4" /> Date
+                              </Label>
+                              <Input
+                                id="date"
+                                type="date"
+                                value={formData.date}
+                                onChange={(e) => setFormData(prev => ({ ...prev, date: e.target.value }))}
+                                required
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="time" className="flex items-center gap-2">
+                                <Clock className="h-4 w-4" /> Time
+                              </Label>
+                              <Input
+                                id="time"
+                                type="time"
+                                value={formData.time}
+                                onChange={(e) => setFormData(prev => ({ ...prev, time: e.target.value }))}
+                                required
+                              />
+                            </div>
                           </div>
-                          <div>
-                            <p className="font-medium">Enhanced Ascendant</p>
-                            <p>{result.comparison.kpAscendant.toFixed(2)}°</p>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="place" className="flex items-center gap-2">
+                              <MapPin className="h-4 w-4" /> Place
+                            </Label>
+                            <Input
+                              id="place"
+                              placeholder="City, Country"
+                              value={formData.place}
+                              onChange={(e) => setFormData(prev => ({ ...prev, place: e.target.value }))}
+                            />
                           </div>
-                          <div className="col-span-2">
-                            <p className="font-medium">Precision Difference</p>
-                            <p>{result.comparison.difference.toFixed(4)}°</p>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="latitude">Latitude</Label>
+                              <Input
+                                id="latitude"
+                                placeholder="13.0827"
+                                value={formData.latitude}
+                                onChange={(e) => setFormData(prev => ({ ...prev, latitude: e.target.value }))}
+                                required
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="longitude">Longitude</Label>
+                              <Input
+                                id="longitude"
+                                placeholder="80.2707"
+                                value={formData.longitude}
+                                onChange={(e) => setFormData(prev => ({ ...prev, longitude: e.target.value }))}
+                                required
+                              />
+                            </div>
                           </div>
-                        </div>
+
+                          <Button type="submit" className="w-full" disabled={advancedCalculation.isPending}>
+                            {advancedCalculation.isPending ? (
+                              <div className="flex items-center gap-2">
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                Calculating...
+                              </div>
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <Zap className="h-4 w-4" />
+                                Generate Advanced Analysis
+                              </div>
+                            )}
+                          </Button>
+                        </form>
                       </CardContent>
                     </Card>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
 
-      <Footer />
+                    {result && (
+                      <div className="space-y-6">
+                        {result.advancedAnalysis?.cuspalWealth && (
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="flex items-center gap-2">
+                                <Coins className="h-5 w-5 text-yellow-500" />
+                                Wealth Analysis
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-3 h-3 rounded-full bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
+                                  <span className="text-lg font-medium">
+                                    Level {result.advancedAnalysis.cuspalWealth.level}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {result.advancedAnalysis.cuspalWealth.description}
+                                </p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
+
+                        {result.advancedAnalysis?.panchangaGroup && (
+                          <Card>
+                            <CardHeader>
+                              <CardTitle className="flex items-center gap-2">
+                                <Users className="h-5 w-5 text-blue-500" />
+                                Planetary Cooperation
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-4">
+                                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                                  <div
+                                    className="bg-blue-500 h-3 rounded-full transition-all duration-500"
+                                    style={{ width: `${Math.min(result.advancedAnalysis.panchangaGroup.groupStrength, 100)}%` }}
+                                  ></div>
+                                </div>
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {result.advancedAnalysis.panchangaGroup.description}
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                  {result.advancedAnalysis.panchangaGroup.cooperatingPlanets?.map((planet: string, idx: number) => (
+                                    <Badge key={idx} variant="secondary" className="text-xs">
+                                      {planet}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        )}
+
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Calculation Comparison</CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <p className="font-medium">Standard Ascendant</p>
+                                <p>{result.comparison.standardAscendant.toFixed(2)}°</p>
+                              </div>
+                              <div>
+                                <p className="font-medium">Enhanced Ascendant</p>
+                                <p>{result.comparison.kpAscendant.toFixed(2)}°</p>
+                              </div>
+                              <div className="col-span-2">
+                                <p className="font-medium">Precision Difference</p>
+                                <p>{result.comparison.difference.toFixed(4)}°</p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
+
+          </div>
+        </div>
+
+        <Footer />
       </div>
     </>
   );

@@ -775,3 +775,63 @@
 .manuscript-content .card-header {
   border-bottom: 1px solid rgba(218, 165, 32, 0.2) !important;
 }
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  position: relative;
+}
+
+/* ── Global overflow fix ── */
+html,
+body,
+#root {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}
+
+/* ── Force all top-level page wrappers to stay within viewport ── */
+#root > * {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* ── Prevent any header/nav from exceeding viewport ── */
+header,
+nav {
+  max-width: 100vw;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ── Prevent buttons row in header from overflowing ── */
+header > *,
+nav > * {
+  min-width: 0;
+  flex-shrink: 1;
+}
+
+/* ── On tablet: allow header buttons to shrink text ── */
+@media (max-width: 1024px) {
+  header button,
+  header a {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+}

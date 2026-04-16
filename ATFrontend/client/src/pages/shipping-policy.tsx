@@ -137,7 +137,7 @@ export default function ShippingPolicy() {
               </p>
               <p className="mt-2">
                 Email: support@astrotick.com<br />
-                Phone: +91-XXXXXXXXXX<br />
+                Phone: +91-8807556886<br />
                 Live Chat: Available 24/7 on our platform
               </p>
             </section>

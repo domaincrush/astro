@@ -263,13 +263,13 @@ export default function SuperHoroscopeResults() {
                   >
                     Generate New Report
                   </Button>
-                  <Button
+                  {/* <Button
                     onClick={handlePrint}
                     className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700"
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Print Report
-                  </Button>
+                  </Button> */}
                 </div>
               </CardContent>
             </Card>

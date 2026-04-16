@@ -624,7 +624,7 @@ const MarriageReport: React.FC = () => {
                     🎉 Your Marriage Report Analysis
                   </CardTitle>
                   <div className="flex justify-center gap-4 mt-4">
-                    <Button
+                    {/* <Button
                       onClick={handleDownloadPDF}
                       disabled={isGeneratingPDF}
                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
@@ -646,7 +646,7 @@ const MarriageReport: React.FC = () => {
                       ) : (
                         <><Mail className="mr-2 h-4 w-4" /> Email Report</>
                       )}
-                    </Button>
+                    </Button> */}
                   </div>
                 </CardHeader>
                 <CardContent>

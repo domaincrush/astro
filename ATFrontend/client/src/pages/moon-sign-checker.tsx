@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
@@ -163,9 +168,23 @@ export default function MoonSignChecker() {
       return;
     }
 
+    const convertTo24Hour = (time: string) => {
+      const [hourMin, meridian] = time.split(" ");
+      let [h, m] = hourMin.split(":").map(Number);
+
+      if (meridian === "PM" && h !== 12) {
+        h += 12;
+      }
+      if (meridian === "AM" && h === 12) {
+        h = 0;
+      }
+
+      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+    };
+
     const requestData = {
       birthDate: birthDate,
-      birthTime: birthTime,
+      birthTime: convertTo24Hour(birthTime),
       birthPlace:
         typeof birthPlace === "string"
           ? birthPlace
@@ -568,14 +587,15 @@ export default function MoonSignChecker() {
                   </Button>
                 </Link>
                 {/* <Link href="/astrologers"> */}
-                  <Button type="button"
+                <Button
+                  type="button"
                   onClick={openAstroWhatsApp}
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
-                  >
-                    Consult with Expert
-                  </Button>
+                  size="lg"
+                  variant="outline"
+                  className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
+                >
+                  Consult with Expert
+                </Button>
                 {/* </Link> */}
               </div>
             </motion.div>

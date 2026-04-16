@@ -96,7 +96,7 @@ export class ComprehensivePanchangEngine {
   private async executeJyotishaEngine(inputData: any): Promise<any> {
     
     return new Promise((resolve, reject) => {
-      const python = spawn('python', ['server/jyotisha-engine.py']);
+      const python = spawn(process.env.PYTHON3, ['server/jyotisha-engine.py']);
       
       let output = '';
       let error = '';

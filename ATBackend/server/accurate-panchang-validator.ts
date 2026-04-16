@@ -277,7 +277,7 @@ export class AccuratePanchangValidator {
   private static async calculateOurPanchang(date: string, lat: number, lng: number, tz: string) {
     // Call our existing Panchang calculation system
     return new Promise((resolve, reject) => {
-      const python = spawn('python3', [
+      const python = spawn(process.env.PYTHON3, [
         'server/panchang-jyotisha-engine.py',
         date,
         lat.toString(),

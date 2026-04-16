@@ -236,7 +236,7 @@ export class SwissEphemerisIntegration {
   private static async executeSwissEphemerisPython(inputData: any): Promise<any> {
     return new Promise((resolve, reject) => {
       const pythonScript = path.join(__dirname, 'enhanced-swiss-ephemeris-engine.py');
-      const pythonProcess = spawn('python3', [pythonScript, JSON.stringify(inputData)], {
+      const pythonProcess = spawn(process.env.PYTHON3, [pythonScript, JSON.stringify(inputData)], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 

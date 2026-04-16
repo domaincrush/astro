@@ -161,7 +161,7 @@ export class JEMicro {
    */
   private static async calculateWithMicroEngine(birthData: BirthData): Promise<JyotishaMicroResult> {
     return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python3', ['server/jyotisha-micro-engine.py']);
+      const pythonProcess = spawn(process.env.PYTHON3, ['server/jyotisha-micro-engine.py']);
 
       let stdout = '';
       let stderr = '';

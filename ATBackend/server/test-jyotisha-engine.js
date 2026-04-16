@@ -14,7 +14,7 @@ async function testJyotishaEngine() {
 
   console.log('Testing Jyotisha engine with data:', testData);
 
-  const pythonProcess = spawn('python3', [
+  const pythonProcess = spawn(process.env.PYTHON3, [
     'server/jyotisha-engine.py',
     JSON.stringify(testData)
   ]);

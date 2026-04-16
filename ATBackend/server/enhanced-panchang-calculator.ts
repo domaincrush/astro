@@ -271,7 +271,7 @@ export class EnhancedPanchangCalculator {
     timezone: string
   ) {
     return new Promise((resolve, reject) => {
-      const python = spawn('python3', [
+      const python = spawn(process.env.PYTHON3, [
         'server/enhanced-swiss-ephemeris-engine.py',
         date,
         latitude.toString(),

@@ -26,7 +26,7 @@ def get_planetary_positions(birth_year, birth_month, birth_day, birth_hour, birt
     try:
         # Call the existing jyotisha-engine.py
         result = subprocess.run(
-            ['python3', 'server/jyotisha-engine.py', json.dumps(birth_data)],
+            [process.env.PYTHON3, 'server/jyotisha-engine.py', json.dumps(birth_data)],
             capture_output=True,
             text=True,
             timeout=30

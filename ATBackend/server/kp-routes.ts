@@ -57,7 +57,7 @@ router.post('/kp-chart', async (req, res) => {
       }
     };
 
-    const pythonProcess = spawn('python', [scriptPath], {
+    const pythonProcess = spawn(process.env.PYTHON3, [scriptPath], {
       cwd: KP_ENGINE_PATH,
       stdio: ['pipe', 'pipe', 'pipe']
     });

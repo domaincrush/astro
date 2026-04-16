@@ -14,11 +14,14 @@ from typing import Dict, List, Any
 
 try:
     import swisseph as swe
+    swe.set_ephe_path('/home/ubuntu/ephe')
     swe_available = True
     print("✅ Swiss Ephemeris available for calculations", file=sys.stderr)
-except ImportError:
+except ImportError as e:
     swe_available = False
     print("❌ Swiss Ephemeris not available", file=sys.stderr)
+    print(f"❌ Python ERROR: {e}", file=sys.stderr)
+    sys.exit(1)
 
 class JyotishaEngine:
     """

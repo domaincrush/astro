@@ -10,7 +10,7 @@ async function executeDrikPanchang(date: string, latitude: number, longitude: nu
     const enginePath = 'server/drik-panchang-corrected.py';
     
     // Execute Python engine with arguments
-    const pythonProcess = spawn('python3', [enginePath, date, latitude.toString(), longitude.toString(), 'Asia/Kolkata'], {
+    const pythonProcess = spawn(process.env.PYTHON3, [enginePath, date, latitude.toString(), longitude.toString(), 'Asia/Kolkata'], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     

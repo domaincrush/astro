@@ -15,8 +15,11 @@ import { registerDashaRoutes } from "./dasha-routes";
 import cors from 'cors';
 
 const app = express();
+// const allowedOrigins = ['http://localhost:5173', 'https://snagurum.in'];
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '').split(',');
+
  app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: allowedOrigins,
   credentials: true, // allow cookies if needed
 }));
 

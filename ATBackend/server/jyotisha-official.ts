@@ -83,7 +83,7 @@ export class JyotishaOfficial {
       // Reset failure counter on success
       this.failedAttempts = 0;
       console.log(`✅ [PRIMARY] Calculation successful in ${Date.now() - startTime}ms`);
-      
+      console.log('primary result = ', primaryResult);
       return primaryResult;
       
     } catch (primaryError) {
@@ -116,7 +116,7 @@ export class JyotishaOfficial {
    */
   private static async calculateWithPrimaryEngine(birthData: BirthData): Promise<JyotishaResult> {
     return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python', ['server/jyotisha-engine.py']);
+      const pythonProcess = spawn(process.env.PYTHON3, ['server/jyotisha-engine.py']);
 
       let stdout = '';
       let stderr = '';

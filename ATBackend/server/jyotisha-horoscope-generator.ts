@@ -204,8 +204,9 @@ export class JyotishaHoroscopeGenerator {
    * Calculate authentic transit data using Jyotisha engine
    */
   private static async calculateJyotishaTransits(date: string): Promise<JyotishaTransitData> {
+    console.log('PYTHON3 path = ',process.env.PYTHON3);
     return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python3', ['server/jyotisha-engine.py'], {
+      const pythonProcess = spawn(process.env.PYTHON3, ['server/jyotisha-engine.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 

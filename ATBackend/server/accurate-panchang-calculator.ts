@@ -273,7 +273,7 @@ if __name__ == "__main__":
 `;
 
     // Execute Python script
-    const pythonProcess = spawn('python3', ['-c', pythonScript]);
+    const pythonProcess = spawn(process.env.PYTHON3, ['-c', pythonScript]);
     
     let output = '';
     let error = '';

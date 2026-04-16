@@ -208,7 +208,7 @@ async function executeDrikPanchang(date: string, latitude: number, longitude: nu
     const enginePath = 'server/drik-panchang-corrected.py';
     
     // Execute Python engine with arguments
-    const pythonProcess = spawn('python3', [enginePath, date, latitude.toString(), longitude.toString(), 'Asia/Kolkata'], {
+    const pythonProcess = spawn(process.env.PYTHON3, [enginePath, date, latitude.toString(), longitude.toString(), 'Asia/Kolkata'], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     
@@ -249,7 +249,7 @@ async function executeEnhancedDetailedPanchang(date: string, latitude: number, l
     const enginePath = 'server/enhanced-detailed-panchang.py';
     
     // Execute Python engine with arguments
-    const pythonProcess = spawn('python3', [enginePath, date, latitude.toString(), longitude.toString()], {
+    const pythonProcess = spawn(process.env.PYTHON3, [enginePath, date, latitude.toString(), longitude.toString()], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
     
@@ -2996,7 +2996,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Use stdin approach instead of command line arguments
       const childProcess = await import('child_process');
-      const pythonProcess = childProcess.spawn('python', [scriptPath], {
+      const pythonProcess = childProcess.spawn(process.env.PYTHON3, [scriptPath], {
         cwd: KP_ENGINE_PATH,
         stdio: ['pipe', 'pipe', 'pipe']
       });
@@ -10677,7 +10677,7 @@ The strength of house lords, their placement in other houses, and mutual aspects
       };
       
       // Execute Lal Kitab analysis using Python engine with Jyotisha integration
-      const pythonProcess = spawn('python3', [
+      const pythonProcess = spawn(process.env.PYTHON3, [
         path.join(process.cwd(), 'server', 'lal-kitab-jyotisha.py'),
         JSON.stringify(birthData)
       ]);
@@ -21307,7 +21307,7 @@ The strength of house lords, their placement in other houses, and mutual aspects
 
       // Execute Shadbala calculation using dynamic import
       const childProcess = await import('child_process');
-      const pythonProcess = childProcess.spawn('python3', ['server/authentic-shadbala-calculator.py'], {
+      const pythonProcess = childProcess.spawn(process.env.PYTHON3, ['server/authentic-shadbala-calculator.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
@@ -21408,7 +21408,7 @@ The strength of house lords, their placement in other houses, and mutual aspects
 
       // Execute dosha detection using dynamic import
       const childProcess = await import('child_process');
-      const pythonProcess = childProcess.spawn('python3', ['server/enhanced-dosha-detector.py'], {
+      const pythonProcess = childProcess.spawn(process.env.PYTHON3, ['server/enhanced-dosha-detector.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
@@ -21471,7 +21471,7 @@ The strength of house lords, their placement in other houses, and mutual aspects
       const { year, month, day, hour, minute, latitude, longitude, ayanaamsha_id = 'LAHIRI' } = req.body;
       
       // Use standalone Python script for nakshatra calculation
-      const pythonProcess = spawn('python', [
+      const pythonProcess = spawn(process.env.PYTHON3, [
         'nakshatra-api.py',
         year.toString(),
         month.toString(),
@@ -22472,7 +22472,7 @@ The strength of house lords, their placement in other houses, and mutual aspects
 
       // Call our premium report API to get actual data
       const { spawn } = require('child_process');
-      const python = spawn('python3', ['server/premium-report-engine.py'], {
+      const python = spawn(process.env.PYTHON3, ['server/premium-report-engine.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
@@ -22604,7 +22604,7 @@ The strength of house lords, their placement in other houses, and mutual aspects
       };
 
       // Call authentic dasha timeline Python script
-      const pythonProcess = spawn('python3', ['server/authentic-dasha-timeline.py'], {
+      const pythonProcess = spawn(process.env.PYTHON3, ['server/authentic-dasha-timeline.py'], {
         stdio: ['pipe', 'pipe', 'pipe']
       });
 

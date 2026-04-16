@@ -2448,7 +2448,7 @@ class PremiumReportEngine:
             
             # Call authentic dasha timeline Python script
             pythonProcess = subprocess.run([
-                'python3', 
+                process.env.PYTHON3,
                 str(Path(__file__).parent / 'authentic-dasha-timeline.py')
             ], 
             input=json.dumps(dasha_data), 
@@ -7627,7 +7627,7 @@ Each recommendation is tailored specifically to your planetary positions and is 
             
             # Call enhanced Sade Sati calculator
             result = subprocess.run(
-                ['python3', 'server/enhanced-sade-sati.py'],
+                [process.env.PYTHON3, 'server/enhanced-sade-sati.py'],
                 input=json.dumps({
                     'year': birth_dt.year,
                     'month': birth_dt.month,
@@ -8367,7 +8367,7 @@ Each recommendation is tailored specifically to your planetary positions and is 
             
             script_path = os.path.join(os.path.dirname(__file__), '..', 'nakshatra-api.py')
             result = subprocess.run([
-                'python3', script_path, 
+                process.env.PYTHON3, script_path,
                 str(year), str(month), str(day), str(hour), str(minute)
             ], capture_output=True, text=True, timeout=30)
             
@@ -9204,7 +9204,7 @@ Each recommendation is tailored specifically to your planetary positions and is 
         
         # Call authentic dasha timeline Python script
         pythonProcess = subprocess.run([
-            'python3', 
+            process.env.PYTHON3,
             str(Path(__file__).parent / 'authentic-dasha-timeline.py')
         ], 
         input=json.dumps(dasha_data), 
@@ -10222,7 +10222,7 @@ Each recommendation is tailored specifically to your planetary positions and is 
             
             # Call authentic dasha timeline Python script
             pythonProcess = subprocess.run([
-                'python3', 
+                process.env.PYTHON3,
                 str(Path(__file__).parent / 'authentic-dasha-timeline.py')
             ], 
             input=json.dumps(dasha_data), 
@@ -12797,7 +12797,7 @@ Each recommendation is tailored specifically to your planetary positions and is 
             
             # Call authentic dasha timeline Python script
             pythonProcess = subprocess.run([
-                'python3', 
+                process.env.PYTHON3,
                 str(Path(__file__).parent / 'authentic-dasha-timeline.py')
             ], 
             input=json.dumps(dasha_data), 

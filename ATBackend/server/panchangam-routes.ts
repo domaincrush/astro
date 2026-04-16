@@ -49,7 +49,7 @@ export const calculatePanchangam = async (req: Request, res: Response) => {
     const pythonScript = path.join(__dirname, 'jyotisha-panchangam.py');
     const args = [pythonScript, date, time, latitude.toString(), longitude.toString(), timezone];
 
-    const pythonProcess = spawn('python3', args);
+    const pythonProcess = spawn(process.env.PYTHON3, args);
     
     let stdout = '';
     let stderr = '';
@@ -155,7 +155,7 @@ export const calculateMultipleDaysPanchangam = async (req: Request, res: Respons
         const args = [pythonScript, dateStr, time, latitude.toString(), longitude.toString(), timezone];
 
         const result = await new Promise((resolve, reject) => {
-          const pythonProcess = spawn('python3', args);
+          const pythonProcess = spawn(process.env.PYTHON3, args);
           let stdout = '';
           let stderr = '';
 

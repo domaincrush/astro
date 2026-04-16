@@ -16,9 +16,10 @@ try:
     import swisseph as swe
     swe_available = True
     print("✅ Swiss Ephemeris available for calculations", file=sys.stderr)
-except ImportError:
+except ImportError as e:
     swe_available = False
     print("❌ Swiss Ephemeris not available", file=sys.stderr)
+    print(f"❌ Python ERROR: {e}")
 
 class JyotishaEngine:
     """

@@ -127,7 +127,7 @@ class IntegratedJyotishaDaemon {
 
       console.log('📊 Executing integrated Jyotisha calculation...');
       
-      const pythonProcess = spawn('python3', pythonArgs);
+      const pythonProcess = spawn(process.env.PYTHON3, pythonArgs);
       let output = '';
       let errorOutput = '';
 

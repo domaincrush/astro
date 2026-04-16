@@ -285,7 +285,7 @@ router.post('/premium-report/generate', async (req, res) => {
 
     // Call premium report engine (with daemon data if available, otherwise fallback)
     const { spawn } = await import('child_process');
-    const pythonProcess = spawn('python3', ['server/premium-report-engine.py'], {
+    const pythonProcess = spawn(process.env.PYTHON3, ['server/premium-report-engine.py'], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
 

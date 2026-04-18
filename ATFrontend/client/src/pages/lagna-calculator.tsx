@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
@@ -72,8 +77,9 @@ export default function LagnaCalculator() {
 
   const validateAndSetDate = (d: string, m: string, y: string) => {
     if (d && m && y) {
-      const formatted = `${y}-${m}-${d}`;
-      const dateObj = new Date(formatted);
+      const formatted = `${d}-${m}-${y}`; // ✅ store format
+
+      const dateObj = new Date(`${y}-${m}-${d}`); // ✅ only for validation
 
       if (
         dateObj &&
@@ -82,7 +88,7 @@ export default function LagnaCalculator() {
         dateObj.getDate().toString().padStart(2, "0") === d
       ) {
         setBirthDateError("");
-        setBirthDate(formatted); // final YYYY-MM-DD value
+        setBirthDate(formatted); // ✅ DD-MM-YYYY
       } else {
         setBirthDateError("Please select a valid date");
         setBirthDate("");
@@ -758,14 +764,15 @@ export default function LagnaCalculator() {
                   </Button>
                 </Link>
                 {/* <Link href="/astrologers"> */}
-                  <Button type="button"
+                <Button
+                  type="button"
                   onClick={openAstroWhatsApp}
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
-                  >
-                    Consult with Expert
-                  </Button>
+                  size="lg"
+                  variant="outline"
+                  className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
+                >
+                  Consult with Expert
+                </Button>
                 {/* </Link> */}
               </div>
             </motion.div>

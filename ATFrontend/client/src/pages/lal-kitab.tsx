@@ -2,7 +2,12 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import {
@@ -123,8 +128,40 @@ export default function LalKitab() {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    calculateMutation.mutate(data);
+  const onSubmit = (data) => {
+    const parts = data.birthDate.split("-");
+    if (parts.length !== 3) {
+      alert("Invalid date format. Use DD-MM-YYYY");
+      return;
+    }
+    const [d, m, y] = parts;
+
+    if (
+      !d ||
+      !m ||
+      !y ||
+      Number(d) < 1 ||
+      Number(d) > 31 ||
+      Number(m) < 1 ||
+      Number(m) > 12 ||
+      y.length !== 4
+    ) {
+      alert("Invalid date format. Use DD-MM-YYYY");
+      return;
+    }
+
+    let apiTime = data.birthTime;
+    if (apiTime && apiTime.split(":").length === 2) {
+      apiTime = `${apiTime}:00`;
+    }
+
+    const finalData = {
+      ...data,
+      birthDate: data.birthDate, // keep DD-MM-YYYY
+      birthTime: apiTime,
+    };
+
+    calculateMutation.mutate(finalData);
   };
   useEffect(() => {
     if (result && window.innerWidth < 768 && resultRef.current) {
@@ -186,7 +223,7 @@ export default function LalKitab() {
                     control={form.control}
                     name="birthDate"
                     render={({ field }) => {
-                      const [y, m, d] = field.value?.split("-") || ["", "", ""];
+                      const [d, m, y] = field.value?.split("-") || ["", "", ""];
 
                       return (
                         <FormItem>
@@ -201,7 +238,7 @@ export default function LalKitab() {
                                 className="border rounded p-2"
                                 value={d}
                                 onChange={(e) =>
-                                  field.onChange(`${y}-${m}-${e.target.value}`)
+                                  field.onChange(`${e.target.value}-${m}-${y}`)
                                 }
                               >
                                 <option value="">Day</option>
@@ -220,7 +257,7 @@ export default function LalKitab() {
                                 className="border rounded p-2"
                                 value={m}
                                 onChange={(e) =>
-                                  field.onChange(`${y}-${e.target.value}-${d}`)
+                                  field.onChange(`${d}-${e.target.value}-${y}`)
                                 }
                               >
                                 <option value="">Month</option>
@@ -239,7 +276,7 @@ export default function LalKitab() {
                                 className="border rounded p-2"
                                 value={y}
                                 onChange={(e) =>
-                                  field.onChange(`${e.target.value}-${m}-${d}`)
+                                  field.onChange(`${d}-${m}-${e.target.value}`)
                                 }
                               >
                                 <option value="">Year</option>
@@ -384,7 +421,13 @@ export default function LalKitab() {
                     <div>
                       <p className="text-sm text-gray-600">Birth Date</p>
                       <p className="font-semibold">
-                        {result.basicInfo.birthDate}
+                        {(() => {
+                          const parts = result.basicInfo.birthDate?.split("-");
+                          if (!parts || parts.length !== 3)
+                            return result.basicInfo.birthDate;
+                          const [d, m, y] = parts;
+                          return `${d}-${m}-${y}`;
+                        })()}
                       </p>
                     </div>
                     <div>
@@ -1057,44 +1100,45 @@ export default function LalKitab() {
         </div>
       </div>
       {/* CTA Section */}
-        <section className="py-16 px-4 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h2 className="text-4xl font-bold mb-6 text-white">
-                Ready to Unlock Your Astrology Wisdom
-              </h2>
-              <p className="text-xl text-white mb-8 opacity-90">
-                Get personalized Astrology readings and discover the mystical
-                guidance awaiting you
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/learn-astrology/planets">
-                  <Button
-                    size="lg"
-                    className="bg-white text-purple-600 hover:bg-gray-100 font-bold px-8 py-4 text-lg"
-                  >
-                    <Zap className="w-5 h-5 mr-2" />
-                    Learn planets Basics
-                  </Button>
-                </Link>
-                {/* <Link href="/astrologers"> */}
-                  <Button type="button"
-                  onClick={openAstroWhatsApp}
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
-                  >
-                    Consult with Expert
-                  </Button>
-                {/* </Link> */}
-              </div>
-            </motion.div>
-          </div>
-        </section>
+      <section className="py-16 px-4 bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600">
+        <div className="max-w-4xl mx-auto text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl font-bold mb-6 text-white">
+              Ready to Unlock Your Astrology Wisdom
+            </h2>
+            <p className="text-xl text-white mb-8 opacity-90">
+              Get personalized Astrology readings and discover the mystical
+              guidance awaiting you
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link href="/learn-astrology/planets">
+                <Button
+                  size="lg"
+                  className="bg-white text-purple-600 hover:bg-gray-100 font-bold px-8 py-4 text-lg"
+                >
+                  <Zap className="w-5 h-5 mr-2" />
+                  Learn planets Basics
+                </Button>
+              </Link>
+              {/* <Link href="/astrologers"> */}
+              <Button
+                type="button"
+                onClick={openAstroWhatsApp}
+                size="lg"
+                variant="outline"
+                className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
+              >
+                Consult with Expert
+              </Button>
+              {/* </Link> */}
+            </div>
+          </motion.div>
+        </div>
+      </section>
       <Footer />
     </div>
   );

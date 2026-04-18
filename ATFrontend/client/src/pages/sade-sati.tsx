@@ -3,7 +3,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
@@ -38,7 +43,10 @@ import {
   Calendar,
 } from "lucide-react";
 import { useRef } from "react";
-import { openAstroWhatsApp, openPremiumReportWhatsApp } from "../utils/whatsapp";
+import {
+  openAstroWhatsApp,
+  openPremiumReportWhatsApp,
+} from "../utils/whatsapp";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -149,17 +157,33 @@ export default function SadeSati() {
   });
 
   const onSubmit = (data: FormData) => {
-    // data.birthDate = "DD-MM-YYYY"
-    let apiDate = data.birthDate;
-    if (apiDate.includes("-")) {
-      const [d, m, y] = apiDate.split("-");
-      apiDate = `${y}-${m}-${d}`; // YYYY-MM-DD for backend
+    // ✅ VALIDATION (ADD HERE)
+    const parts = data.birthDate.split("-");
+
+    if (
+      parts.length !== 3 ||
+      parts.includes("") ||
+      Number(parts[0]) < 1 ||
+      Number(parts[0]) > 31 ||
+      Number(parts[1]) < 1 ||
+      Number(parts[1]) > 12 ||
+      parts[2].length !== 4
+    ) {
+      toast({
+        title: "Invalid Date",
+        description: "Please enter valid date (DD-MM-YYYY)",
+        variant: "destructive",
+      });
+      return;
     }
 
-    // data.birthTime = "HH:mm"
+    // ✅ KEEP FORMAT (DD-MM-YYYY)
+    const apiDate = data.birthDate;
+
+    // ✅ TIME FIX
     let apiTime = data.birthTime;
     if (apiTime && apiTime.split(":").length === 2) {
-      apiTime = `${apiTime}:00`; // add seconds
+      apiTime = `${apiTime}:00`;
     }
 
     const completeData = {
@@ -509,13 +533,18 @@ export default function SadeSati() {
                           </p>
                           <p className="text-base">
                             Born on{" "}
-                            {new Date(
-                              result.personalInfo.birthDate,
-                            ).toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })}
+                            {(() => {
+                              if (!result.personalInfo?.birthDate) return "N/A";
+
+                              const parts =
+                                result.personalInfo.birthDate.split("-");
+                              if (parts.length !== 3)
+                                return result.personalInfo.birthDate;
+
+                              const [d, m, y] = parts;
+
+                              return `${d}-${m}-${y}`;
+                            })()}
                           </p>
                           <p className="text-base text-gray-600">
                             {result.personalInfo.birthPlace}
@@ -963,13 +992,15 @@ export default function SadeSati() {
                 your Sade Sati period.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onClick={openPremiumReportWhatsApp}
+                <button
+                  onClick={openPremiumReportWhatsApp}
                   // onClick={() => (window.location.href = "/premium-report")}
                   className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-orange-600 to-red-700 text-white font-semibold rounded-lg shadow-lg hover:from-orange-700 hover:to-red-800 transition-all duration-300 transform hover:scale-105"
                 >
                   Get Premium Report
                 </button>
-                <button onClick={openAstroWhatsApp}
+                <button
+                  onClick={openAstroWhatsApp}
                   // onClick={() => (window.location.href = "/astrologers")}
                   className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-semibold rounded-lg shadow-lg hover:from-emerald-700 hover:to-teal-800 transition-all duration-300 transform hover:scale-105"
                 >

@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
 import { Helmet } from "react-helmet-async";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
@@ -40,17 +45,21 @@ export default function NakshatraFinder() {
 
   const validateAndSetDate = (d: string, m: string, y: string) => {
     if (d && m && y) {
-      const formatted = `${y}-${m}-${d}`;
-      const dateObj = new Date(formatted);
+      const dayNum = parseInt(d);
+      const monthNum = parseInt(m);
+      const yearNum = parseInt(y);
 
-      if (
-        dateObj &&
-        dateObj.getFullYear().toString() === y &&
-        (dateObj.getMonth() + 1).toString().padStart(2, "0") === m &&
-        dateObj.getDate().toString().padStart(2, "0") === d
-      ) {
+      const isValidDate =
+        dayNum >= 1 &&
+        dayNum <= 31 &&
+        monthNum >= 1 &&
+        monthNum <= 12 &&
+        yearNum >= 1900 &&
+        yearNum <= new Date().getFullYear();
+
+      if (isValidDate) {
         setBirthDateError("");
-        setBirthDate(formatted); // final YYYY-MM-DD value
+        setBirthDate(`${d}-${m}-${y}`); // ✅ DD-MM-YYYY
       } else {
         setBirthDateError("Please select a valid date");
         setBirthDate("");
@@ -447,10 +456,14 @@ export default function NakshatraFinder() {
                           </div>
                         )}
                       </div>
-                      <button onClick={() => setLocation('/learn-astrology/nakshatras')}
-                      className="mt-4 w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300">
+                      <button
+                        onClick={() =>
+                          setLocation("/learn-astrology/nakshatras")
+                        }
+                        className="mt-4 w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition duration-300"
+                      >
                         Explore more
-                        </button>
+                      </button>
                     </div>
                   ) : (
                     <div className="text-center py-12">
@@ -491,14 +504,15 @@ export default function NakshatraFinder() {
                   </Button>
                 </Link>
                 {/* <Link href="/astrologers"> */}
-                  <Button type="button"
+                <Button
+                  type="button"
                   onClick={openAstroWhatsApp}
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
-                  >
-                    Consult with Expert
-                  </Button>
+                  size="lg"
+                  variant="outline"
+                  className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
+                >
+                  Consult with Expert
+                </Button>
                 {/* </Link> */}
               </div>
             </motion.div>

@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Badge } from "src/components/ui/badge";
 import { Progress } from "src/components/ui/progress";
@@ -492,12 +497,12 @@ export default function KundliMatching() {
                                               {/* Day */}
                                               <Select
                                                 value={
-                                                  field.value?.split("-")[2] ||
+                                                  field.value?.split("-")[0] ||
                                                   ""
                                                 }
                                                 onValueChange={(day) =>
                                                   field.onChange(
-                                                    `${field.value?.split("-")[0] || "2000"}-${field.value?.split("-")[1] || "01"}-${day}`,
+                                                    `${day}-${field.value?.split("-")[1] || "01"}-${field.value?.split("-")[2] || "2000"}`,
                                                   )
                                                 }
                                               >
@@ -529,7 +534,7 @@ export default function KundliMatching() {
                                                 }
                                                 onValueChange={(month) =>
                                                   field.onChange(
-                                                    `${field.value?.split("-")[0] || "2000"}-${month}-${field.value?.split("-")[2] || "01"}`,
+                                                    `${field.value?.split("-")[0] || "01"}-${month}-${field.value?.split("-")[2] || "2000"}`,
                                                   )
                                                 }
                                               >
@@ -556,12 +561,12 @@ export default function KundliMatching() {
                                               {/* Year */}
                                               <Select
                                                 value={
-                                                  field.value?.split("-")[0] ||
+                                                  field.value?.split("-")[2] ||
                                                   ""
                                                 }
                                                 onValueChange={(year) =>
                                                   field.onChange(
-                                                    `${year}-${field.value?.split("-")[1] || "01"}-${field.value?.split("-")[2] || "01"}`,
+                                                    `${field.value?.split("-")[0] || "01"}-${field.value?.split("-")[1] || "01"}-${year}`,
                                                   )
                                                 }
                                               >
@@ -750,12 +755,12 @@ export default function KundliMatching() {
                                               {/* Day */}
                                               <Select
                                                 value={
-                                                  field.value?.split("-")[2] ||
+                                                  field.value?.split("-")[0] ||
                                                   ""
                                                 }
                                                 onValueChange={(day) =>
                                                   field.onChange(
-                                                    `${field.value?.split("-")[0] || "2000"}-${field.value?.split("-")[1] || "01"}-${day}`,
+                                                    `${day}-${field.value?.split("-")[1] || "01"}-${field.value?.split("-")[2] || "2000"}`,
                                                   )
                                                 }
                                               >
@@ -787,7 +792,7 @@ export default function KundliMatching() {
                                                 }
                                                 onValueChange={(month) =>
                                                   field.onChange(
-                                                    `${field.value?.split("-")[0] || "2000"}-${month}-${field.value?.split("-")[2] || "01"}`,
+                                                    `${field.value?.split("-")[0] || "01"}-${month}-${field.value?.split("-")[2] || "2000"}`,
                                                   )
                                                 }
                                               >
@@ -814,12 +819,12 @@ export default function KundliMatching() {
                                               {/* Year */}
                                               <Select
                                                 value={
-                                                  field.value?.split("-")[0] ||
+                                                  field.value?.split("-")[2] ||
                                                   ""
                                                 }
                                                 onValueChange={(year) =>
                                                   field.onChange(
-                                                    `${year}-${field.value?.split("-")[1] || "01"}-${field.value?.split("-")[2] || "01"}`,
+                                                    `${field.value?.split("-")[0] || "01"}-${field.value?.split("-")[1] || "01"}-${year}`,
                                                   )
                                                 }
                                               >

@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
@@ -19,7 +24,10 @@ import Footer from "src/components/layout/Footer";
 import { LocationSearch } from "src/components/LocationSearch";
 import { Baby, Calendar, Clock, MapPin } from "lucide-react";
 import { useRef } from "react";
-import { openAstroWhatsApp, openPremiumReportWhatsApp } from "../utils/whatsapp";
+import {
+  openAstroWhatsApp,
+  openPremiumReportWhatsApp,
+} from "../utils/whatsapp";
 
 export default function BabyNaming() {
   const [birthDate, setBirthDate] = useState("");
@@ -37,22 +45,26 @@ export default function BabyNaming() {
   const [birthDateError, setBirthDateError] = useState("");
   const [hour, setHour] = useState("");
   const [minute, setMinute] = useState("");
-  const [ampm, setAmPm] = useState("");
   const [birthTimeError, setBirthTimeError] = useState("");
 
   const validateAndSetDate = (d: string, m: string, y: string) => {
     if (d && m && y) {
-      const formatted = `${y}-${m}-${d}`;
-      const dateObj = new Date(formatted);
+      const formatted = `${d}-${m}-${y}`;
+
+      const dayNum = Number(d);
+      const monthNum = Number(m);
+      const yearNum = Number(y);
+
+      // Create safe date
+      const dateObj = new Date(yearNum, monthNum - 1, dayNum);
 
       if (
-        dateObj &&
-        dateObj.getFullYear().toString() === y &&
-        (dateObj.getMonth() + 1).toString().padStart(2, "0") === m &&
-        dateObj.getDate().toString().padStart(2, "0") === d
+        dateObj.getFullYear() === yearNum &&
+        dateObj.getMonth() === monthNum - 1 &&
+        dateObj.getDate() === dayNum
       ) {
         setBirthDateError("");
-        setBirthDate(formatted); // final YYYY-MM-DD value
+        setBirthDate(formatted);
       } else {
         setBirthDateError("Please select a valid date");
         setBirthDate("");
@@ -64,9 +76,9 @@ export default function BabyNaming() {
       const hh = parseInt(h, 10);
       const mm = parseInt(min, 10);
 
-      if (hh >= 1 && hh <= 24 && mm >= 0 && mm <= 59) {
+      if (hh >= 0 && hh <= 23 && mm >= 0 && mm <= 59) {
         setBirthTimeError("");
-        setBirthTime(`${h.padStart(2, "0")}:${min.padStart(2, "0")} `);
+        setBirthTime(`${h.padStart(2, "0")}:${min.padStart(2, "0")}`);
       } else {
         setBirthTimeError("Please select a valid time");
         setBirthTime("");
@@ -145,7 +157,7 @@ export default function BabyNaming() {
     }
 
     // Coordinate validation
-    if (!latitude || !longitude) {
+    if (latitude === null || longitude === null) {
       toast({
         title: "Location Required",
         description: "Please select a valid location from the dropdown",
@@ -743,13 +755,15 @@ export default function BabyNaming() {
                 for your baby's future
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <a onClick={openPremiumReportWhatsApp}
+                <a
+                  onClick={openPremiumReportWhatsApp}
                   // href="/premium-report"
                   className="bg-white text-mystical-blue px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                 >
                   Premium Birth Chart
                 </a>
-                <a onClick={openAstroWhatsApp}
+                <a
+                  onClick={openAstroWhatsApp}
                   // href="/astrologers"
                   className="bg-white/20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition-colors backdrop-blur-sm"
                 >

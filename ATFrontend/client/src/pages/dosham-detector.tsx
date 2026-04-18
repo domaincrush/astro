@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
@@ -26,7 +31,10 @@ import {
   MapPin,
   Users,
 } from "lucide-react";
-import { openAstroWhatsApp, openPremiumReportWhatsApp } from "../utils/whatsapp";
+import {
+  openAstroWhatsApp,
+  openPremiumReportWhatsApp,
+} from "../utils/whatsapp";
 
 export default function DoshamDetector() {
   const [formData, setFormData] = useState({
@@ -55,8 +63,9 @@ export default function DoshamDetector() {
 
   const validateAndSetDate = (d: string, m: string, y: string) => {
     if (d && m && y) {
-      const formatted = `${y}-${m}-${d}`;
-      const dateObj = new Date(formatted);
+      const formatted = `${d}-${m}-${y}`; // ✅ store DD-MM-YYYY
+
+      const dateObj = new Date(`${y}-${m}-${d}`); // ✅ only for validation
 
       if (
         dateObj &&
@@ -936,13 +945,15 @@ export default function DoshamDetector() {
                 remedies and timing guidance from expert astrologers
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <a onClick={openPremiumReportWhatsApp}
+                <a
+                  onClick={openPremiumReportWhatsApp}
                   // href="/premium-report"
                   className="bg-white text-mystical-blue px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
                 >
                   Premium Life Report
                 </a>
-                <a onClick={openAstroWhatsApp}
+                <a
+                  onClick={openAstroWhatsApp}
                   // href="/astrologers"
                   className="bg-white/20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-white/30 transition-colors backdrop-blur-sm"
                 >

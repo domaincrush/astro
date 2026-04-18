@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
@@ -197,8 +202,11 @@ const timezones = [
 ];
 
 export default function PanchangNew() {
+  const today = new Date();
+  const formattedDate = `${String(today.getDate()).padStart(2, "0")}-${String(today.getMonth() + 1).padStart(2, "0")}-${today.getFullYear()}`;
+
   const [formData, setFormData] = useState({
-    date: new Date().toISOString().split("T")[0],
+    date: formattedDate,
     city: "Delhi",
     timezone: "Asia/Kolkata",
   });
@@ -297,7 +305,8 @@ export default function PanchangNew() {
       // Format: "2025-07-12 02:08 AM"
       const [datePart, timePart] = datetimeStr.split(" ", 2);
       const timeWithPeriod = datetimeStr.substring(datePart.length + 1);
-      const displayDate = new Date(datePart);
+      const [day, month, year] = datePart.split("-");
+      const displayDate = new Date(`${year}-${month}-${day}`);
 
       const dateStr = displayDate.toLocaleDateString("en-US", {
         month: "short",
@@ -309,7 +318,8 @@ export default function PanchangNew() {
       // Fallback for old format - just time
       if (!panchangData) return datetimeStr;
 
-      const currentDate = new Date(panchangData.date);
+      const [day, month, year] = panchangData.date.split("-");
+      const currentDate = new Date(`${year}-${month}-${day}`);
       const isNextDay = isNextDayTime(datetimeStr);
       const displayDate = isNextDay
         ? new Date(currentDate.getTime() + 24 * 60 * 60 * 1000)
@@ -346,10 +356,10 @@ export default function PanchangNew() {
 
     try {
       const today = new Date();
-      const todayDateString = today.toISOString().split("T")[0]; // YYYY-MM-DD format
+      const todayDateString = `${String(today.getDate()).padStart(2, "0")}-${String(today.getMonth() + 1).padStart(2, "0")}-${today.getFullYear()}`;
 
       // Extract date from the panchang date string
-      const panchangDate = panchangData.date.split("T")[0]; // Get just the date part
+      const panchangDate = panchangData.date;
 
       return panchangDate === todayDateString;
     } catch (error) {
@@ -380,13 +390,12 @@ export default function PanchangNew() {
       if (period === "PM" && hour24 !== 12) hour24 += 12;
 
       // Create end datetime - assuming IST timezone since our data is from Chennai/India
+      const [day, month, year] = datePart.split("-");
+
       const endDateTime = new Date(
-        datePart +
-          "T" +
-          hour24.toString().padStart(2, "0") +
-          ":" +
-          minutes.padStart(2, "0") +
-          ":00+05:30",
+        `${year}-${month}-${day}T${hour24
+          .toString()
+          .padStart(2, "0")}:${minutes.padStart(2, "0")}:00+05:30`,
       );
 
       // Compare current time with end time
@@ -401,7 +410,8 @@ export default function PanchangNew() {
       if (period === "PM" && hour24 !== 12) hour24 += 12;
 
       // Create end time for today
-      const currentDate = new Date(panchangData.date);
+      const [day, month, year] = panchangData.date.split("-");
+      const currentDate = new Date(`${year}-${month}-${day}`);
       const endTime = new Date(currentDate);
       endTime.setHours(hour24, parseInt(minutes), 0, 0);
 
@@ -412,8 +422,7 @@ export default function PanchangNew() {
 
       // Compare current time with end time
       const currentTimeMinutes =
-        currentTimeInTimezone.getHours() * 60 +
-        currentTimeInTimezone.getMinutes();
+      now.getHours() * 60 + now.getMinutes();
       const endTimeMinutes = hour24 * 60 + parseInt(minutes);
 
       // Handle next day scenario
@@ -595,14 +604,82 @@ export default function PanchangNew() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="date">Date</Label>
-                  <Input
-                    id="date"
-                    type="date"
-                    value={formData.date}
-                    onChange={(e) =>
-                      setFormData({ ...formData, date: e.target.value })
-                    }
-                  />
+                  <div className="grid grid-cols-3 gap-2">
+                    {/* Day */}
+                    <Select
+                      value={formData.date?.split("-")[0] || ""}
+                      onValueChange={(day) =>
+                        setFormData({
+                          ...formData,
+                          date: `${day}-${formData.date?.split("-")[1] || "01"}-${formData.date?.split("-")[2] || "2000"}`,
+                        })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Day" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 31 }, (_, i) => (
+                          <SelectItem
+                            key={i + 1}
+                            value={String(i + 1).padStart(2, "0")}
+                          >
+                            {i + 1}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Month */}
+                    <Select
+                      value={formData.date?.split("-")[1] || ""}
+                      onValueChange={(month) =>
+                        setFormData({
+                          ...formData,
+                          date: `${formData.date?.split("-")[0] || "01"}-${month}-${formData.date?.split("-")[2] || "2000"}`,
+                        })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Month" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <SelectItem
+                            key={i + 1}
+                            value={String(i + 1).padStart(2, "0")}
+                          >
+                            {i + 1}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Year */}
+                    <Select
+                      value={formData.date?.split("-")[2] || ""}
+                      onValueChange={(year) =>
+                        setFormData({
+                          ...formData,
+                          date: `${formData.date?.split("-")[0] || "01"}-${formData.date?.split("-")[1] || "01"}-${year}`,
+                        })
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Year" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 120 }, (_, i) => {
+                          const year = new Date().getFullYear() - i;
+                          return (
+                            <SelectItem key={year} value={String(year)}>
+                              {year}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <div>
                   <Label htmlFor="city">City</Label>

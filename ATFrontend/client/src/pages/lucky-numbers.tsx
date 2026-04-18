@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import { Label } from "src/components/ui/label";
@@ -18,7 +23,10 @@ import Footer from "src/components/layout/Footer";
 import LocationSearch from "src/components/LocationSearch";
 import { Hash, Calendar, Clock, User, MapPin, Users, Star } from "lucide-react";
 import { useRef } from "react";
-import { openAstroWhatsApp, openPremiumReportWhatsApp } from "../utils/whatsapp";
+import {
+  openAstroWhatsApp,
+  openPremiumReportWhatsApp,
+} from "../utils/whatsapp";
 
 export default function LuckyNumbers() {
   const [formData, setFormData] = useState({
@@ -105,6 +113,11 @@ export default function LuckyNumbers() {
       resultRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [result]);
+
+  const parts = formData.birthDate.split("-");
+  const d = parts[0] || "";
+  const m = parts[1] || "";
+  const y = parts[2] || "";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
@@ -195,15 +208,12 @@ export default function LuckyNumbers() {
                       <div className="grid grid-cols-3 gap-2">
                         {/* Day */}
                         <Select
-                          value={formData.birthDate.split("-")[2] || ""}
+                          value={d}
                           onValueChange={(day) => {
-                            const [y, m] = formData.birthDate.split("-") || [
-                              "",
-                              "",
-                            ];
+                            // no need to split again
                             setFormData({
                               ...formData,
-                              birthDate: `${y || "2000"}-${m || "01"}-${day}`,
+                              birthDate: `${day}-${m || "01"}-${y || "2000"}`,
                             });
                           }}
                         >
@@ -224,16 +234,11 @@ export default function LuckyNumbers() {
 
                         {/* Month */}
                         <Select
-                          value={formData.birthDate.split("-")[1] || ""}
+                          value={m}
                           onValueChange={(month) => {
-                            const [y, , d] = formData.birthDate.split("-") || [
-                              "",
-                              "",
-                              "",
-                            ];
                             setFormData({
                               ...formData,
-                              birthDate: `${y || "2000"}-${month}-${d || "01"}`,
+                              birthDate: `${d || "01"}-${month}-${y || "2000"}`,
                             });
                           }}
                         >
@@ -254,16 +259,11 @@ export default function LuckyNumbers() {
 
                         {/* Year */}
                         <Select
-                          value={formData.birthDate.split("-")[0] || ""}
+                          value={y}
                           onValueChange={(year) => {
-                            const [, m, d] = formData.birthDate.split("-") || [
-                              "",
-                              "",
-                              "",
-                            ];
                             setFormData({
                               ...formData,
-                              birthDate: `${year}-${m || "01"}-${d || "01"}`,
+                              birthDate: `${d || "01"}-${m || "01"}-${year}`,
                             });
                           }}
                         >
@@ -402,15 +402,7 @@ export default function LuckyNumbers() {
                             {result.birthDetails.name}
                           </p>
                           <p className="text-base">
-                            Born on{" "}
-                            {new Date(formData.birthDate).toLocaleDateString(
-                              "en-US",
-                              {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              },
-                            )}
+                            Born on {formData.birthDate}
                           </p>
                           <p className="text-base text-gray-600">
                             {result.birthDetails.birthPlace}
@@ -840,13 +832,15 @@ export default function LuckyNumbers() {
                 your life path.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onClick={openPremiumReportWhatsApp}
+                <button
+                  onClick={openPremiumReportWhatsApp}
                   // onClick={() => (window.location.href = "/premium-report")}
                   className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-purple-600 to-violet-700 text-white font-semibold rounded-lg shadow-lg hover:from-purple-700 hover:to-violet-800 transition-all duration-300 transform hover:scale-105"
                 >
                   Get Premium Report
                 </button>
-                <button onClick={openAstroWhatsApp}
+                <button
+                  onClick={openAstroWhatsApp}
                   // onClick={() => (window.location.href = "/astrologers")}
                   className="inline-flex items-center justify-center px-8 py-3 bg-gradient-to-r from-emerald-600 to-teal-700 text-white font-semibold rounded-lg shadow-lg hover:from-emerald-700 hover:to-teal-800 transition-all duration-300 transform hover:scale-105"
                 >

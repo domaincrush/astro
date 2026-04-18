@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "src/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "src/components/ui/card";
 import { Button } from "src/components/ui/button";
 import { Input } from "src/components/ui/input";
 import {
@@ -54,55 +59,55 @@ export default function DashaCalculator() {
 
   const validateAndSetDate = (d: string, m: string, y: string) => {
     if (d && m && y) {
-      const formatted = `${y}-${m}-${d}`;
-      const dateObj = new Date(formatted);
+      const isoFormat = `${y}-${m}-${d}`;
+      const formatted = `${d}-${m}-${y}`;
+
+      const dateObj = new Date(isoFormat);
 
       if (
-        dateObj &&
+        !isNaN(dateObj.getTime()) &&
         dateObj.getFullYear().toString() === y &&
         (dateObj.getMonth() + 1).toString().padStart(2, "0") === m &&
         dateObj.getDate().toString().padStart(2, "0") === d
       ) {
         setBirthDateError("");
         setBirthDate(formatted);
-        form.setValue("birthDate", formatted); // ✅ keep form in sync
+        form.setValue("birthDate", formatted);
       } else {
         setBirthDateError("Please select a valid date");
         setBirthDate("");
-        form.setValue("birthDate", ""); // ✅ reset form value
+        form.setValue("birthDate", "");
       }
     }
   };
 
   const validateAndSetTime = (h: string, min: string, meridian: string) => {
-  if (h && min && meridian) {
-    const hh = parseInt(h, 10);
-    const mm = parseInt(min, 10);
+    if (h && min && meridian) {
+      const hh = parseInt(h, 10);
+      const mm = parseInt(min, 10);
 
-    if (hh >= 1 && hh <= 12 && mm >= 0 && mm <= 59) {
+      if (hh >= 1 && hh <= 12 && mm >= 0 && mm <= 59) {
+        let convertedHour = hh;
 
-      let convertedHour = hh;
+        if (meridian === "PM" && hh !== 12) {
+          convertedHour = hh + 12;
+        }
+        if (meridian === "AM" && hh === 12) {
+          convertedHour = 0;
+        }
 
-      if (meridian === "PM" && hh !== 12) {
-        convertedHour = hh + 12;
+        const formatted = `${String(convertedHour).padStart(2, "0")}:${min.padStart(2, "0")}`;
+
+        setBirthTimeError("");
+        setBirthTime(formatted);
+        form.setValue("birthTime", formatted);
+      } else {
+        setBirthTimeError("Please select a valid time");
+        setBirthTime("");
+        form.setValue("birthTime", "");
       }
-      if (meridian === "AM" && hh === 12) {
-        convertedHour = 0;
-      }
-
-      const formatted = `${String(convertedHour).padStart(2, "0")}:${min.padStart(2, "0")}`;
-
-      setBirthTimeError("");
-      setBirthTime(formatted);
-      form.setValue("birthTime", formatted);
-
-    } else {
-      setBirthTimeError("Please select a valid time");
-      setBirthTime("");
-      form.setValue("birthTime", "");
     }
-  }
-};
+  };
 
   const form = useForm<DashaFormData>({
     resolver: zodResolver(dashaSchema),
@@ -623,14 +628,15 @@ export default function DashaCalculator() {
                   </Button>
                 </Link>
                 {/* <Link href="/astrologers"> */}
-                  <Button type="button"
+                <Button
+                  type="button"
                   onClick={openAstroWhatsApp}
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
-                  >
-                    Consult with Expert
-                  </Button>
+                  size="lg"
+                  variant="outline"
+                  className="border-white text-purple-600 hover:bg-white hover:text-purple-600 font-bold px-8 py-4 text-lg"
+                >
+                  Consult with Expert
+                </Button>
                 {/* </Link> */}
               </div>
             </motion.div>

@@ -53,8 +53,10 @@ export default function MoonSignChecker() {
 
   const validateAndSetDate = (d: string, m: string, y: string) => {
     if (d && m && y) {
-      const formatted = `${y}-${m}-${d}`;
-      const dateObj = new Date(formatted);
+      const formattedForValidation = `${y}-${m}-${d}`;
+      const formattedDisplay = `${d}-${m}-${y}`;
+
+      const dateObj = new Date(formattedForValidation);
 
       if (
         dateObj &&
@@ -63,7 +65,7 @@ export default function MoonSignChecker() {
         dateObj.getDate().toString().padStart(2, "0") === d
       ) {
         setBirthDateError("");
-        setBirthDate(formatted); // final YYYY-MM-DD value
+        setBirthDate(formattedDisplay); // ✅ DD-MM-YYYY
       } else {
         setBirthDateError("Please select a valid date");
         setBirthDate("");

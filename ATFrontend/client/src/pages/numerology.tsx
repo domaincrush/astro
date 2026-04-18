@@ -21,20 +21,34 @@ import { openAstroWhatsApp } from "../utils/whatsapp";
 
 export default function Numerology() {
   const [name, setName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
   const [results, setResults] = useState<any>(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
+
+  const getFormattedDate = () => {
+    if (day && month && year) {
+      return `${day}-${month}-${year}`;
+    }
+    return "";
+  };
+
   const calculateNumerology = () => {
-    if (!name || !birthDate) return;
+    if (!name || !day || !month || !year) return;
 
     setIsCalculating(true);
 
     // Calculate Life Path Number
-    const date = new Date(birthDate);
-    const day = date.getDate();
-    const month = date.getMonth() + 1;
-    const year = date.getFullYear();
+    const formattedDate = getFormattedDate();
+    if (!formattedDate) return;
+
+    const [d, m, y] = formattedDate.split("-");
+
+    const dayNum = parseInt(d);
+    const monthNum = parseInt(m);
+    const yearNum = parseInt(y);
 
     const reduceToSingleDigit = (num: number): number => {
       while (num > 9 && num !== 11 && num !== 22 && num !== 33) {
@@ -46,7 +60,7 @@ export default function Numerology() {
       return num;
     };
 
-    const lifePathNumber = reduceToSingleDigit(day + month + year);
+    const lifePathNumber = reduceToSingleDigit(dayNum + monthNum + yearNum);
 
     // Calculate Expression Number (from full name)
     const letterValues: { [key: string]: number } = {
@@ -112,7 +126,7 @@ export default function Numerology() {
 
     // Calculate Personal Year
     const currentYear = new Date().getFullYear();
-    const personalYear = reduceToSingleDigit(day + month + currentYear);
+    const personalYear = reduceToSingleDigit(dayNum + monthNum + currentYear);
 
     const numberMeanings: {
       [key: number]: { title: string; description: string; traits: string[] };
@@ -290,21 +304,64 @@ export default function Numerology() {
                 >
                   Birth Date
                 </Label>
-                <Input
-                  id="birthDate"
-                  data-testid="input-birthDate"
-                  type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                  className="w-full"
-                />
+                <div className="flex gap-2">
+                  <select
+                    value={day}
+                    onChange={(e) => setDay(e.target.value)}
+                    className="border p-2 flex-1"
+                  >
+                    <option value="">Day</option>
+                    {[...Array(31)].map((_, i) => (
+                      <option
+                        key={i + 1}
+                        value={(i + 1).toString().padStart(2, "0")}
+                      >
+                        {i + 1}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    className="border p-2 flex-1"
+                  >
+                    <option value="">Month</option>
+                    {[...Array(12)].map((_, i) => (
+                      <option
+                        key={i + 1}
+                        value={(i + 1).toString().padStart(2, "0")}
+                      >
+                        {new Date(0, i).toLocaleString("default", {
+                          month: "long",
+                        })}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    className="border p-2 flex-1"
+                  >
+                    <option value="">Year</option>
+                    {Array.from({ length: 120 }, (_, i) => {
+                      const y = new Date().getFullYear() - i;
+                      return (
+                        <option key={y} value={y.toString()}>
+                          {y}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
               </div>
             </div>
 
             <div className="text-center">
               <Button
                 onClick={calculateNumerology}
-                disabled={!name || !birthDate || isCalculating}
+                disabled={!name || !day || !month || !year || isCalculating}
                 className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 px-8 py-3 text-white font-semibold rounded-lg transition-all"
               >
                 {isCalculating ? "Calculating..." : "Calculate My Numbers"}
@@ -801,12 +858,18 @@ export default function Numerology() {
               complete numerological analysis today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button onClick={() => window.location.href = '/learn-astrology/birth-chart'}
-              className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+              <button
+                onClick={() =>
+                  (window.location.href = "/learn-astrology/birth-chart")
+                }
+                className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+              >
                 Learn Birth Chart Basic
               </button>
-              <button onClick={openAstroWhatsApp}
-              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors">
+              <button
+                onClick={openAstroWhatsApp}
+                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors"
+              >
                 Chat with Expert
               </button>
             </div>
